@@ -1,2 +1,25 @@
 @import 'bootstrap/scss/bootstrap.scss';
-@import './_base';
+@import './_base.scss';
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    font-family: 'Open Sans', sans-serif;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Bootstrap fixes */
+.nav {
+    width: 100%;
+}
+
+.main {
+    height: 100%;
+    padding-top: 70px;
+}
