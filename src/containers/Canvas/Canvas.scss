@@ -1,0 +1,40 @@
+.canvas {
+    border: 1px solid;
+    height: 700px;
+    margin: auto;
+}
+
+.canvas__title {
+    padding: 20px 0;
+    font-size: 24px;
+}
+
+.canvas__content-header {
+    padding: 10px;
+}
+
+.canvas__save-button {
+    width: 100%;
+    float: right;
+}
+
+.canvas__content-body {
+    height: 80%;
+    margin-top: 20px;
+    border: 1px solid;
+}
+
+.canvas__toolbox {
+    border: 1px solid;
+    height: 100%;
+}
+
+.canvas__draw-place {
+    height: 100%;
+    border: 1px solid;
+}
+
+.canvas__groups {
+    height: 100%;
+    border: 1px solid;
+}
