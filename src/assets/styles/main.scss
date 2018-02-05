@@ -22,4 +22,12 @@ body,
 .main {
     height: 100%;
     padding-top: 70px;
+    position: relative;
+
+    &.landing {
+        background-image: url('../images/art.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center bottom;
+    }
 }

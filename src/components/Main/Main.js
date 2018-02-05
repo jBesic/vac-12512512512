@@ -1,11 +1,12 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 
 const Main = function (props) {
     return (
-        <main {...props} className='container-fluid d-flex main'>
-            {props.children}    
+        <main className={'container-fluid d-flex main' + (props.location.pathname === '/' ? ' landing' : '')}>
+            {props.children}
         </main>
     );
 }
 
-export default Main;
+export default withRouter(Main);

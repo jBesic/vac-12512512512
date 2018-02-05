@@ -5,7 +5,7 @@ import './Navigation.css';
 
 const Navigation = function (props) {
     return (
-        <nav className="navbar fixed-top navbar-expand-lg navbar-light">
+        <nav className="navbar fixed-top navbar-expand-lg navbar-light vac-navbar">
             <NavLink className="navbar-brand" to="/">Vector Art Champions</NavLink>
 
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
