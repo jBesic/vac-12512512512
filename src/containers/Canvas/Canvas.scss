@@ -1,0 +1,39 @@
+@import '../../assets/styles/_palette.scss';
+
+.canvas {
+    height: 700px;
+    margin: auto;
+}
+
+.canvas__title {
+    padding: 20px 0;
+    font-size: 24px;
+}
+
+.canvas__content-header {
+    padding: 10px;
+}
+
+.canvas__save-button {
+    width: 100%;
+    float: right;
+}
+
+.canvas__content-body {
+    height: 80%;
+    margin-top: 20px;
+}
+
+.canvas__toolbox {
+    height: 100%;
+    border-right: 1px solid $color1;
+}
+
+.canvas__draw-place {
+    height: 100%;
+}
+
+.canvas__groups {
+    height: 100%;
+    border-left: 1px solid $color1;
+}

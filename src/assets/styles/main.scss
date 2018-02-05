@@ -1,5 +1,7 @@
 @import 'bootstrap/scss/bootstrap.scss';
+@import './_palette.scss';
 @import './_base.scss';
+
 
 * {
     box-sizing: border-box;
@@ -21,7 +23,7 @@ body,
 
 .main {
     height: 100%;
-    padding-top: 70px;
+    padding-top: 7%;
     position: relative;
 
     &.landing {
@@ -29,5 +31,15 @@ body,
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center bottom;
+    }
+}
+
+.vac-btn-primary {
+    background-color: $color5;
+    color: $color10;
+
+    &:hover {
+        background-color: $color4;
+        color: $color10;
     }
 }
