@@ -13,7 +13,7 @@ const Landing = function (props) {
                 <div>
                     <Link className="btn vac-btn-primary btn-lg m-1" to='/canvas'>Draw for fun</Link>
                     <Link className="btn vac-btn-primary btn-lg m-1" to='/choose-competition'>Join to competition</Link>
-                    <Link className="btn vac-btn-primary btn-lg m-1" to='/galleries'>Browser galleries</Link>
+                    <Link className="btn vac-btn-primary btn-lg m-1" to='/galleries'>Browse galleries</Link>
                     <Link className="btn vac-btn-primary btn-lg m-1" to='/galleries'>Vote for arts</Link>
                 </div>
             </div>
