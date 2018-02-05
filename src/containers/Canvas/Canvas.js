@@ -25,7 +25,7 @@ class Canvas extends Component {
                                             Remaining time: <strong>2:33 min</strong>
                                         </div>
                                     </div>
-                                    <div className='col-md-2'><button type="button" className="btn btn-primary canvas__save-button">Save</button></div>
+                                    <div className='col-md-2'><button type="button" className="btn vac-btn-primary canvas__save-button">Save</button></div>
                                 </div>
                                 {/* *** Canvas Content Body  *** */}
                                 <div className='row canvas__content-body mt-10'>

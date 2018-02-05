@@ -1,0 +1,9 @@
+@import 'assets/styles/_palette.scss';
+
+.nav-link {
+    color: $color5;
+
+    &:hover {
+        color: $color4;
+    }
+}

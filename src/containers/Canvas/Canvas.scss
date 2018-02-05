@@ -1,5 +1,6 @@
+@import '../../assets/styles/_palette.scss';
+
 .canvas {
-    border: 1px solid;
     height: 700px;
     margin: auto;
 }
@@ -21,20 +22,18 @@
 .canvas__content-body {
     height: 80%;
     margin-top: 20px;
-    border: 1px solid;
 }
 
 .canvas__toolbox {
-    border: 1px solid;
     height: 100%;
+    border-right: 1px solid $color1;
 }
 
 .canvas__draw-place {
     height: 100%;
-    border: 1px solid;
 }
 
 .canvas__groups {
     height: 100%;
-    border: 1px solid;
+    border-left: 1px solid $color1;
 }
