@@ -1,0 +1,15 @@
+@import 'assets/styles/_palette.scss';
+
+.landing {
+    background-color: unset;
+}
+
+.vac-btn-primary {
+    background-color: $color5;
+    color: $color10;
+
+    &:hover {
+        background-color: $color4;
+        color: $color10;
+    }
+}
