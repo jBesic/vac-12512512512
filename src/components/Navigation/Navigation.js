@@ -1,6 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { connect } from 'react-redux';
 
+import { AsyncLogoutUser } from '../../store/actions/actions';
 import './Navigation.css';
 
 const Navigation = function (props) {
@@ -10,28 +12,60 @@ const Navigation = function (props) {
 
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="nav justify-content-end">
-                    <li className="nav-item">
-                        <NavLink className="nav-link" to="/register">Register</NavLink>
-                    </li>
-                    <li className="nav-item">
-                        <NavLink className="nav-link" to="/login">Login</NavLink>
-                    </li>
-                    <li className="nav-item">
-                        <NavLink className="nav-link" to="/">Home</NavLink>
-                    </li>
-                    <li className="nav-item">
-                        <NavLink className="nav-link" to="/gallery">Gallery</NavLink>
-                    </li>
-                    <li className="nav-item">
-                        <NavLink className="nav-link" to="/competitions">Competitions</NavLink>
-                    </li>
-                    <li className="nav-item">
-                        <NavLink className="nav-link" to="/logout">Logout</NavLink>
-                    </li>
+                    {
+                        props.auth.isLoged ? null :
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/register">Register</NavLink>
+                            </li>
+                    }
+                    {
+                        props.auth.isLoged ? null :
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/login">Login</NavLink>
+                            </li>
+                    }
+                    {
+                        !props.auth.isLoged ? null :
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/">Home</NavLink>
+                            </li>
+                    }
+                    {
+                        !props.auth.isLoged ? null :
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/gallery">Gallery</NavLink>
+                            </li>
+                    }
+                    {
+                        !props.auth.isLoged ? null :
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/competitions">Competitions</NavLink>
+                            </li>}
+                    {
+                        !props.auth.isLoged ? null :
+                            <li className="nav-item">
+                                <button
+                                    type='button'
+                                    className="btn btn-link nav-link"
+                                    onClick={() => props.logout(localStorage.getItem('token'))}>Logout</button>
+                            </li>
+                    }
                 </ul>
             </div>
         </nav>
     );
 }
 
-export default Navigation;
+function mapStateToProps(state) {
+    return {
+        auth: state.auth
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        logout: token => dispatch(AsyncLogoutUser(token))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navigation);
