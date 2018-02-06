@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Toolbox from '../../components/Toolbox/Toolbox';
 
 import './Canvas.css';
 
@@ -21,7 +22,7 @@ class Canvas extends Component {
                                         <input type="text" className="form-control" placeholder='Enter a name of your art...' />
                                     </div>
                                     <div className='col-md-6 text-center'>
-                                        <div className="alert alert-light  m-0 p-1">
+                                        <div className="alert alert-light  m-0 p-2">
                                             Remaining time: <strong>2:33 min</strong>
                                         </div>
                                     </div>
@@ -29,8 +30,8 @@ class Canvas extends Component {
                                 </div>
                                 {/* *** Canvas Content Body  *** */}
                                 <div className='row canvas__content-body mt-10'>
-                                    <div className='col-md-2 canvas__toolbox'>Toolbox</div>
-                                    <div className='col-md-8 canvas__draw-place'>Canvas</div>
+                                    <div className='col-md-2 canvas__toolbox'><Toolbox /></div>
+                                    <div className='col-md-8 canvas__draw-place'></div>
                                     <div className='col-md-2 canvas__groups'>Groups</div>
                                 </div>
                             </div>
