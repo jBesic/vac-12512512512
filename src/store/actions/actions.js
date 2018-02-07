@@ -74,7 +74,31 @@ const AsyncLogoutUser = function (token) {
     }
 }
 
+const addShape = (shape) => {
+    return {
+        type: actionTypes.ADD_SHAPE,
+        shape: shape
+    }
+};
+
+const updateShape = (shape) => {
+    return {
+        type: actionTypes.ADD_SHAPE,
+        shape: shape
+    }
+};
+
+const deleteShape = (shape) => {
+    return {
+        type: actionTypes.DELETE_SHAPE,
+        shape: shape
+    }
+};
+
 export {
     AsyncRegisterUser,
-    AsyncLogoutUser
+    AsyncLogoutUser,
+    addShape,
+    deleteShape,
+    updateShape
 };

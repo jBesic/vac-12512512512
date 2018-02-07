@@ -4,3 +4,11 @@
     padding: 5px;
     cursor: pointer;
 }
+
+.toolbox__tool-selected {
+    outline: 1px dashed;
+}
+
+.toolbox__tool-disabled {
+    pointer-events: none;
+}
