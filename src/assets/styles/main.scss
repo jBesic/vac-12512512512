@@ -25,7 +25,7 @@ body,
     position: fixed;
     top: 0;
     width: 100%;
-    z-index: 9999;
+    z-index: 99999;
 }
 .sk-cube-center {
     left: 50%;
@@ -142,5 +142,9 @@ body,
         border: $color4;
         color: $color10;
         outline: $color4;
+    }
+
+    &:focus {
+        box-shadow: unset;
     }
 }

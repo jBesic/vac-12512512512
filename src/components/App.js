@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Switch, Route, withRouter } from 'react-router-dom';
+import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import Modal from './Modal';
 
-import onlyForAnonymous from '../hoc/onlyForAnonymous';
 import Navigation from './Navigation/Navigation';
-import Register from '../containers/Register';
+import Authentication from './Authentication';
 import Main from './Main/Main';
 import Landing from './Landing/Landing';
 import Canvas from '../containers/Canvas/Canvas';
@@ -16,11 +16,19 @@ class App extends Component {
       <React.Fragment>
         <Navigation />
         <Main>
-          <Spinner show={this.props.auth.isFetching}/>
+          <Spinner show={this.props.auth.isFetching} />
+          <Modal show={this.props.auth.loginActive || this.props.auth.registerActive}>
+            {this.props.auth.loginActive || this.props.auth.registerActive ?
+              <Authentication
+                loginActive={this.props.auth.loginActive}
+                registerActive={this.props.auth.registerActive} />
+              : null}
+          </Modal>
+
           <Switch>
             <Route exact path='/' component={Landing} />
-            <Route exact path='/register' component={onlyForAnonymous(Register)} />
             <Route exact path='/canvas' component={Canvas} />
+            <Redirect to='/' />
           </Switch>
         </Main>
       </React.Fragment>

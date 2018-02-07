@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { AsyncRegisterUser } from '../../store/actions/actions';
+import { AsyncLoginUser } from '../../store/actions/actions';
 
-class Register extends Component {
+class Login extends Component {
     constructor(props) {
         super();
 
@@ -25,7 +25,7 @@ class Register extends Component {
 
     submitHandler(ev) {
         ev.preventDefault();
-        this.props.registerDispatch(this.state.username, this.state.password);
+        this.props.loginDispatch(this.state.username, this.state.password);
     }
 
     render() {
@@ -68,7 +68,7 @@ class Register extends Component {
                 <button
                     disabled={isInvalid}
                     type="submit"
-                    className="btn btn-block btn-primary vac-btn-primary">Register</button>
+                    className="btn btn-block btn-primary vac-btn-primary">Log in</button>
             </form>
         );
     }
@@ -82,8 +82,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        registerDispatch: (username, password) => dispatch(AsyncRegisterUser(username, password))
+        loginDispatch: (username, password) => dispatch(AsyncLoginUser(username, password))
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Register);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

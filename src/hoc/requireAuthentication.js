@@ -7,13 +7,13 @@ const requireAuthentication = function (WrapperComponent) {
             super();
 
             if (!props.auth.isLoged) {
-                props.history.push('/login');
+                props.history.push('/');
             }
         }
 
         componentWillUpdate(nextProps) {
             if (!nextProps.auth.isLoged) {
-                nextProps.history.push('/login');
+                nextProps.history.push('/');
             }
         }
 
