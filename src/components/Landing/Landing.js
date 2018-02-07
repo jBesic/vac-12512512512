@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import './Landing.css';
 
@@ -14,11 +15,17 @@ const Landing = function (props) {
                     <Link className="btn vac-btn-primary btn-lg m-1" to='/canvas'>Draw for fun</Link>
                     <Link className="btn vac-btn-primary btn-lg m-1" to='/choose-competition'>Join to competition</Link>
                     <Link className="btn vac-btn-primary btn-lg m-1" to='/galleries'>Browse galleries</Link>
-                    <Link className="btn vac-btn-primary btn-lg m-1" to='/galleries'>Vote for arts</Link>
+                    {props.auth.isLoged ? <Link className="btn vac-btn-primary btn-lg m-1" to='/galleries'>Vote for arts</Link> : null}
                 </div>
             </div>
         </div>
     );
 }
 
-export default Landing;
+function mapStateToProps(state) {
+    return {
+        auth: state.auth
+    }
+}
+
+export default connect(mapStateToProps)(Landing);
