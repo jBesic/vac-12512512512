@@ -1,54 +1,42 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
+import { AuthenticationModal } from '../../store/actions/actions';
 import Register from '../../containers/Register';
 import Login from '../../containers/Login';
 import './authentication.css';
 
 class Authentication extends Component {
-    constructor(props) {
-        super();
-
-        this.state = {
-            loginActive: props.loginActive,
-            registerActive: props.registerActive
-        };
-
-        this.loginActive = this.loginActive.bind(this);
-        this.registerActive = this.registerActive.bind(this);
-    }
-
-    loginActive() {
-        this.setState({
-            loginActive: true,
-            registerActive: false
-        });
-    }
-
-    registerActive() {
-        this.setState({
-            loginActive: false,
-            registerActive: true
-        });
-    }
-
     render() {
         return (
             <React.Fragment>
                 <div className="btn-group d-block mb-4" role='group'>
                     <button
                         type="button"
-                        className={"btn w-50 vac-btn-primary vac-btn-modal" + (this.state.loginActive ? ' active' : '')}
-                        onClick={this.loginActive}>Login</button>
+                        className={"btn w-50 vac-btn-primary vac-btn-modal" + (this.props.auth.loginActive ? ' active' : '')}
+                        onClick={() => this.props.modal('login', true)}>Login</button>
                     <button
                         type="button"
-                        className={"btn w-50 vac-btn-primary vac-btn-modal" + (this.state.registerActive ? ' active' : '')}
-                        onClick={this.registerActive}>Register</button>
+                        className={"btn w-50 vac-btn-primary vac-btn-modal" + (this.props.auth.registerActive ? ' active' : '')}
+                        onClick={() => this.props.modal('register', true)}>Register</button>
                 </div>
-                {this.state.registerActive ? <Register /> : null}
-                {this.state.loginActive ? <Login /> : null}
+                {this.props.auth.registerActive ? <Register /> : null}
+                {this.props.auth.loginActive ? <Login /> : null}
             </React.Fragment>
         );
     }
 };
 
-export default Authentication;
+function mapStateToProps(state) {
+    return {
+        auth: state.auth
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        modal: (component, show) => dispatch(AuthenticationModal(component, show))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Authentication);

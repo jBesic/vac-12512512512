@@ -19,9 +19,7 @@ class App extends Component {
           <Spinner show={this.props.auth.isFetching} />
           <Modal show={this.props.auth.loginActive || this.props.auth.registerActive}>
             {this.props.auth.loginActive || this.props.auth.registerActive ?
-              <Authentication
-                loginActive={this.props.auth.loginActive}
-                registerActive={this.props.auth.registerActive} />
+              <Authentication />
               : null}
           </Modal>
 

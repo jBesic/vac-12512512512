@@ -15,6 +15,7 @@ const INITIAL_STATE = {
     loginActive: false,
     registerActive: false,
     isFetching: false,
+    message: '',
     isLoged: localStorage.getItem('token') ? true : false
 };
 
@@ -23,6 +24,7 @@ function registerUser(state = INITIAL_STATE, action) {
         case AUTHENTICATION_MODAL:
             return {
                 ...state,
+                message: '',
                 loginActive: action.component === 'login' ? action.show : false,
                 registerActive: action.component === 'register' ? action.show : false
             }
@@ -30,12 +32,14 @@ function registerUser(state = INITIAL_STATE, action) {
         case REGISTER_REQUEST:
             return {
                 ...state,
+                message: '',
                 isFetching: true
             };
 
         case REGISTER_SUCCESS:
             return {
                 ...state,
+                message: '',
                 isFetching: false,
                 isLoged: true
             };
@@ -43,18 +47,21 @@ function registerUser(state = INITIAL_STATE, action) {
         case REGISTER_FAILURE:
             return {
                 ...state,
-                isFetching: false
+                isFetching: false,
+                message: action.message
             };
 
         case LOGIN_REQUEST:
             return {
                 ...state,
+                message: '',
                 isFetching: true
             };
 
         case LOGIN_SUCCESS:
             return {
                 ...state,
+                message: '',
                 isFetching: false,
                 isLoged: true
             };
@@ -62,12 +69,14 @@ function registerUser(state = INITIAL_STATE, action) {
         case LOGIN_FAILURE:
             return {
                 ...state,
-                isFetching: false
+                isFetching: false,
+                message: action.message
             };
 
         case LOGOUT_REQUEST:
             return {
                 ...state,
+                message: '',
                 isFetching: true,
                 isLoged: true
             };
@@ -75,6 +84,7 @@ function registerUser(state = INITIAL_STATE, action) {
         case LOGOUT_SUCCESS:
             return {
                 ...state,
+                message: '',
                 isFetching: false,
                 isLoged: false
             };
@@ -83,6 +93,7 @@ function registerUser(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 isFetching: false,
+                message: action.message
             };
 
         default:

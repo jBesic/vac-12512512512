@@ -1,4 +1,5 @@
 import * as actionTypes from './actionTypes';
+import * as vacApi from '../../vacApi';
 
 // Register
 const registerRequest = function () {
@@ -25,17 +26,15 @@ const AsyncRegisterUser = function (userName, password) {
     return dispatch => {
         dispatch(registerRequest());
 
-        new Promise((resolve, reject) => {
-            setTimeout(resolve, 5000);
-        }).then(value => {
-            const token = 'dummyText';
-            localStorage.setItem('token', token);
-            dispatch(registerSuccess(token));
-            dispatch(AuthenticationModal(false));
-        }).catch(error => {
-            dispatch(registerFailure('Ooh, something went wrong !'));
-            dispatch(AuthenticationModal(false));
-        });
+        vacApi.register(userName, password)
+            .then(response => {
+                const token = response.data.data;
+                localStorage.setItem('token', token);
+                dispatch(registerSuccess(token));
+                dispatch(AuthenticationModal(false));
+            }).catch(error => {
+                dispatch(registerFailure(error.response.data.message));
+            });
     }
 }
 
@@ -64,17 +63,15 @@ const AsyncLoginUser = function (userName, password) {
     return dispatch => {
         dispatch(loginRequest());
 
-        new Promise((resolve, reject) => {
-            setTimeout(resolve, 5000);
-        }).then(value => {
-            const token = 'dummyText';
-            localStorage.setItem('token', token);
-            dispatch(loginSuccess(token));
-            dispatch(AuthenticationModal(false));
-        }).catch(error => {
-            dispatch(loginFailure('Ooh, something went wrong !'));
-            dispatch(AuthenticationModal(false));
-        });
+        vacApi.login(userName, password)
+            .then(response => {
+                const token = response.data.data;
+                localStorage.setItem('token', token);
+                dispatch(loginSuccess(token));
+                dispatch(AuthenticationModal(false));
+            }).catch(error => {
+                dispatch(loginFailure(error.response.data.message));
+            });
     }
 }
 
@@ -103,21 +100,19 @@ const AsyncLogoutUser = function (token) {
     return dispatch => {
         dispatch(logoutRequest());
 
-        new Promise((resolve, reject) => {
-            setTimeout(resolve, 3000);
-        }).then(value => {
-            localStorage.removeItem('token', token);
-            dispatch(logoutSuccess(token));
-            dispatch(AuthenticationModal(false));
-        }).catch(error => {
-            dispatch(logoutFailure('Ooh, something went wrong !'));
-            dispatch(AuthenticationModal(false));
-        });
+        vacApi.logout(token)
+            .then(response => {
+                localStorage.removeItem('token');
+                dispatch(logoutSuccess(token));
+                dispatch(AuthenticationModal(false));
+            }).catch(error => {
+                dispatch(logoutFailure(error.response.data.message));
+            });
     }
 }
 
 // Authentication modal
-const AuthenticationModal = function(component, show) {
+const AuthenticationModal = function (component, show) {
     return {
         type: actionTypes.AUTHENTICATION_MODAL,
         component: component,
