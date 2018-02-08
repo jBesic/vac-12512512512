@@ -83,7 +83,7 @@ const addShape = (shape) => {
 
 const updateShape = (shape) => {
     return {
-        type: actionTypes.ADD_SHAPE,
+        type: actionTypes.UPDATE_SHAPE,
         shape: shape
     }
 };

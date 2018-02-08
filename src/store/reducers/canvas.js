@@ -8,6 +8,7 @@ const initState = {
 const canvas = (state = initState, action) => {
     switch (action.type) {
         case actionTypes.ADD_SHAPE: return addUpdateShape(state, action.shape);
+        case actionTypes.UPDATE_SHAPE: return addUpdateShape(state, action.shape);
         case actionTypes.DELETE_SHAPE: return deleteShape(state, action.shape);
         default:
             return { ...state };

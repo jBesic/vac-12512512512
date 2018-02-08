@@ -16,7 +16,7 @@ class Canvas extends Component {
         drawStarted: false,
         selectedTool: tools.SELECT,
         mouseMoveEventNeeded: false,
-        selectedShape: { id: null }
+        selectedPointIndex: null
     };
 
     mouseDownHandler = (event) => {
@@ -70,7 +70,7 @@ class Canvas extends Component {
         }
 
         switch (this.state.activeMode) {
-            case mode.SELECT_MODE: return this.selectShape(shape);
+            case mode.SELECT_MODE: return this.selectShape(event, shape);
             case mode.DELETE_MODE: return this.deleteShape(shape);
             case mode.PAINT_MODE: return this.paintShape(shape);
             default: return;
@@ -81,11 +81,14 @@ class Canvas extends Component {
         this.props.deleteShape(shape);
     };
 
-    selectShape = (shape) => {
-        this.setState({ selectedShape: shape });
+    selectShape = (event, shape) => {
+        if (this.state.shape.id === shape.id) {
+            return this.setState({ shape: { id: null, points: [] } });
+        }
+        return this.setState({ shape });
     };
 
-    paintShape = (shape) => { };
+    paintShape = (shape) => {};
 
     canvasEventHandler = (event) => {
         if (this.state.activeMode === mode.DRAW_MODE && this.state.mouseMoveEventNeeded === false) {
@@ -105,9 +108,6 @@ class Canvas extends Component {
                 this.setState({ drawStarted: true, referencePoint, shape });
                 this.props.addShape(shape);
             }
-        }
-        if (this.state.activeMode === mode.SELECT_MODE) {
-            this.unselectShapeHandler();
         }
     };
 
@@ -131,7 +131,7 @@ class Canvas extends Component {
             mouseMoveEventNeeded = true;
         }
 
-        this.setState({ selectedTool: tool, mouseMoveEventNeeded, activeMode });
+        this.setState({ shape: { type: null, points: [] }, selectedTool: tool, mouseMoveEventNeeded, activeMode });
     };
 
     closePolygonHandler = (event) => {
@@ -145,12 +145,47 @@ class Canvas extends Component {
     }
 
     unselectShapeHandler = () => {
-        this.setState({ selectedShape: { id: null } });
+        this.setState({ shape: { type: null, points: [] } });
     }
 
-   /* handleStart = (event, selectedPoint) => {
-       event.stopPropagation();
-   }; */
+    handleStart = (selectedPoint, event) => {
+        event.stopPropagation();
+        let shape = { ...this.state.shape };
+        let selectedPointIndex = shape.points.indexOf(selectedPoint);
+        if (shape.type === tools.RECTANGLE) {
+            let referencePointIndex = selectedPointIndex > 1 ? selectedPointIndex - 2 : selectedPointIndex + 2;
+            let referencePointHelper = shape.points[referencePointIndex].split(',');
+            let referencePoint = { x: referencePointHelper[0], y: referencePointHelper[1] };
+            this.setState({ shape, referencePoint });
+        } else {
+            this.setState({ selectedPointIndex });
+        }
+    };
+
+    handleDrag = (event) => {
+        event.stopPropagation();
+        const canvas = document.getElementById('Canvas').getBoundingClientRect();
+        let newPoint = { x: event.clientX - canvas.left, y: event.clientY - canvas.top };
+        let shape = { ...this.state.shape };
+        let points = [];
+        if (shape.type === tools.RECTANGLE) {
+            points = getControlPointsForRectangle(this.state.referencePoint, newPoint);
+        } else {
+            points = [...shape.points];
+            points[this.state.selectedPointIndex] = newPoint.x + ',' + newPoint.y;
+            if (this.state.selectedPointIndex === 0) {
+                points[points.length - 1] = newPoint.x + ',' + newPoint.y;
+            }
+        }
+
+        shape.points = points;
+        this.setState({ shape });
+    };
+
+    handleStop = (event) => {
+        event.stopPropagation();
+        this.props.updateShape({...this.state.shape});
+    };
 
     render() {
         return (
@@ -178,40 +213,58 @@ class Canvas extends Component {
                                 </div>
                                 {/* *** Canvas Content Body  *** */}
                                 <div className='row canvas__content-body mt-10'>
-                                    <div className='col-md-2 canvas__toolbox' onClick={this.unselectShapeHandler}><Toolbox selectedTool={this.state.selectedTool} selectToolHandler={this.selectToolHandler} drawStarted={this.state.drawStarted} /></div>
-                                    <div onClick={this.canvasEventHandler} onMouseDown={this.mouseDownHandler} onMouseUp={this.mouseUpHandler} onMouseMove={this.mouseMoveHandler} id='Canvas' className='col-md-8 canvas__draw-place'>
-                                        {this.state.shape[0]}
-                                        <svg width="100%" height="100%">
+                                    <div className='col-md-2 canvas__toolbox' onClick={this.unselectShapeHandler}>
+                                        <Toolbox
+                                            selectedTool={this.state.selectedTool}
+                                            selectToolHandler={this.selectToolHandler}
+                                            drawStarted={this.state.drawStarted} />
+                                    </div>
+                                    <div
+                                        onClick={this.canvasEventHandler}
+                                        onMouseDown={this.mouseDownHandler}
+                                        onMouseUp={this.mouseUpHandler}
+                                        onMouseMove={this.mouseMoveHandler}
+                                        className='col-md-8 canvas__draw-place'>
+                                        <svg width="100%" height="100%" id='Canvas'>
+                                            {/* Show saved shapes, except shape which you currently draw or have selected */}
                                             {this.props.shapes.map((item, index) => {
-                                                if (item.type === tools.RECTANGLE || item.type === tools.TRIANGLE) {
-                                                    return <polyline className={item.id === this.state.selectedShape.id ? 'canvas__shape-selected' : ''} onClick={this.clickShapeHandler.bind(this, item)} key={item.id} fill='white' stroke='black' strokeWidth='2px' points={item.points.join(' ')} />;
+                                                if (item.id === this.state.shape.id) {
+                                                    return 0;
                                                 }
-                                                if (item.type === tools.POLYGON) {
-                                                    return item.id !== this.state.shape.id && <polyline className={item.id === this.state.selectedShape.id ? 'canvas__shape-selected' : ''} onClick={this.clickShapeHandler.bind(this, item)} key={item.id} fill='white' stroke='black' strokeWidth='2px' points={item.points.join(' ')} />;
+                                                if (item.type === tools.RECTANGLE || item.type === tools.TRIANGLE || item.type === tools.POLYGON) {
+                                                    return item.id !== this.state.shape.id && <polyline onClick={this.clickShapeHandler.bind(this, item)} key={item.id} fill='white' stroke='black' strokeWidth='2px' points={item.points.join(' ')} />;
                                                 }
                                                 if (item.type === tools.CIRCLE) {
-                                                    return item.points.length && <ellipse className={item.id === this.state.selectedShape.id ? 'canvas__shape-selected' : ''} onClick={this.clickShapeHandler.bind(this, item)} key={item.id} cx={item.points[0]} cy={item.points[1]} rx={item.points[2]} ry={item.points[3]} stroke='black' strokeWidth='2px' fill='white' />;
+                                                    return item.points.length && <ellipse onClick={this.clickShapeHandler.bind(this, item)} key={item.id} cx={item.points[0]} cy={item.points[1]} rx={item.points[2]} ry={item.points[3]} stroke='black' strokeWidth='2px' fill='white' />;
                                                 }
                                                 if (item.type === tools.LINE) {
-                                                    return item.points.length && <line className={item.id === this.state.selectedShape.id ? 'canvas__shape-selected' : ''} onClick={this.clickShapeHandler.bind(this, item)} key={item.id} x1={item.points[0]} y1={item.points[1]} x2={item.points[2]} y2={item.points[3]} fill='white' stroke='black' strokeWidth='2px' />;
+                                                    return item.points.length && <line onClick={this.clickShapeHandler.bind(this, item)} key={item.id} x1={item.points[0]} y1={item.points[1]} x2={item.points[2]} y2={item.points[3]} fill='white' stroke='black' strokeWidth='2px' />;
                                                 }
-                                                return 0;
+                                                return [];
                                             })}
-                                            {this.state.shape && (this.state.shape.type === tools.RECTANGLE || this.state.shape.type === tools.TRIANGLE || this.state.shape.type === tools.POLYGON) && <polyline key={this.state.shape.id} fill='white' stroke='black' strokeWidth='2px' points={this.state.shape.points.join(' ')} />}
-                                            {this.state.shape && this.state.shape.type === tools.CIRCLE && this.state.shape.points.length && <ellipse key={this.state.shape.id} cx={this.state.shape.points[0]} cy={this.state.shape.points[1]} rx={this.state.shape.points[2]} ry={this.state.shape.points[3]} fill='white' stroke='black' strokeWidth='2px' />}
-                                            {this.state.shape && this.state.shape.type === tools.LINE && this.state.shape.points.length && <line x1={this.state.shape.points[0]} y1={this.state.shape.points[1]} x2={this.state.shape.points[2]} y2={this.state.shape.points[3]} fill='white' stroke='black' strokeWidth='2px' />}
-                                            {/* Draw circle on first point of polygon */}
-                                            {this.state.shape && this.state.shape.type === tools.POLYGON && <circle onClick={this.closePolygonHandler} fill='red' stroke='black' strokeWidth='2px' cx={this.state.referencePoint.x} cy={this.state.referencePoint.y} r='10' />}}
-                                            {/* Draw small circles on control points of selected shape (POLYGON) */}
-                                            {this.state.selectedShape.id !== null && this.state.selectedShape.type != tools.CIRCLE && this.state.selectedShape.type != tools.LINE && this.state.selectedShape.points.map(item => {
+                                            {/* Show shape you currently manage */}
+                                            {(this.state.shape.type === tools.RECTANGLE || this.state.shape.type === tools.TRIANGLE || this.state.shape.type === tools.POLYGON) && <polyline className='canvas__shape-selected' onClick={this.clickShapeHandler.bind(this, this.state.shape)} key={this.state.shape.id} fill='white' stroke='black' strokeWidth='2px' points={this.state.shape.points.join(' ')} />}
+                                            {this.state.shape.type === tools.CIRCLE && this.state.shape.points.length && <ellipse className='canvas__shape-selected' onClick={this.clickShapeHandler.bind(this, this.state.shape)} key={this.state.shape.id} cx={this.state.shape.points[0]} cy={this.state.shape.points[1]} rx={this.state.shape.points[2]} ry={this.state.shape.points[3]} fill='white' stroke='black' strokeWidth='2px' />}
+                                            {this.state.shape.type === tools.LINE && this.state.shape.points.length && <line className='canvas__shape-selected' onClick={this.clickShapeHandler.bind(this, this.state.shape)} x1={this.state.shape.points[0]} y1={this.state.shape.points[1]} x2={this.state.shape.points[2]} y2={this.state.shape.points[3]} fill='white' stroke='black' strokeWidth='2px' />}
+
+                                            {/* Show circle on first point of polygon in DRAW_MODE */}
+                                            {this.state.activeMode === mode.DRAW_MODE && this.state.shape && this.state.shape.type === tools.POLYGON && <circle onClick={this.closePolygonHandler} fill='red' stroke='black' strokeWidth='2px' cx={this.state.referencePoint.x} cy={this.state.referencePoint.y} r='10' />}}
+
+                                            {/* Show small circles on control points of selected shape (RECTANGLE, TRIANGLE, POLYGON) in SELECT_MODE */}
+                                            {this.state.activeMode === mode.SELECT_MODE && (this.state.shape.type === tools.RECTANGLE || this.state.shape.type === tools.TRIANGLE || this.state.shape.type === tools.POLYGON) && this.state.shape.points.map((item, index) => {
+                                                if (index === this.state.shape.points.length - 1) return [];
                                                 let points = item.split(',');
+                                                points[0] = (Number)(points[0]);
+                                                points[1] = (Number)(points[1]);
                                                 return <Draggable
-                                                axis="both"
-                                                onStart={this.handleStart}
-                                                onDrag={this.handleDrag}
-                                                onStop={this.handleStop}>
-                                                <circle style={{cursor: 'pointer'}} cx={points[0]} cy={points[1]} r='5' stroke='black' strokeWidth='1px' fill='red'/>
-                                            </Draggable>;
+                                                    key={(index)}
+                                                    axis="both"
+                                                    position={{ x: points[0], y: points[1] }}
+                                                    onStart={this.handleStart.bind(this, item)}
+                                                    onDrag={this.handleDrag}
+                                                    onStop={this.handleStop}>
+                                                    <circle style={{ cursor: 'pointer' }} cx='0' cy='0' r='5' stroke='black' strokeWidth='1px' fill='red' />
+                                                </Draggable>;
                                             })}
                                         </svg>
                                     </div>

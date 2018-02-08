@@ -3,7 +3,7 @@ const TRIANGLE = 'TRIANGLE';
 const LINE = 'LINE';
 const POLYGON = 'POLYGON';
 const CIRCLE = 'CIRCLE';
-const TEXT_INPUT = 'TEXT_INPUT';
+//const TEXT_INPUT = 'TEXT_INPUT';
 const DELETE = 'DELETE';
 const SELECT = 'SELECT';
 
