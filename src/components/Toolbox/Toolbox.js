@@ -3,9 +3,10 @@ import Rectangle from '../../assets/images/rectangle.png';
 import Triangle from '../../assets/images/triangle.png';
 import Line from '../../assets/images/line.png';
 import Polygon from '../../assets/images/polygon.png';
-import {tools} from '../../helper/canvasHelper';
+import { tools } from '../../helper/canvasHelper';
+import ShapeProperties from '../ShapeProperties';
 
-import './Toolbox.css'
+import './Toolbox.css';
 
 const Toolbox = (props) => {
     return (
@@ -47,13 +48,6 @@ const Toolbox = (props) => {
                 </div>
                 <div className={'col-md-4 toolbox__tool' + (props.selectedTool === tools.TEXT_INPUT ? ' toolbox__tool-selected' : '') + (props.drawStarted ? ' toolbox__tool-disabled' : '')} onClick={() => props.selectToolHandler(tools.TEXT_INPUT)}>
                     <i className='fa fa-font fa-2x'></i>
-                </div>
-            </div>
-            <div className='row'>
-                <div className='col-md-12 mb-3'>
-                    <div className="alert alert-secondary  m-0 p-1">
-                        Shape properties
-                    </div>
                 </div>
             </div>
         </React.Fragment>

@@ -11,7 +11,9 @@ const canvas = (state = initState, action) => {
         case actionTypes.UPDATE_SHAPE: return addUpdateShape(state, action.shape);
         case actionTypes.DELETE_SHAPE: return deleteShape(state, action.shape);
         default:
-            return { ...state };
+            return {
+                ...state
+            };
     }
 }
 
@@ -23,13 +25,24 @@ function addUpdateShape(state, shape) {
     if (tempShape) {
         let newShapes = shapes.filter(item => item.id !== shape.id);
         newShapes.push(shape);
-        return { ...state, shapes: newShapes };
+
+        return {
+            ...state,
+            shapes: newShapes
+        };
     }
     shapes.push(shape);
-    return { ...state, shapes, lastUsedId: state.lastUsedId+1 };
+    return {
+        ...state,
+        shapes,
+        lastUsedId: state.lastUsedId + 1
+    };
 }
 
 function deleteShape(state, shape) {
     let shapes = state.shapes.filter(item => item.id !== shape.id);
-    return { ...state, shapes};
+    return {
+        ...state,
+        shapes
+    };
 }

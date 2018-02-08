@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
-import Toolbox from '../../components/Toolbox/Toolbox';
 import { connect } from 'react-redux';
-import { tools, mode } from '../../helper/canvasHelper';
-import * as actions from '../../store/actions/actions';
 import Draggable from 'react-draggable';
+
+import Toolbox from '../../components/Toolbox/Toolbox';
+import ShapeProperties from '../../components/ShapeProperties';
+import { tools, mode, defaultShapeAttributes } from '../../helper/canvasHelper';
+import * as actions from '../../store/actions/actions';
 
 import './Canvas.css';
 
 class Canvas extends Component {
-
     state = {
         shape: { type: null, points: [] },
         referencePoint: { x: null, y: null },
@@ -23,7 +24,7 @@ class Canvas extends Component {
         if (this.state.mouseMoveEventNeeded === true && this.state.drawStarted === false) {
             const canvas = document.getElementById('Canvas').getBoundingClientRect();
             let referencePoint = { x: event.clientX - canvas.left, y: event.clientY - canvas.top };
-            let shape = { id: this.props.lastUsedId + 1, type: this.state.selectedTool, points: [] };
+            let shape = { id: this.props.lastUsedId + 1, type: this.state.selectedTool, points: [], attributes: defaultShapeAttributes(this.state.selectedTool) };
             this.setState({ drawStarted: true, referencePoint, shape });
         }
     };
@@ -59,7 +60,7 @@ class Canvas extends Component {
 
     mouseUpHandler = (event) => {
         if (this.state.mouseMoveEventNeeded === true && this.state.drawStarted === true) {
-            this.setState({ shape: { id: null, points: [] }, drawStarted: false });
+            this.setState({ shape: { id: null, points: [], attributes: defaultShapeAttributes(this.state.shape.type) }, drawStarted: false });
             this.props.addShape(this.state.shape);
         }
     };
@@ -88,7 +89,7 @@ class Canvas extends Component {
         return this.setState({ shape });
     };
 
-    paintShape = (shape) => {};
+    paintShape = (shape) => { };
 
     canvasEventHandler = (event) => {
         if (this.state.activeMode === mode.DRAW_MODE && this.state.mouseMoveEventNeeded === false) {
@@ -103,7 +104,7 @@ class Canvas extends Component {
                 this.props.addShape(shape);
             } else {
                 let referencePoint = { x: event.clientX - canvas.left, y: event.clientY - canvas.top };
-                let shape = { id: this.props.lastUsedId + 1, type: this.state.selectedTool, points: [] };
+                let shape = { id: this.props.lastUsedId + 1, type: this.state.selectedTool, attributes: defaultShapeAttributes(this.state.selectedTool), points: [] };
                 shape.points.push(referencePoint.x + ',' + referencePoint.y);
                 this.setState({ drawStarted: true, referencePoint, shape });
                 this.props.addShape(shape);
@@ -184,7 +185,7 @@ class Canvas extends Component {
 
     handleStop = (event) => {
         event.stopPropagation();
-        this.props.updateShape({...this.state.shape});
+        this.props.updateShape({ ...this.state.shape });
     };
 
     render() {
@@ -213,11 +214,15 @@ class Canvas extends Component {
                                 </div>
                                 {/* *** Canvas Content Body  *** */}
                                 <div className='row canvas__content-body mt-10'>
-                                    <div className='col-md-2 canvas__toolbox' onClick={this.unselectShapeHandler}>
+                                    <div className='col-md-2 canvas__toolbox'>
                                         <Toolbox
+                                            onClick={this.unselectShapeHandler}
                                             selectedTool={this.state.selectedTool}
                                             selectToolHandler={this.selectToolHandler}
                                             drawStarted={this.state.drawStarted} />
+                                        <ShapeProperties
+                                            mode={this.state.activeMode}
+                                            shape={this.state.shape} />
                                     </div>
                                     <div
                                         onClick={this.canvasEventHandler}

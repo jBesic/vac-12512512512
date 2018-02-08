@@ -7,7 +7,7 @@ const CIRCLE = 'CIRCLE';
 const DELETE = 'DELETE';
 const SELECT = 'SELECT';
 
-export const tools =  {
+export const tools = {
     RECTANGLE,
     TRIANGLE,
     LINE,
@@ -29,3 +29,53 @@ export const mode = {
     PAINT_MODE
 };
 
+export const defaultShapeAttributes = function (shapeType) {
+    switch (shapeType) {
+        case tools.RECTANGLE:
+            return {
+                borderSize: 2,
+                borderColor: '#000000',
+                fillColor: '#FFFFFF',
+                opacity: 100,
+                groupId: undefined
+            };
+
+        case tools.POLYGON:
+            return {
+                borderSize: 2,
+                borderColor: '#000000',
+                fillColor: '#FFFFFF',
+                opacity: 100,
+                groupId: undefined
+            };
+
+        case tools.TRIANGLE:
+            return {
+                borderSize: 2,
+                borderColor: '#000000',
+                fillColor: '#FFFFFF',
+                opacity: 100,
+                groupId: undefined
+            };
+
+        case tools.CIRCLE:
+            return {
+                borderSize: 2,
+                borderColor: '#000000',
+                fillColor: '#FFFFFF',
+                opacity: 100,
+                groupId: undefined
+            };
+
+        case tools.LINE:
+            return {
+                borderSize: 2,
+                borderColor: '#000000',
+                opacity: 100,
+                groupId: undefined
+            };
+
+        default:
+            return null;
+    }
+};
