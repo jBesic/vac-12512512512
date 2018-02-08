@@ -30,9 +30,19 @@
     height: 100%;
 }
 
+.canvas__draw-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 50%;
+}
+
 .canvas__draw-place {
-    border: 1px solid;
-    height: 100%;
+    border: 1px solid #ced4da;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 
 .canvas__groups {

@@ -41,7 +41,7 @@ class ShapeProperties extends Component {
         switch (type) {
             case 'borderSize':
                 return (
-                    <div key='borderSize' className='shape-properties-wrapper mb-1'>
+                    <div key='borderSize' className='shape-properties-wrapper mb-2'>
                         <label>Border size</label>
                         <input
                             className="form-control"
@@ -54,7 +54,7 @@ class ShapeProperties extends Component {
 
             case 'borderColor':
                 return (
-                    <div key='borderColor' className='shape-properties-wrapper mb-1'>
+                    <div key='borderColor' className='shape-properties-wrapper mb-2'>
                         <label>Border Color</label>
                         <input
                             className="form-control"
@@ -66,7 +66,7 @@ class ShapeProperties extends Component {
 
             case 'fillColor':
                 return (
-                    <div key='fillColor' className='shape-properties-wrapper mb-1'>
+                    <div key='fillColor' className='shape-properties-wrapper mb-2'>
                         <label>Fill Color</label>
                         <input
                             className="form-control"
@@ -78,7 +78,7 @@ class ShapeProperties extends Component {
 
             case 'opacity':
                 return (
-                    <div key='opacity' className='shape-properties-wrapper mb-1'>
+                    <div key='opacity' className='shape-properties-wrapper mb-2'>
                         <label>Opacity</label>
                         <input
                             className="form-control"
@@ -91,7 +91,7 @@ class ShapeProperties extends Component {
 
             case 'groupId':
                 return (
-                    <div key='groupId' className='shape-properties-wrapper mb-1'>
+                    <div key='groupId' className='shape-properties-wrapper mb-2'>
                         <label>Group</label>
                         <select
                             className="form-control"
@@ -108,22 +108,20 @@ class ShapeProperties extends Component {
     }
 
     render() {
-        return (
-            this.props.mode === mode.SELECT_MODE && this.state.shape.id ?
-                < div className='row' >
-                    <div className='col-md-12 mb-3'>
-                        <div className="alert alert-secondary  m-0 p-1">
-                            Properties
+        return this.props.mode === mode.SELECT_MODE && this.state.shape.id ?
+            <div className='row shape-properties'>
+                <div className='col-md-12 mb-3'>
+                    <div className="alert alert-secondary m-0 p-1">
+                        Properties
                     </div>
-                    </div>
-                    <div className='col-md-12 mb-3'>
-                        {Object.keys(this.state.shape.attributes).map(attribute => {
-                            return this.getPropertyType(attribute);
-                        })}
-                    </div>
-                </div >
-                : null
-        )
+                </div>
+                <div className='col-md-12 mb-3'>
+                    {Object.keys(this.state.shape.attributes).map(attribute => {
+                        return this.getPropertyType(attribute);
+                    })}
+                </div>
+            </div >
+            : null;
     }
 };
 
