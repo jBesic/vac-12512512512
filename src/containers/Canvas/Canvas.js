@@ -4,6 +4,7 @@ import Draggable from 'react-draggable';
 
 import Toolbox from '../../components/Toolbox/Toolbox';
 import ShapeProperties from '../../components/ShapeProperties';
+import Groups from '../../components/Groups';
 import { tools, mode, defaultShapeAttributes } from '../../helper/canvasHelper';
 import * as actions from '../../store/actions/actions';
 import Shape from '../../components/Shape/Shape';
@@ -276,7 +277,9 @@ class Canvas extends Component {
                                     })}
                                 </svg>
                             </div>
-                            <div className='col-md-2 canvas__groups'>Groups</div>
+                            <div className='col-md-2 canvas__groups'>
+                                <Groups />
+                            </div>
                         </div>
                     </div>
                 </div>

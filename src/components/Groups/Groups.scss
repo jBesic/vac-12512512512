@@ -1,0 +1,30 @@
+@import 'assets/styles/_palette.scss';
+
+.btn.group-controll {
+    height: auto;
+    padding: 0;
+    width: 25px;
+}
+
+.vac-list-group .list-group-item {
+    background-color: unset;
+    font-size: .8rem;
+    position: relative;
+    padding: 5px;
+    padding-left: 25px;
+    text-align: left;
+
+    &.active {
+        border: 0;
+        color: $color5;
+    }
+
+    img {
+        height: auto;
+        left: 0;
+        position: absolute;
+        top: 50%;
+        transform: translate(0, -50%);
+        width: 18px;
+    }
+}
