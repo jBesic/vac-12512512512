@@ -14,3 +14,11 @@ export const ADD_SHAPE = 'ADD_SHAPE';
 export const UPDATE_SHAPE = 'UPDATE_SHAPE';
 export const DELETE_SHAPE = 'DELETE_SHAPE';
 export const UPDATE_SHAPE_ATTRIBUTE = 'UPDATE_SHAPE_ATTRIBUTE';
+
+export const ADD_GROUP = 'ADD_GROUP';
+export const DELETE_GROUP = 'DELETE_GROUP';
+export const BRING_ONE_LEVEL = 'BRING_ONE_LEVEL';
+export const SEND_ONE_LEVEL = 'SEND_ONE_LEVEL';
+export const BRING_TO_TOP = 'BRING_TO_TOP';
+export const SEND_TO_BACK = 'SEND_TO_BACK';
+export const SELECT_ELEMENT = 'SELECT_ELEMENT';

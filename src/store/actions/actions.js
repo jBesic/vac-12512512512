@@ -95,10 +95,39 @@ const deleteShape = (shape) => {
     }
 };
 
+const addGroup = () => {
+    return {
+        type: actionTypes.ADD_GROUP
+    }
+}
+
+const deleteGroup = () => {
+    return {
+        type: actionTypes.DELETE_GROUP
+    }
+}
+
+const moveElement = (type) => {
+    return {
+        type: type
+    }
+};
+
+const selectElement = (elementId) => {
+    return {
+        type: actionTypes.SELECT_ELEMENT,
+        elementId: elementId
+    }
+};
+
 export {
     AsyncRegisterUser,
     AsyncLogoutUser,
     addShape,
     deleteShape,
-    updateShape
+    updateShape,
+    addGroup,
+    deleteGroup,
+    moveElement,
+    selectElement
 };

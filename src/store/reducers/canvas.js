@@ -25,9 +25,9 @@ function addUpdateShape(state, shape) {
     if (tempShape) {
         let newShapes = shapes.filter(item => item.id !== shape.id);
         newShapes.push(shape);
-        newShapes.sort(function(prevShape, nextShape) {
+        newShapes.sort(function (prevShape, nextShape) {
             return prevShape.id - nextShape.id;
-          });
+        });
         return {
             ...state,
             shapes: newShapes
