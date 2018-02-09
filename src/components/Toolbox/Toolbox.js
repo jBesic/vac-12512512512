@@ -3,7 +3,7 @@ import React from 'react';
 import select from '../../assets/images/select.svg';
 import eraser from '../../assets/images/eraser.svg';
 import rectangle from '../../assets/images/rectangle.svg';
-import circle from '../../assets/images/circle.svg';
+import ellipse from '../../assets/images/circle.svg';
 import triangle from '../../assets/images/triangle.svg';
 import polygon from '../../assets/images/polygon.svg';
 import line from '../../assets/images/line.svg';
@@ -45,8 +45,8 @@ const Toolbox = (props) => {
                     </div>
                 </div>
                 <div className='col-md-6'>
-                    <div className={'toolbox__tool' + (props.selectedTool === tools.CIRCLE ? ' toolbox__tool-selected' : '') + (props.drawStarted ? ' toolbox__tool-disabled' : '')} onClick={() => props.selectToolHandler(tools.CIRCLE)}>
-                        <img alt='Toolbar icon' className="img-fluid" src={circle} />
+                    <div className={'toolbox__tool' + (props.selectedTool === tools.ELLIPSE ? ' toolbox__tool-selected' : '') + (props.drawStarted ? ' toolbox__tool-disabled' : '')} onClick={() => props.selectToolHandler(tools.ELLIPSE)}>
+                        <img alt='Toolbar icon' className="img-fluid" src={ellipse} />
                     </div>
                 </div>
                 <div className='col-md-6'>

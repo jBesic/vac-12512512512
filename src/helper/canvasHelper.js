@@ -2,7 +2,7 @@ const RECTANGLE = 'RECTANGLE';
 const TRIANGLE = 'TRIANGLE';
 const LINE = 'LINE';
 const POLYGON = 'POLYGON';
-const CIRCLE = 'CIRCLE';
+const ELLIPSE = 'ELLIPSE';
 //const TEXT_INPUT = 'TEXT_INPUT';
 const DELETE = 'DELETE';
 const SELECT = 'SELECT';
@@ -12,7 +12,7 @@ export const tools = {
     TRIANGLE,
     LINE,
     POLYGON,
-    CIRCLE,
+    ELLIPSE,
     DELETE,
     SELECT
 };
@@ -58,7 +58,7 @@ export const defaultShapeAttributes = function (shapeType) {
                 groupId: undefined
             };
 
-        case tools.CIRCLE:
+        case tools.ELLIPSE:
             return {
                 borderSize: 2,
                 borderColor: '#000000',

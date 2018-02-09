@@ -6,6 +6,7 @@ import Toolbox from '../../components/Toolbox/Toolbox';
 import ShapeProperties from '../../components/ShapeProperties';
 import { tools, mode, defaultShapeAttributes } from '../../helper/canvasHelper';
 import * as actions from '../../store/actions/actions';
+import Shape from '../../components/Shape/Shape';
 
 import './Canvas.css';
 
@@ -41,8 +42,8 @@ class Canvas extends Component {
                 case tools.TRIANGLE:
                     points = getControlPointsForTriangle(this.state.referencePoint, newPoint);
                     break;
-                case tools.CIRCLE:
-                    points = getControlPointsForCircle(this.state.referencePoint, newPoint);
+                case tools.ELLIPSE:
+                    points = getControlPointsForEllipse(this.state.referencePoint, newPoint);
                     break;
                 case tools.LINE:
                     points = getControlPointsForLine(this.state.referencePoint, newPoint);
@@ -127,7 +128,7 @@ class Canvas extends Component {
         }
 
         let mouseMoveEventNeeded = false;
-        const helper = [tools.RECTANGLE, tools.CIRCLE, tools.LINE, tools.TRIANGLE];
+        const helper = [tools.RECTANGLE, tools.ELLIPSE, tools.LINE, tools.TRIANGLE];
         if (activeMode === mode.DRAW_MODE && helper.indexOf(tool) !== -1) {
             mouseMoveEventNeeded = true;
         }
@@ -180,6 +181,7 @@ class Canvas extends Component {
         }
 
         shape.points = points;
+        console.log(shape.points);
         this.setState({ shape });
     };
 
@@ -234,35 +236,36 @@ class Canvas extends Component {
                                     {/* Show saved shapes, except shape which you currently draw or have selected */}
                                     {this.props.shapes.map((item, index) => {
                                         if (item.id === this.state.shape.id) {
-                                            return 0;
+                                            return [];
                                         }
-                                        if (item.type === tools.RECTANGLE || item.type === tools.TRIANGLE || item.type === tools.POLYGON) {
-                                            return item.id !== this.state.shape.id && <polyline onClick={this.clickShapeHandler.bind(this, item)} key={item.id} fill='white' stroke='black' strokeWidth='2px' points={item.points.join(' ')} />;
-                                        }
-                                        if (item.type === tools.CIRCLE) {
-                                            return item.points.length && <ellipse onClick={this.clickShapeHandler.bind(this, item)} key={item.id} cx={item.points[0]} cy={item.points[1]} rx={item.points[2]} ry={item.points[3]} stroke='black' strokeWidth='2px' fill='white' />;
-                                        }
-                                        if (item.type === tools.LINE) {
-                                            return item.points.length && <line onClick={this.clickShapeHandler.bind(this, item)} key={item.id} x1={item.points[0]} y1={item.points[1]} x2={item.points[2]} y2={item.points[3]} fill='white' stroke='black' strokeWidth='2px' />;
-                                        }
-                                        return [];
+                                        return <Shape type={item.type} key={item.id} onClickHandler={this.clickShapeHandler.bind(this, item)} points={item.points} />
                                     })}
+
                                     {/* Show shape you currently manage */}
-                                    {(this.state.shape.type === tools.RECTANGLE || this.state.shape.type === tools.TRIANGLE || this.state.shape.type === tools.POLYGON) && <polyline className='canvas__shape-selected' onClick={this.clickShapeHandler.bind(this, this.state.shape)} key={this.state.shape.id} fill='white' stroke='black' strokeWidth='2px' points={this.state.shape.points.join(' ')} />}
-                                    {this.state.shape.type === tools.CIRCLE && this.state.shape.points.length && <ellipse className='canvas__shape-selected' onClick={this.clickShapeHandler.bind(this, this.state.shape)} key={this.state.shape.id} cx={this.state.shape.points[0]} cy={this.state.shape.points[1]} rx={this.state.shape.points[2]} ry={this.state.shape.points[3]} fill='white' stroke='black' strokeWidth='2px' />}
-                                    {this.state.shape.type === tools.LINE && this.state.shape.points.length && <line className='canvas__shape-selected' onClick={this.clickShapeHandler.bind(this, this.state.shape)} x1={this.state.shape.points[0]} y1={this.state.shape.points[1]} x2={this.state.shape.points[2]} y2={this.state.shape.points[3]} fill='white' stroke='black' strokeWidth='2px' />}
+                                    <Shape
+                                        type={this.state.shape.type}
+                                        points={this.state.shape.points}
+                                        onClickHandler={this.clickShapeHandler.bind(this, this.state.shape)}
+                                        class='canvas__shape-selected'
+                                        style={this.state.shape.style} />
 
                                     {/* Show circle on first point of polygon in DRAW_MODE */}
-                                    {this.state.activeMode === mode.DRAW_MODE && this.state.shape && this.state.shape.type === tools.POLYGON && <circle onClick={this.closePolygonHandler} fill='red' stroke='black' strokeWidth='2px' cx={this.state.referencePoint.x} cy={this.state.referencePoint.y} r='10' />}}
+                                    {this.state.activeMode === mode.DRAW_MODE && this.state.shape.type === tools.POLYGON &&
+                                        <Shape
+                                            type='ELLIPSE'
+                                            onClickHandler={this.closePolygonHandler}
+                                            points={[this.state.referencePoint.x, this.state.referencePoint.y, 10, 10]}
+                                            style={{ stroke: 'black', strokeWidth: '2px', fill: 'red', cursor: 'pointer' }} />}
 
-                                            {/* Show small circles on control points of selected shape (RECTANGLE, TRIANGLE, POLYGON) in SELECT_MODE */}
+                                    {/* Show small circles on control points of selected shape (RECTANGLE, TRIANGLE, POLYGON) in SELECT_MODE */}
                                     {this.state.activeMode === mode.SELECT_MODE && (this.state.shape.type === tools.RECTANGLE || this.state.shape.type === tools.TRIANGLE || this.state.shape.type === tools.POLYGON) && this.state.shape.points.map((item, index) => {
-                                        if (index === this.state.shape.points.length - 1) return [];
+                                        //if (index === this.state.shape.points.length - 1) return [];
+                                        console.log(this.state.shape.points);
                                         let points = item.split(',');
                                         points[0] = (Number)(points[0]);
                                         points[1] = (Number)(points[1]);
                                         return <Draggable
-                                            key={(index)}
+                                            key={index}
                                             axis="both"
                                             position={{ x: points[0], y: points[1] }}
                                             onStart={this.handleStart.bind(this, item)}
@@ -301,15 +304,18 @@ function getControlPointsForTriangle(referencePoint, newPoint) {
     return points;
 }
 
-function getControlPointsForCircle(referencePoint, newPoint) {
-    let points = [];
+function getControlPointsForEllipse(referencePoint, newPoint) {
     let rx = Math.abs((newPoint.x - referencePoint.x) / 2);
     let ry = Math.abs((newPoint.y - referencePoint.y) / 2);
-    // cx, cy, rx, ry
-    points.push(referencePoint.x + rx / 2);
-    points.push(referencePoint.y + ry / 2);
-    points.push(rx);
-    points.push(ry);
+    let cx = newPoint.x - rx;
+    if (referencePoint.x > newPoint.x) {
+        cx = referencePoint.x - rx;
+    }
+    let cy = newPoint.y - ry;
+    if (referencePoint.y > newPoint.y) {
+        cy = referencePoint.y - ry;
+    }
+    let points = [cx, cy, rx, ry];
 
     return points;
 }
