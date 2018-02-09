@@ -64,6 +64,7 @@ class Canvas extends Component {
         if (this.state.mouseMoveEventNeeded === true && this.state.drawStarted === true) {
             this.setState({ shape: { id: null, points: [], attributes: defaultShapeAttributes(this.state.shape.type) }, drawStarted: false });
             this.props.addShape(this.state.shape);
+            this.props.addShapeToGroup(this.state.shape.id);
         }
     };
 
@@ -82,6 +83,7 @@ class Canvas extends Component {
 
     deleteShape = (shape) => {
         this.props.deleteShape(shape);
+        this.props.deleteShapeFromGroup(shape.id);
     };
 
     selectShape = (event, shape) => {
@@ -110,6 +112,7 @@ class Canvas extends Component {
                 shape.points.push(referencePoint.x + ',' + referencePoint.y);
                 this.setState({ drawStarted: true, referencePoint, shape });
                 this.props.addShape(shape);
+                this.props.addShapeToGroup(shape.id);
             }
         }
     };
@@ -340,7 +343,9 @@ const mapDispatchToProps = dispatch => {
     return {
         addShape: (shape) => dispatch(actions.addShape(shape)),
         updateShape: (shape) => dispatch(actions.updateShape(shape)),
-        deleteShape: (shape) => dispatch(actions.deleteShape(shape))
+        deleteShape: (shape) => dispatch(actions.deleteShape(shape)),
+        addShapeToGroup: (shapeId) => dispatch(actions.addShapeToGroup(shapeId)),
+        deleteShapeFromGroup: (shapeId) => dispatch(actions.deleteShapeFromGroup(shapeId))
     }
 }
 

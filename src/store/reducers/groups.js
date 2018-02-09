@@ -142,6 +142,7 @@ const groups = (state = initState, action) => {
                 selectedGroupId: lastUsedId + 1
             };
         }
+
         case actionTypes.DELETE_GROUP: {
             if (state.groups.length === 1) {
                 return state;
@@ -155,6 +156,47 @@ const groups = (state = initState, action) => {
                 ...state,
                 groups: newGroups,
                 selectedGroupId: newGroups[0].id
+            };
+        }
+
+        case actionTypes.ADD_SHAPE_TO_GROUP: {
+            const newGroups = [...state.groups];
+            const indexInArray = newGroups.findIndex(group => {
+                return group.id === state.selectedGroupId;
+            });
+
+            newGroups[indexInArray] = {
+                ...newGroups[indexInArray],
+                shapeIds: [
+                    ...newGroups[indexInArray].shapeIds,
+                    action.shapeId
+                ]
+            };
+
+            return {
+                ...state,
+                groups: newGroups
+            };
+        }
+
+        case actionTypes.DELETE_SHAPE_FROM_GROUP: {
+            const newGroups = [...state.groups];
+            const indexInArray = newGroups.findIndex(group => {
+                return group.shapeIds.indexOf(action.shapeId) !== -1;
+            });
+
+            const indexOfShapeInArray = newGroups[indexInArray].shapeIds.indexOf(action.shapeId);
+            const splicedShapeIdsArray = [...newGroups[indexInArray].shapeIds];
+            splicedShapeIdsArray.splice(indexOfShapeInArray, 1);
+
+            newGroups[indexInArray] = {
+                ...newGroups[indexInArray],
+                shapeIds: splicedShapeIdsArray
+            };
+
+            return {
+                ...state,
+                groups: newGroups
             };
         }
 

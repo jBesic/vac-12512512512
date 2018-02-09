@@ -95,6 +95,13 @@ const deleteShape = (shape) => {
     }
 };
 
+const deleteShapes = (shapeIds) => {
+    return {
+        type: actionTypes.DELETE_SHAPES,
+        shapeIds: shapeIds
+    }
+};
+
 const addGroup = () => {
     return {
         type: actionTypes.ADD_GROUP
@@ -120,14 +127,31 @@ const selectElement = (elementId) => {
     }
 };
 
+const addShapeToGroup = (shapeId) => {
+    return {
+        type: actionTypes.ADD_SHAPE_TO_GROUP,
+        shapeId: shapeId
+    }
+};
+
+const deleteShapeFromGroup = (shapeIds) => {
+    return {
+        type: actionTypes.DELETE_SHAPE_FROM_GROUP,
+        shapeId: shapeIds
+    }
+};
+
 export {
     AsyncRegisterUser,
     AsyncLogoutUser,
     addShape,
     deleteShape,
+    deleteShapes,
     updateShape,
     addGroup,
     deleteGroup,
     moveElement,
-    selectElement
+    selectElement,
+    addShapeToGroup,
+    deleteShapeFromGroup
 };

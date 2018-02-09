@@ -10,6 +10,7 @@ const canvas = (state = initState, action) => {
         case actionTypes.ADD_SHAPE: return addUpdateShape(state, action.shape);
         case actionTypes.UPDATE_SHAPE: return addUpdateShape(state, action.shape);
         case actionTypes.DELETE_SHAPE: return deleteShape(state, action.shape);
+        case actionTypes.DELETE_SHAPES: return deleteShapes(state, action.shapeIds);
         default:
             return {
                 ...state
@@ -47,4 +48,15 @@ function deleteShape(state, shape) {
         ...state,
         shapes
     };
+}
+
+function deleteShapes(state, shapeIds) {
+    const shapes = state.shapes.filter(shape => {
+        return shapeIds.indexOf(shape.id) === -1;
+    });
+
+    return {
+        ...state,
+        shapes
+    }
 }

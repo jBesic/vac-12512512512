@@ -5,7 +5,8 @@ import {
     addGroup,
     deleteGroup,
     moveElement,
-    selectElement
+    selectElement,
+    deleteShapes
 } from '../../store/actions/actions';
 import * as actionTypes from '../../store/actions/actionTypes';
 
@@ -24,10 +25,6 @@ class Groups extends Component {
         super();
     }
 
-    handleControllButton(controll) {
-        console.log(controll);
-    }
-
     render() {
         return (
             <div className='row groups-panel'>
@@ -43,7 +40,15 @@ class Groups extends Component {
                         <img alt='Controll button' title='Add new Group' className="img-fluid" src={newFile} />
                     </span>
                     <span
-                        onClick={() => { this.props.deleteGroupDispatch() }}
+                        onClick={() => {
+                            if (this.props.groupsSettings.groups.length > 1) {
+                                const indexOfGroupInArray = this.props.groupsSettings.groups.findIndex(group => {
+                                    return group.id === this.props.groupsSettings.selectedGroupId;
+                                });
+                                this.props.deleteShapesDispatch(this.props.groupsSettings.groups[indexOfGroupInArray].shapeIds);
+                                this.props.deleteGroupDispatch();
+                            }
+                        }}
                         className='btn group-controll'>
                         <img alt='Controll button' title='Delete selected Group' className="img-fluid" src={deleteElement} />
                     </span>
@@ -100,7 +105,8 @@ function mapDispatchToProps(dispatch) {
         addGroupDispatch: () => dispatch(addGroup()),
         deleteGroupDispatch: () => dispatch(deleteGroup()),
         moveElementDispatch: (type) => dispatch(moveElement(type)),
-        selectElementDispatch: (elementId) => dispatch(selectElement(elementId))
+        selectElementDispatch: (elementId) => dispatch(selectElement(elementId)),
+        deleteShapesDispatch: (shapeIds) => dispatch(deleteShapes(shapeIds))
     };
 }
 
