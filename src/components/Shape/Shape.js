@@ -67,6 +67,20 @@ const Shape = (props) => {
             style={props.style ? props.style : style} />;
     }
 
+    if (props.type === tools.TEXT_INPUT) {
+        if (!props.points.length) {
+            return [];
+        }
+        let point = props.points[0].split(',');
+        shape = <text
+            onClick={props.onClickHandler ? props.onClickHandler : () => { }}
+            x={point[0]}
+            y={point[1]}
+            className={props.class}
+            style={props.style ? props.style : style}>{props.text}
+            </text>;
+    }
+
     if (props.isDraggable === true) {
         let output = <Draggable
         axis={props.axis ? props.axis : 'both'}

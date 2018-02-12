@@ -8,6 +8,7 @@ import triangle from '../../assets/images/triangle.png';
 import polygon from '../../assets/images/polygon.png';
 import line from '../../assets/images/line.png';
 import text from '../../assets/images/text.svg';
+import bucket from '../../assets/images/bucket.png';
 
 import { tools } from '../../helper/canvasHelper';
 
@@ -67,6 +68,11 @@ const Toolbox = (props) => {
                 <div className='col-md-6'>
                     <div className={'toolbox__tool' + (props.selectedTool === tools.TEXT_INPUT ? ' toolbox__tool-selected' : '') + (props.drawStarted ? ' toolbox__tool-disabled' : '')} onClick={() => props.selectToolHandler(tools.TEXT_INPUT)}>
                         <img alt='Toolbar icon' className="img-fluid" src={text} />
+                    </div>
+                </div>
+                <div className='col-md-6'>
+                    <div className={'toolbox__tool' + (props.selectedTool === tools.BUCKET ? ' toolbox__tool-selected' : '') + (props.drawStarted ? ' toolbox__tool-disabled' : '')} onClick={() => props.selectToolHandler(tools.BUCKET)}>
+                        <img alt='Toolbar icon' className="img-fluid" src={bucket} />
                     </div>
                 </div>
             </div>

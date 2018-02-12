@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { mode } from '../../helper/canvasHelper';
+import { mode, tools } from '../../helper/canvasHelper';
 import { moveShapeOtherGroup } from '../../store/actions/actions';
 import './shape-properties.css';
 
@@ -35,7 +35,7 @@ const ShapeProperties = (props) => {
             case 'fill':
                 return (
                     <div key='fill' className='shape-properties-wrapper mb-2'>
-                        <label>Fill Color</label>
+                        <label>{props.shape.type === tools.TEXT_INPUT ? 'Text Color' : 'Fill Color'}</label>
                         <input
                             className="form-control"
                             type='color'
@@ -78,13 +78,38 @@ const ShapeProperties = (props) => {
                     </div >
                 );
 
+            case 'text':
+                return (
+                    <div key='bucket' className='shape-properties-wrapper mb-2'>
+                        <label>Text</label>
+                        <input
+                            className="form-control"
+                            type='text'
+                            value={props.shape.text}
+                            onChange={ev => props.changeText(ev.target.value)} />
+                    </div>
+                );
+
+            case 'fontSize':
+                return (
+                    <div key='fontSize' className='shape-properties-wrapper mb-2'>
+                        <label>Font Size</label>
+                        <input
+                            className="form-control"
+                            type='number'
+                            value={props.shape.attributes.fontSize}
+                            onChange={ev => props.updateShapeProps('fontSize', ev.target.value)}
+                            min='1' max='100' step='1' />
+                    </div>
+                );
+
             default:
                 return null;
         }
     }
 
-    return props.mode === mode.SELECT_MODE && props.shape.id ?
-        <div className='row shape-properties'>
+    if (props.mode === mode.SELECT_MODE && props.shape.id) {
+        return <div className='row shape-properties'>
             <div className='col-md-12 mb-3'>
                 <div className="alert alert-secondary m-0 p-1">
                     Properties
@@ -95,8 +120,24 @@ const ShapeProperties = (props) => {
                     return getPropertyType(attribute);
                 })}
             </div>
-        </div >
-        : null;
+        </div >;
+    }
+
+    if (props.mode === mode.PAINT_MODE) {
+        return <div className='row shape-properties'>
+            <div className='col-md-12 mb-3'>
+                <div key='bucket' className='shape-properties-wrapper mb-2'>
+                    <label>Fill Color</label>
+                    <input
+                        className="form-control"
+                        type='color'
+                        value={props.selectedColor}
+                        onChange={ev => props.changeBucketColor(ev.target.value)} />
+                </div>
+            </div>
+        </div >;
+    }
+    return [];
 };
 
 function mapStateToProps(state) {

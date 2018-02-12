@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Toolbox from '../../components/Toolbox/Toolbox';
 import ShapeProperties from '../../components/ShapeProperties';
 import Groups from '../../components/Groups';
-import { tools, mode, defaultShapeAttributes } from '../../helper/canvasHelper';
+import { tools, mode, defaultShapeAttributes, canvasFunctions } from '../../helper/canvasHelper';
 import * as actions from '../../store/actions/actions';
 import Shape from '../../components/Shape/Shape';
 
@@ -12,7 +12,7 @@ import './Canvas.css';
 
 class Canvas extends Component {
     state = {
-        shape: { type: null, points: [] },
+        shape: { type: null, points: [], text: '' },
         referencePoint: { x: null, y: null },
         activeMode: mode.SELECT_MODE,
         drawStarted: false,
@@ -20,7 +20,8 @@ class Canvas extends Component {
         mouseMoveEventNeeded: false,
         selectedPointIndex: null,
         movingShapeStarted: false,
-        pointsBeforeMoving: []
+        pointsBeforeMoving: [],
+        selectedBucketColor: '#FFFFFF'
     };
 
     mouseDownHandler = (event) => {
@@ -33,28 +34,25 @@ class Canvas extends Component {
     };
 
     mouseMoveHandler = (event) => {
-        /* const tmp = document.getElementById('Canvas').getBoundingClientRect();
-            let tmp2 = { x: event.clientX - tmp.left, y: event.clientY - tmp.top }; */
-
         if (this.state.mouseMoveEventNeeded === true && this.state.drawStarted === true) {
             const canvas = document.getElementById('Canvas').getBoundingClientRect();
             let newPoint = { x: event.clientX - canvas.left, y: event.clientY - canvas.top };
             let points;
             switch (this.state.selectedTool) {
                 case tools.RECTANGLE:
-                    points = getControlPointsForRectangle(this.state.referencePoint, newPoint);
+                    points = canvasFunctions.getControlPointsForRectangle(this.state.referencePoint, newPoint);
                     break;
                 case tools.TRIANGLE:
-                    points = getControlPointsForTriangle(this.state.referencePoint, newPoint);
+                    points = canvasFunctions.getControlPointsForTriangle(this.state.referencePoint, newPoint);
                     break;
                 case tools.ELLIPSE:
-                    points = getControlPointsForEllipse(this.state.referencePoint, newPoint);
+                    points = canvasFunctions.getControlPointsForEllipse(this.state.referencePoint, newPoint);
                     break;
                 case tools.CIRCLE:
-                    points = getControlPointsForCircle(this.state.referencePoint, newPoint);
+                    points = canvasFunctions.getControlPointsForCircle(this.state.referencePoint, newPoint);
                     break;
                 case tools.LINE:
-                    points = getControlPointsForLine(this.state.referencePoint, newPoint);
+                    points = canvasFunctions.getControlPointsForLine(this.state.referencePoint, newPoint);
                     break;
                 default:
                     return;
@@ -82,8 +80,10 @@ class Canvas extends Component {
 
         switch (this.state.activeMode) {
             case mode.SELECT_MODE: return this.selectShape(event, shape);
-            case mode.DELETE_MODE: return this.deleteShape(shape);
-            case mode.PAINT_MODE: return this.paintShape(shape);
+            case mode.DELETE_MODE: return this.deleteShape(event, shape);
+            case mode.PAINT_MODE:
+                this.selectShape(event, shape);
+                return setTimeout(() => this.updateShapeProperties('fill', this.state.selectedBucketColor), 10);
             default: return;
         }
     };
@@ -94,10 +94,6 @@ class Canvas extends Component {
     };
 
     selectShape = (event, shape) => {
-        /* if (this.state.shape.id === shape.id) {
-            return this.setState({ shape: { id: null, points: [] } });
-        } */
-
         const group = this.props.groupsSettings.groups.find(group => {
             return group.shapeIds.indexOf(shape.id) !== -1;
         });
@@ -109,11 +105,9 @@ class Canvas extends Component {
         return this.setState({ shape });
     };
 
-    paintShape = (shape) => { };
-
     canvasEventHandler = (event) => {
+        const canvas = document.getElementById('Canvas').getBoundingClientRect();
         if (this.state.activeMode === mode.DRAW_MODE && this.state.mouseMoveEventNeeded === false) {
-            const canvas = document.getElementById('Canvas').getBoundingClientRect();
             if (this.state.drawStarted === true) {
                 let newPoint = { x: event.clientX - canvas.left, y: event.clientY - canvas.top };
                 let shape = { ...this.state.shape };
@@ -131,6 +125,13 @@ class Canvas extends Component {
                 this.props.addShapeToGroup(shape.id);
             }
         }
+        if (this.state.activeMode === mode.TEXT_MODE) {
+            let referencePoint = { x: event.clientX - canvas.left, y: event.clientY - canvas.top };
+            let shape = { id: this.props.lastUsedId + 1, type: this.state.selectedTool, attributes: defaultShapeAttributes(this.state.selectedTool), points: [referencePoint.x + ',' + referencePoint.y], text: 'Some text goes here!' };
+            this.setState({ shape, activeMode: mode.SELECT_MODE, selectedTool: tools.SELECT });
+            this.props.addShape(shape);
+
+        }
     };
 
     selectToolHandler = (tool) => {
@@ -142,6 +143,12 @@ class Canvas extends Component {
                 break;
             case tools.DELETE:
                 activeMode = mode.DELETE_MODE;
+                break;
+            case tools.BUCKET:
+                activeMode = mode.PAINT_MODE;
+                break;
+            case tools.TEXT_INPUT:
+                activeMode = mode.TEXT_MODE;
                 break;
             default:
                 break;
@@ -210,16 +217,16 @@ class Canvas extends Component {
         let shape = { ...this.state.shape };
         let points = [];
         if (shape.type === tools.RECTANGLE) {
-            points = getControlPointsForRectangle(this.state.referencePoint, newPoint);
+            points = canvasFunctions.getControlPointsForRectangle(this.state.referencePoint, newPoint);
         } else if (shape.type === tools.ELLIPSE) {
             if (axis === 'x') {
                 newPoint.y = this.state.referencePoint.y + (shape.points[2] * 2);
             } else {
                 newPoint.x = this.state.referencePoint.x + (shape.points[1] * 2);
             }
-            points = getControlPointsForEllipse(this.state.referencePoint, newPoint);
+            points = canvasFunctions.getControlPointsForEllipse(this.state.referencePoint, newPoint);
         } else if (shape.type === tools.CIRCLE) {
-            points = getControlPointsForCircle(this.state.referencePoint, newPoint);
+            points = canvasFunctions.getControlPointsForCircle(this.state.referencePoint, newPoint);
         }
         else {
             points = [...shape.points];
@@ -250,7 +257,7 @@ class Canvas extends Component {
         const canvas = document.getElementById('Canvas').getBoundingClientRect();
         let newPoint = { x: event.clientX - canvas.left, y: event.clientY - canvas.top };
         let shape = { ...this.state.shape };
-        shape.points = calculateNewShapePoints(this.state.referencePoint, newPoint, [...shape.points], shape.type);
+        shape.points = canvasFunctions.calculateNewShapePoints(this.state.referencePoint, newPoint, [...shape.points], shape.type);
         this.setState({ shape, referencePoint: newPoint });
     };
     handleMoveStop = (event) => {
@@ -268,7 +275,18 @@ class Canvas extends Component {
             }
         };
         this.setState({ shape });
-        this.props.updateShape(shape)
+        this.props.updateShape(shape);
+    };
+
+    changeBucketColorHandler = (color) => {
+        return this.setState({ selectedBucketColor: color });
+    };
+
+    changeTextHandler = (text) => {
+        let shape = {...this.state.shape};
+        shape.text = text;
+        this.setState({ shape });
+        this.props.updateShape(shape);
     };
 
     render() {
@@ -304,7 +322,10 @@ class Canvas extends Component {
                                 <ShapeProperties
                                     mode={this.state.activeMode}
                                     shape={this.state.shape}
-                                    updateShapeProps={this.updateShapeProperties} />
+                                    updateShapeProps={this.updateShapeProperties}
+                                    selectedColor={this.state.selectedBucketColor}
+                                    changeBucketColor={this.changeBucketColorHandler}
+                                    changeText={this.changeTextHandler} />
                             </div>
                             <div className='col-md-8 canvas__draw-wrapper'
                                 onClick={this.canvasEventHandler}
@@ -317,7 +338,7 @@ class Canvas extends Component {
                                         if (item.id === this.state.shape.id) {
                                             return [];
                                         }
-                                        return <Shape type={item.type} key={item.id} onClickHandler={this.clickShapeHandler.bind(this, item)} points={item.points} style={item.attributes} />
+                                        return <Shape type={item.type} key={item.id} onClickHandler={this.clickShapeHandler.bind(this, item)} text={item.text} points={item.points} style={item.attributes} />
                                     })}
 
                                     {/* Show shape you currently manage */}
@@ -325,6 +346,7 @@ class Canvas extends Component {
                                         type={this.state.shape.type}
                                         points={this.state.movingShapeStarted ? this.state.pointsBeforeMoving : this.state.shape.points}
                                         onClickHandler={this.clickShapeHandler.bind(this, this.state.shape)}
+                                        text={this.state.shape.text}
                                         class='canvas__shape-selected'
                                         style={this.state.shape.attributes}
                                         isDraggable={this.state.activeMode === mode.SELECT_MODE ? true : false}
@@ -381,82 +403,6 @@ class Canvas extends Component {
         );
     };
 };
-
-function getControlPointsForRectangle(referencePoint, newPoint) {
-    let points = [referencePoint.x + ',' + referencePoint.y];
-    points.push(newPoint.x + ',' + referencePoint.y);
-    points.push(newPoint.x + ',' + newPoint.y);
-    points.push(referencePoint.x + ',' + newPoint.y);
-    points.push(referencePoint.x + ',' + referencePoint.y);
-
-    return points;
-}
-
-function getControlPointsForTriangle(referencePoint, newPoint) {
-    let points = [referencePoint.x + ',' + referencePoint.y];
-    points.push(newPoint.x + ',' + referencePoint.y);
-    points.push(newPoint.x + ',' + newPoint.y);
-    points.push(referencePoint.x + ',' + referencePoint.y);
-
-    return points;
-}
-
-function getControlPointsForEllipse(referencePoint, newPoint) {
-    let rx = Math.abs((newPoint.x - referencePoint.x) / 2);
-    let ry = Math.abs((newPoint.y - referencePoint.y) / 2);
-    let cx = newPoint.x - rx;
-    if (referencePoint.x > newPoint.x) {
-        cx = referencePoint.x - rx;
-    }
-    let cy = newPoint.y - ry;
-    if (referencePoint.y > newPoint.y) {
-        cy = referencePoint.y - ry;
-    }
-
-    let centerCoords = cx + ',' + cy;
-    let points = [centerCoords, rx, ry];
-
-    return points;
-}
-
-function getControlPointsForCircle(referencePoint, newPoint) {
-    let r = Math.abs((newPoint.x - referencePoint.x) / 2);
-    let cx = newPoint.x - r;
-    if (referencePoint.x > newPoint.x) {
-        cx = referencePoint.x - r;
-    }
-    let cy = referencePoint.y;
-
-    let centerCoords = cx + ',' + cy;
-    let points = [centerCoords, r];
-
-    return points;
-}
-
-function getControlPointsForLine(referencePoint, newPoint) {
-    let point1 = referencePoint.x + ',' + referencePoint.y;
-    let point2 = newPoint.x + ',' + newPoint.y;
-    let points = [point1, point2];
-
-    return points;
-}
-
-function calculateNewShapePoints(referencePoint, newPoint, points, shapeType) {
-    let distanceX = newPoint.x - referencePoint.x;
-    let distanceY = newPoint.y - referencePoint.y;
-    let newPoints = points.map((item, index) => {
-        if ((shapeType === tools.ELLIPSE || shapeType === tools.CIRCLE) && index > 0) {
-            return item;
-        }
-        let helper = item.split(',');
-        helper = helper.map(item => (Number)(item));
-        helper[0] = helper[0] + distanceX;
-        helper[1] = helper[1] + distanceY;
-        return helper.join(',');
-    });
-
-    return newPoints;
-}
 
 /*function resizeRectangle(oldPoints, newPoint, selectedPointIndex) {
                     let points = [...oldPoints];
