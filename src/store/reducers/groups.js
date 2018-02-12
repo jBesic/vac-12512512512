@@ -229,7 +229,8 @@ const groups = (state = initState, action) => {
 
             return {
                 ...state,
-                groups: newGroups
+                groups: newGroups,
+                selectedGroupId: Number.parseInt(action.newGroupId, 10)
             };
         }
 

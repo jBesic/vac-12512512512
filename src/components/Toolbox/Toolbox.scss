@@ -13,7 +13,7 @@
 .toolbox__tool {
     cursor: pointer;
     margin: 0 auto;
-    padding: 5%;
+    padding: 15% 5%;
 
     &.toolbox__tool-selected {
         outline: 1px dashed black;
@@ -24,11 +24,11 @@
     }
 
     img {
-        max-width: 30px;
+        max-width: 25px;
         margin: 0 auto;
     }
 
     @media (min-width: 100px) {
-        padding: 15%;
+        // padding: 15%;
     }
 }

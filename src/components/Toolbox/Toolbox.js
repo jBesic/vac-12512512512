@@ -15,16 +15,12 @@ import { tools } from '../../helper/canvasHelper';
 import './Toolbox.css';
 
 const Toolbox = (props) => {
-    return (
-        <React.Fragment>
+    return <div className="card">
+        <div className="card-header vac-card-header">
+            Toolbox
+        </div>
+        <div className='card-body'>
             <div className='row'>
-                <div className='col-md-12 mb-3'>
-                    <div className="alert alert-secondary  m-0 p-1">
-                        Toolbox
-                    </div>
-                </div>
-            </div>
-            <div className='row toolbar-tools'>
                 <div className='col-md-6'>
                     <div className={'toolbox__tool' + (props.selectedTool === tools.SELECT ? ' toolbox__tool-selected' : '') + (props.drawStarted ? ' toolbox__tool-disabled' : '')} onClick={() => props.selectToolHandler(tools.SELECT)}>
                         <i className='fa fa-mouse-pointer fa-lg'></i>
@@ -76,8 +72,8 @@ const Toolbox = (props) => {
                     </div>
                 </div>
             </div>
-        </React.Fragment>
-    );
+        </div>
+    </div>;
 }
 
 export default Toolbox;
