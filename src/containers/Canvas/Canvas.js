@@ -78,12 +78,25 @@ class Canvas extends Component {
             event.stopPropagation();
         }
 
+        const selectedGroup = this.props.groupsSettings.groups.find(group => {
+            return group.id === this.props.groupsSettings.selectedGroupId;
+        });
+
         switch (this.state.activeMode) {
-            case mode.SELECT_MODE: return this.selectShape(event, shape);
-            case mode.DELETE_MODE: return this.deleteShape(event, shape);
+            case mode.SELECT_MODE:
+                return this.selectShape(event, shape);
+
+            case mode.DELETE_MODE:
+                return selectedGroup.shapeIds.indexOf(shape.id) !== -1 ? this.deleteShape(event, shape) : false;
+
             case mode.PAINT_MODE:
-                this.selectShape(event, shape);
-                return setTimeout(() => this.updateShapeProperties('fill', this.state.selectedBucketColor), 10);
+                if (selectedGroup.shapeIds.indexOf(shape.id) !== -1) {
+                    this.selectShape(event, shape);
+                    setTimeout(() => this.updateShapeProperties('fill', this.state.selectedBucketColor), 10);
+                }
+
+                return false;
+
             default: return;
         }
     };
@@ -399,7 +412,10 @@ class Canvas extends Component {
                                 </div>
                             </div>
                             <div className='col-md-2 canvas__groups'>
-                                <Groups shape={this.state.shape} />
+                                <Groups
+                                    activeMode={this.state.activeMode}
+                                    unselectShapeHandler={this.unselectShapeHandler}
+                                    shape={this.state.shape} />
                             </div>
                         </div>
                     </div>
@@ -436,9 +452,18 @@ class Canvas extends Component {
 }*/
 
 const mapStateToProps = state => {
+    const sortedShapes = state.groupsSettings.groups.reduce((accumulated, group) => {
+        return [...accumulated, ...group.shapeIds]
+    }, []);
+
+    const clonnedShapes = [...state.canvas.shapes];
+    clonnedShapes.sort((shapeA, shapeB) => {
+        return sortedShapes.indexOf(shapeA.id) > sortedShapes.indexOf(shapeB.id);
+    });
+
     return {
         lastUsedId: state.canvas.lastUsedId,
-        shapes: state.canvas.shapes,
+        shapes: clonnedShapes,
         groupsSettings: state.groupsSettings
     }
 }
