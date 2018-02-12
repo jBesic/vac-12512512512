@@ -9,6 +9,7 @@ import {
     deleteShapes
 } from '../../store/actions/actions';
 import * as actionTypes from '../../store/actions/actionTypes';
+import { mode } from '../../helper/canvasHelper';
 
 import bringForward from '../../assets/images/bring-to-forward.svg';
 import sendToBack from '../../assets/images/send-to-back.svg';
@@ -29,12 +30,24 @@ const Groups = function (props) {
             <div className="card-body">
                 <div className='mb-3 text-right'>
                     <span
-                        onClick={() => { props.addGroupDispatch() }}
+                        onClick={() => {
+                            if (props.activeMode === mode.DRAW_MODE) {
+                                return true;
+                            }
+
+                            props.unselectShapeHandler();
+                            props.addGroupDispatch();
+                        }}
                         className='btn group-controll'>
                         <img alt='Controll button' title='Add new Group' className="img-fluid" src={newFile} />
                     </span>
                     <span
                         onClick={() => {
+                            if (props.activeMode === mode.DRAW_MODE) {
+                                return true;
+                            }
+
+                            props.unselectShapeHandler();
                             if (props.groupsSettings.groups.length > 1) {
                                 const indexOfGroupInArray = props.groupsSettings.groups.findIndex(group => {
                                     return group.id === props.groupsSettings.selectedGroupId;
@@ -55,7 +68,14 @@ const Groups = function (props) {
                             return (
                                 <li
                                     key={group.id}
-                                    onClick={() => { props.selectElementDispatch(group.id); }}
+                                    onClick={() => {
+                                        if (props.activeMode === mode.DRAW_MODE) {
+                                            return true;
+                                        }
+
+                                        props.unselectShapeHandler();
+                                        props.selectElementDispatch(group.id);
+                                    }}
                                     className={"btn list-group-item" + (isActive ? ' active' : '')}>
                                     <img alt='Group' className="img-fluid" src={groupElement} /> {group.id} Group
                                 </li>
@@ -65,22 +85,50 @@ const Groups = function (props) {
                 </div>
                 <div className='text-right'>
                     <span
-                        onClick={() => { props.moveElementDispatch(actionTypes.BRING_ONE_LEVEL) }}
+                        onClick={() => {
+                            if (props.activeMode === mode.DRAW_MODE) {
+                                return true;
+                            }
+
+                            props.unselectShapeHandler();
+                            props.moveElementDispatch(actionTypes.BRING_ONE_LEVEL);
+                        }}
                         className='btn group-controll'>
                         <img alt='Controll button' title='Bring to front one level' className="img-fluid" src={moveUp} />
                     </span>
                     <span
-                        onClick={() => { props.moveElementDispatch(actionTypes.SEND_ONE_LEVEL) }}
+                        onClick={() => {
+                            if (props.activeMode === mode.DRAW_MODE) {
+                                return true;
+                            }
+
+                            props.unselectShapeHandler();
+                            props.moveElementDispatch(actionTypes.SEND_ONE_LEVEL);
+                        }}
                         className='btn group-controll'>
                         <img alt='Controll button' title='Send to back one level' className="img-fluid" src={moveDown} />
                     </span>
                     <span
-                        onClick={() => { props.moveElementDispatch(actionTypes.BRING_TO_TOP) }}
+                        onClick={() => {
+                            if (props.activeMode === mode.DRAW_MODE) {
+                                return true;
+                            }
+
+                            props.unselectShapeHandler();
+                            props.moveElementDispatch(actionTypes.BRING_TO_TOP);
+                        }}
                         className='btn group-controll'>
                         <img alt='Controll button' title='Bring in front of all groups' className="img-fluid" src={bringForward} />
                     </span>
                     <span
-                        onClick={() => { props.moveElementDispatch(actionTypes.SEND_TO_BACK) }}
+                        onClick={() => {
+                            if (props.activeMode === mode.DRAW_MODE) {
+                                return true;
+                            }
+
+                            props.unselectShapeHandler();
+                            props.moveElementDispatch(actionTypes.SEND_TO_BACK);
+                        }}
                         className='btn group-controll'>
                         <img alt='Controll button' title='Send behind all groups' className="img-fluid" src={sendToBack} />
                     </span>
