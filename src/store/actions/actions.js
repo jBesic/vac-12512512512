@@ -120,9 +120,103 @@ const AuthenticationModal = function (component, show) {
     }
 };
 
+const addShape = (shape) => {
+    return {
+        type: actionTypes.ADD_SHAPE,
+        shape: shape
+    }
+};
+
+const updateShape = (shape) => {
+    return {
+        type: actionTypes.UPDATE_SHAPE,
+        shape: shape
+    }
+};
+
+const deleteShape = (shape) => {
+    return {
+        type: actionTypes.DELETE_SHAPE,
+        shape: shape
+    }
+};
+
+const deleteShapes = (shapeIds) => {
+    return {
+        type: actionTypes.DELETE_SHAPES,
+        shapeIds: shapeIds
+    }
+};
+
+const addGroup = () => {
+    return {
+        type: actionTypes.ADD_GROUP
+    }
+}
+
+const deleteGroup = () => {
+    return {
+        type: actionTypes.DELETE_GROUP
+    }
+}
+
+const moveElement = (type) => {
+    return {
+        type: type
+    }
+};
+
+const selectElement = (elementId) => {
+    return {
+        type: actionTypes.SELECT_ELEMENT,
+        elementId: elementId
+    }
+};
+
+const addShapeToGroup = (shapeId) => {
+    return {
+        type: actionTypes.ADD_SHAPE_TO_GROUP,
+        shapeId: shapeId
+    }
+};
+
+const deleteShapeFromGroup = (shapeId) => {
+    return {
+        type: actionTypes.DELETE_SHAPE_FROM_GROUP,
+        shapeId: shapeId
+    }
+};
+
+const moveShapeOtherGroup = (shapeId, newGroupId) => {
+    return {
+        type: actionTypes.MOVE_SHAPE_TO_OTHER_GROUP,
+        shapeId: shapeId,
+        newGroupId: newGroupId
+    }
+};
+
+const moveShapeElement = (type, shapeId) => {
+    return {
+        type: type,
+        shapeId: shapeId
+    }
+};
+
 export {
     AsyncRegisterUser,
     AsyncLogoutUser,
     AsyncLoginUser,
-    AuthenticationModal
+    AuthenticationModal,
+    addShape,
+    deleteShape,
+    deleteShapes,
+    updateShape,
+    addGroup,
+    deleteGroup,
+    moveElement,
+    selectElement,
+    addShapeToGroup,
+    deleteShapeFromGroup,
+    moveShapeOtherGroup,
+    moveShapeElement
 };

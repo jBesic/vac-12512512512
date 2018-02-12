@@ -1,0 +1,34 @@
+@import 'assets/styles/_palette.scss';
+
+.row.toolbar-tools [class*='col-'] {
+    &:nth-child(2n) {
+        padding-left: 0;
+    }
+
+    &:nth-child(2n + 1) {
+        padding-right: 0;
+    }
+}
+
+.toolbox__tool {
+    cursor: pointer;
+    margin: 0 auto;
+    padding: 5%;
+
+    &.toolbox__tool-selected {
+        outline: 1px dashed black;
+    }
+    
+    &.toolbox__tool-disabled {
+        pointer-events: none;
+    }
+
+    img {
+        max-width: 30px;
+        margin: 0 auto;
+    }
+
+    @media (min-width: 100px) {
+        padding: 15%;
+    }
+}
