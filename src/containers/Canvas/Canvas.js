@@ -97,6 +97,15 @@ class Canvas extends Component {
         /* if (this.state.shape.id === shape.id) {
             return this.setState({ shape: { id: null, points: [] } });
         } */
+
+        const group = this.props.groupsSettings.groups.find(group => {
+            return group.shapeIds.indexOf(shape.id) !== -1;
+        });
+
+        if (group) {
+            this.props.selectElementDispatch(group.id);
+        }
+
         return this.setState({ shape });
     };
 
@@ -258,7 +267,7 @@ class Canvas extends Component {
                 [attribute]: value
             }
         };
-        this.setState({shape});
+        this.setState({ shape });
         this.props.updateShape(shape)
     };
 
@@ -304,7 +313,7 @@ class Canvas extends Component {
                                 onMouseMove={this.mouseMoveHandler} >
                                 <svg style={{ border: '1px solid #ced4da' }} width='100%' height='100%' id='Canvas'>
                                     {/* Show saved shapes, except shape which you currently draw or have selected */}
-                                    {this.props.shapes.map((item, index) => { 
+                                    {this.props.shapes.map((item, index) => {
                                         if (item.id === this.state.shape.id) {
                                             return [];
                                         }
@@ -349,21 +358,21 @@ class Canvas extends Component {
                                             point = point.map(item => (Number)(item));
                                         }
                                         return <Shape
-                                                key={index}
-                                                type={tools.CIRCLE}
-                                                points={['0,0', '5']}
-                                                style={{ stroke: 'black', strokeWidth: '1px', fill: 'red', cursor: 'pointer' }}
-                                                isDraggable={true}
-                                                axis={axis}
-                                                position={{ x: point[0], y: point[1] }}
-                                                handleStart={this.handleResizeStart.bind(this, item)}
-                                                handleDrag={this.handleResizeDrag.bind(this, axis)}
-                                                handleStop={this.handleResizeStop} />;
+                                            key={index}
+                                            type={tools.CIRCLE}
+                                            points={['0,0', '5']}
+                                            style={{ stroke: 'black', strokeWidth: '1px', fill: 'red', cursor: 'pointer' }}
+                                            isDraggable={true}
+                                            axis={axis}
+                                            position={{ x: point[0], y: point[1] }}
+                                            handleStart={this.handleResizeStart.bind(this, item)}
+                                            handleDrag={this.handleResizeDrag.bind(this, axis)}
+                                            handleStop={this.handleResizeStop} />;
                                     })}
                                 </svg>
                             </div>
                             <div className='col-md-2 canvas__groups'>
-                                <Groups />
+                                <Groups shape={this.state.shape} />
                             </div>
                         </div>
                     </div>
@@ -478,7 +487,8 @@ function calculateNewShapePoints(referencePoint, newPoint, points, shapeType) {
 const mapStateToProps = state => {
     return {
         lastUsedId: state.canvas.lastUsedId,
-        shapes: state.canvas.shapes
+        shapes: state.canvas.shapes,
+        groupsSettings: state.groupsSettings
     }
 }
 
@@ -488,7 +498,8 @@ const mapDispatchToProps = dispatch => {
         updateShape: (shape) => dispatch(actions.updateShape(shape)),
         deleteShape: (shape) => dispatch(actions.deleteShape(shape)),
         addShapeToGroup: (shapeId) => dispatch(actions.addShapeToGroup(shapeId)),
-        deleteShapeFromGroup: (shapeId) => dispatch(actions.deleteShapeFromGroup(shapeId))
+        deleteShapeFromGroup: (shapeId) => dispatch(actions.deleteShapeFromGroup(shapeId)),
+        selectElementDispatch: (elementId) => dispatch(actions.selectElement(elementId)),
     }
 }
 
