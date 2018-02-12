@@ -1,0 +1,17 @@
+@import 'assets/styles/_palette.scss';
+
+.vac-btn-modal {
+    background-color: unset;
+    color: $color11;
+
+    &:hover {
+        background-color: unset;
+        color: $color11;
+    }
+
+    &.active {
+        background-color: $color5;
+        color: $color10;
+        opacity: 1;
+    }
+}

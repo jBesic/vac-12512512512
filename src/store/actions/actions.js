@@ -1,5 +1,7 @@
 import * as actionTypes from './actionTypes';
+import * as vacApi from '../../vacApi';
 
+// Register
 const registerRequest = function () {
     return {
         type: actionTypes.REGISTER_REQUEST
@@ -20,20 +22,56 @@ const registerFailure = function (message) {
     }
 };
 
-// This makes the async call to an endpoint
 const AsyncRegisterUser = function (userName, password) {
     return dispatch => {
         dispatch(registerRequest());
 
-        new Promise((resolve, reject) => {
-            setTimeout(resolve, 5000);
-        }).then(value => {
-            const token = 'dummyText';
-            localStorage.setItem('token', token);
-            dispatch(registerSuccess(token));
-        }).catch(error => {
-            dispatch(registerFailure('Ooh, something went wrong !'));
-        });
+        vacApi.register(userName, password)
+            .then(response => {
+                const token = response.data.data;
+                localStorage.setItem('token', token);
+                dispatch(registerSuccess(token));
+                dispatch(AuthenticationModal(false));
+            }).catch(error => {
+                dispatch(registerFailure(error.response.data.message));
+            });
+    }
+}
+
+// Login
+const loginRequest = function () {
+    return {
+        type: actionTypes.LOGIN_REQUEST
+    }
+};
+
+const loginSuccess = function (token) {
+    return {
+        type: actionTypes.LOGIN_SUCCESS,
+        token: token
+    }
+};
+
+const loginFailure = function (message) {
+    return {
+        type: actionTypes.LOGIN_FAILURE,
+        message: message
+    }
+};
+
+const AsyncLoginUser = function (userName, password) {
+    return dispatch => {
+        dispatch(loginRequest());
+
+        vacApi.login(userName, password)
+            .then(response => {
+                const token = response.data.data;
+                localStorage.setItem('token', token);
+                dispatch(loginSuccess(token));
+                dispatch(AuthenticationModal(false));
+            }).catch(error => {
+                dispatch(loginFailure(error.response.data.message));
+            });
     }
 }
 
@@ -58,21 +96,29 @@ const logoutFailure = function (message) {
     }
 };
 
-// This makes the async call to an endpoint
 const AsyncLogoutUser = function (token) {
     return dispatch => {
         dispatch(logoutRequest());
 
-        new Promise((resolve, reject) => {
-            setTimeout(resolve, 3000);
-        }).then(value => {
-            localStorage.removeItem('token', token);
-            dispatch(logoutSuccess(token));
-        }).catch(error => {
-            dispatch(logoutFailure('Ooh, something went wrong !'));
-        });
+        vacApi.logout(token)
+            .then(response => {
+                localStorage.removeItem('token');
+                dispatch(logoutSuccess(token));
+                dispatch(AuthenticationModal(false));
+            }).catch(error => {
+                dispatch(logoutFailure(error.response.data.message));
+            });
     }
 }
+
+// Authentication modal
+const AuthenticationModal = function (component, show) {
+    return {
+        type: actionTypes.AUTHENTICATION_MODAL,
+        component: component,
+        show: show
+    }
+};
 
 const addShape = (shape) => {
     return {
@@ -159,6 +205,8 @@ const moveShapeElement = (type, shapeId) => {
 export {
     AsyncRegisterUser,
     AsyncLogoutUser,
+    AsyncLoginUser,
+    AuthenticationModal,
     addShape,
     deleteShape,
     deleteShapes,

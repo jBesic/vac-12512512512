@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { AsyncLogoutUser } from '../../store/actions/actions';
+import { AsyncLogoutUser, AuthenticationModal } from '../../store/actions/actions';
 import './Navigation.css';
 
 const Navigation = function (props) {
@@ -15,13 +15,19 @@ const Navigation = function (props) {
                     {
                         props.auth.isLoged ? null :
                             <li className="nav-item">
-                                <NavLink className="nav-link" to="/register">Register</NavLink>
+                                <button
+                                    type='button'
+                                    className="btn btn-link nav-link"
+                                    onClick={() => props.modal('register', true)}>Register</button>
                             </li>
                     }
                     {
                         props.auth.isLoged ? null :
                             <li className="nav-item">
-                                <NavLink className="nav-link" to="/login">Login</NavLink>
+                                <button
+                                    type='button'
+                                    className="btn btn-link nav-link"
+                                    onClick={() => props.modal('login', true)}>Login</button>
                             </li>
                     }
                     {
@@ -64,7 +70,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        logout: token => dispatch(AsyncLogoutUser(token))
+        logout: token => dispatch(AsyncLogoutUser(token)),
+        modal: (component, show) => dispatch(AuthenticationModal(component, show))
     }
 }
 

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { AsyncRegisterUser } from '../../store/actions/actions';
+import { AsyncLoginUser } from '../../store/actions/actions';
 
-class Register extends Component {
+class Login extends Component {
     constructor(props) {
         super();
 
@@ -12,28 +12,31 @@ class Register extends Component {
         this.state = {
             username: '',
             password: '',
-            repeatPassword: '',
-            error: ''
+            showMessage: false
         };
     }
 
     setPropertyByName(propertyKey, value) {
         this.setState({
-            [propertyKey]: value
+            [propertyKey]: value,
+            showMessage: false
         });
     }
 
     submitHandler(ev) {
         ev.preventDefault();
-        this.props.registerDispatch(this.state.username, this.state.password);
+        this.setState({
+            showMessage: true
+        });
+        this.props.loginDispatch(this.state.username, this.state.password);
     }
 
     render() {
-        const isInvalid = this.state.username === '' || this.state.password === '' || this.state.password !== this.state.repeatPassword;
+        const isInvalid = this.state.username === '' || this.state.password === '';
 
         return (
             <form className='d-block w-100' onSubmit={this.submitHandler}>
-                {this.props.auth.message ? <div className="alert alert-danger">{this.props.auth.message}</div> : null}
+                {this.state.showMessage && this.props.auth.message ? <div className="alert alert-danger">{this.props.auth.message}</div> : null}
                 <div className="form-group">
                     <label htmlFor="username">Email address</label>
                     <input
@@ -55,21 +58,10 @@ class Register extends Component {
                         placeholder="Password"
                         autoComplete="false" />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="repeat-password">Repeat Password</label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        id="repeat-password"
-                        onChange={ev => this.setPropertyByName('repeatPassword', ev.target.value)}
-                        value={this.state.repeatPassword}
-                        placeholder="Repeat Password"
-                        autoComplete="false" />
-                </div>
                 <button
                     disabled={isInvalid}
                     type="submit"
-                    className="btn btn-block btn-primary vac-btn-primary">Register</button>
+                    className="btn btn-block btn-primary vac-btn-primary">Log in</button>
             </form>
         );
     }
@@ -83,8 +75,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        registerDispatch: (username, password) => dispatch(AsyncRegisterUser(username, password))
+        loginDispatch: (username, password) => dispatch(AsyncLoginUser(username, password))
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Register);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
