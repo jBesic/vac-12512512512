@@ -120,57 +120,63 @@ const ShapeProperties = (props) => {
     }
 
     if (props.mode === mode.SELECT_MODE && props.shape.id) {
-        return <div className='row shape-properties'>
-            <div className='col-md-12 mb-3'>
-                <div className="alert alert-secondary m-0 p-1">
-                    Properties
-                    </div>
+        return <div className="card mt-3">
+            <div className="card-header vac-card-header">
+                Properties
             </div>
-            <div className='col-md-12 mb-3 text-right'>
-                <span
-                    onClick={() => { props.moveShapeElementDispatch(actionTypes.SHAPE_BRING_ONE_LEVEL, props.shape.id) }}
-                    className='btn group-controll'>
-                    <img alt='Controll button' title='Bring to front one level' className="img-fluid" src={moveUp} />
-                </span>
-                <span
-                    onClick={() => { props.moveShapeElementDispatch(actionTypes.SHAPE_SEND_ONE_LEVEL, props.shape.id) }}
-                    className='btn group-controll'>
-                    <img alt='Controll button' title='Send to back one level' className="img-fluid" src={moveDown} />
-                </span>
-                <span
-                    onClick={() => { props.moveShapeElementDispatch(actionTypes.SHAPE_BRING_TO_TOP, props.shape.id) }}
-                    className='btn group-controll'>
-                    <img alt='Controll button' title='Bring in front of all groups' className="img-fluid" src={bringForward} />
-                </span>
-                <span
-                    onClick={() => { props.moveShapeElementDispatch(actionTypes.SHAPE_SEND_TO_BACK, props.shape.id) }}
-                    className='btn group-controll'>
-                    <img alt='Controll button' title='Send behind all groups' className="img-fluid" src={sendToBack} />
-                </span>
+            <div className='card-body'>
+                <div className='mb-3 text-right'>
+                    <span
+                        onClick={() => { props.moveShapeElementDispatch(actionTypes.SHAPE_BRING_ONE_LEVEL, props.shape.id) }}
+                        className='btn group-controll'>
+                        <img alt='Controll button' title='Bring to front one level' className="img-fluid" src={moveUp} />
+                    </span>
+                    <span
+                        onClick={() => { props.moveShapeElementDispatch(actionTypes.SHAPE_SEND_ONE_LEVEL, props.shape.id) }}
+                        className='btn group-controll'>
+                        <img alt='Controll button' title='Send to back one level' className="img-fluid" src={moveDown} />
+                    </span>
+                    <span
+                        onClick={() => { props.moveShapeElementDispatch(actionTypes.SHAPE_BRING_TO_TOP, props.shape.id) }}
+                        className='btn group-controll'>
+                        <img alt='Controll button' title='Bring in front of all groups' className="img-fluid" src={bringForward} />
+                    </span>
+                    <span
+                        onClick={() => { props.moveShapeElementDispatch(actionTypes.SHAPE_SEND_TO_BACK, props.shape.id) }}
+                        className='btn group-controll'>
+                        <img alt='Controll button' title='Send behind all groups' className="img-fluid" src={sendToBack} />
+                    </span>
+                </div>
+                <div className='mb-3'>
+                    {Object.keys(props.shape.attributes).map(attribute => {
+                        return getPropertyType(attribute);
+                    })}
+                </div>
             </div>
-            <div className='col-md-12 mb-3'>
-                {Object.keys(props.shape.attributes).map(attribute => {
-                    return getPropertyType(attribute);
-                })}
-            </div>
-        </div >;
+        </div>;
     }
 
     if (props.mode === mode.PAINT_MODE) {
-        return <div className='row shape-properties'>
-            <div className='col-md-12 mb-3'>
-                <div key='bucket' className='shape-properties-wrapper mb-2'>
-                    <label>Fill Color</label>
-                    <input
-                        className="form-control"
-                        type='color'
-                        value={props.selectedColor}
-                        onChange={ev => props.changeBucketColor(ev.target.value)} />
+        return <div className="card mt-3">
+            <div className="card-header vac-card-header">
+                Properties
+            </div>
+            <div className='card-body'>
+                <div className='mb-3'>
+                    <div key='bucket' className='shape-properties-wrapper mb-2'>
+                        <label>Fill Color</label>
+                        <input
+                            className="form-control"
+                            type='color'
+                            value={props.selectedColor}
+                            onChange={ev => props.changeBucketColor(ev.target.value)} />
+                    </div>
                 </div>
             </div>
-        </div >;
+        </div>;
     }
-    return [];
+
+    return null;
 };
 
 function mapStateToProps(state) {

@@ -284,7 +284,7 @@ class Canvas extends Component {
     };
 
     changeTextHandler = (text) => {
-        let shape = {...this.state.shape};
+        let shape = { ...this.state.shape };
         shape.text = text;
         this.setState({ shape });
         this.props.updateShape(shape);
@@ -328,71 +328,75 @@ class Canvas extends Component {
                                     changeBucketColor={this.changeBucketColorHandler}
                                     changeText={this.changeTextHandler} />
                             </div>
-                            <div className='col-md-8 canvas__draw-wrapper'
+                            <div className='col-md-8'
                                 onClick={this.canvasEventHandler}
                                 onMouseDown={this.mouseDownHandler}
                                 onMouseUp={this.mouseUpHandler}
-                                onMouseMove={this.mouseMoveHandler} >
-                                <svg style={{ border: '1px solid #ced4da' }} width='100%' height='100%' id='Canvas'>
-                                    {/* Show saved shapes, except shape which you currently draw or have selected */}
-                                    {this.props.shapes.map((item, index) => {
-                                        if (item.id === this.state.shape.id) {
-                                            return [];
-                                        }
-                                        return <Shape type={item.type} key={item.id} onClickHandler={this.clickShapeHandler.bind(this, item)} text={item.text} points={item.points} style={item.attributes} />
-                                    })}
+                                onMouseMove={this.mouseMoveHandler}>
+                                <div className=' canvas__draw-wrapper'>
+                                    <div className='inner'>
+                                        <svg style={{ border: '1px solid #ced4da' }} width='100%' height='100%' id='Canvas'>
+                                            {/* Show saved shapes, except shape which you currently draw or have selected */}
+                                            {this.props.shapes.map((item, index) => {
+                                                if (item.id === this.state.shape.id) {
+                                                    return [];
+                                                }
+                                                return <Shape type={item.type} key={item.id} onClickHandler={this.clickShapeHandler.bind(this, item)} text={item.text} points={item.points} style={item.attributes} />
+                                            })}
 
-                                    {/* Show shape you currently manage */}
-                                    {this.state.shape.id && <Shape
-                                        type={this.state.shape.type}
-                                        points={this.state.movingShapeStarted ? this.state.pointsBeforeMoving : this.state.shape.points}
-                                        onClickHandler={this.clickShapeHandler.bind(this, this.state.shape)}
-                                        text={this.state.shape.text}
-                                        class='canvas__shape-selected'
-                                        style={this.state.shape.attributes}
-                                        isDraggable={this.state.activeMode === mode.SELECT_MODE ? true : false}
-                                        position={{ x: 0, y: 0 }}
-                                        handleStart={this.handleMoveStart.bind(this)}
-                                        handleDrag={this.handleMoveDrag.bind(this)}
-                                        handleStop={this.handleMoveStop.bind(this)} />}
+                                            {/* Show shape you currently manage */}
+                                            {this.state.shape.id && <Shape
+                                                type={this.state.shape.type}
+                                                points={this.state.movingShapeStarted ? this.state.pointsBeforeMoving : this.state.shape.points}
+                                                onClickHandler={this.clickShapeHandler.bind(this, this.state.shape)}
+                                                text={this.state.shape.text}
+                                                class='canvas__shape-selected'
+                                                style={this.state.shape.attributes}
+                                                isDraggable={this.state.activeMode === mode.SELECT_MODE ? true : false}
+                                                position={{ x: 0, y: 0 }}
+                                                handleStart={this.handleMoveStart.bind(this)}
+                                                handleDrag={this.handleMoveDrag.bind(this)}
+                                                handleStop={this.handleMoveStop.bind(this)} />}
 
-                                    {/* Show circle on first point of polygon in DRAW_MODE */}
-                                    {this.state.activeMode === mode.DRAW_MODE && this.state.shape.type === tools.POLYGON &&
-                                        <circle
-                                            onClick={this.closePolygonHandler}
-                                            cx={this.state.referencePoint.x} cy={this.state.referencePoint.y} r='10'
-                                            style={{ stroke: 'black', strokeWidth: '2', fill: 'red', cursor: 'pointer' }} />}
+                                            {/* Show circle on first point of polygon in DRAW_MODE */}
+                                            {this.state.activeMode === mode.DRAW_MODE && this.state.shape.type === tools.POLYGON &&
+                                                <circle
+                                                    onClick={this.closePolygonHandler}
+                                                    cx={this.state.referencePoint.x} cy={this.state.referencePoint.y} r='10'
+                                                    style={{ stroke: 'black', strokeWidth: '2', fill: 'red', cursor: 'pointer' }} />}
 
-                                    {/* Show small circles on control points of selected shape in SELECT_MODE */}
-                                    {this.state.activeMode === mode.SELECT_MODE && this.state.shape.points.map((item, index) => {
-                                        if (this.state.shape.type !== tools.LINE && index === this.state.shape.points.length - 1) {
-                                            return [];
-                                        }
-                                        let point = [];
-                                        let axis = 'both';
-                                        if (this.state.shape.type === tools.ELLIPSE || this.state.shape.type === tools.CIRCLE) {
-                                            point = this.state.shape.points[0].split(',');
-                                            point = point.map(item => (Number)(item));
-                                            let radius = this.state.shape.points[index + 1];
-                                            point[index] = point[index] + radius;
-                                            axis = index > 0 ? 'y' : 'x';
-                                        } else {
-                                            point = item.split(',');
-                                            point = point.map(item => (Number)(item));
-                                        }
-                                        return <Shape
-                                            key={index}
-                                            type={tools.CIRCLE}
-                                            points={['0,0', '5']}
-                                            style={{ stroke: 'black', strokeWidth: '1px', fill: 'red', cursor: 'pointer' }}
-                                            isDraggable={true}
-                                            axis={axis}
-                                            position={{ x: point[0], y: point[1] }}
-                                            handleStart={this.handleResizeStart.bind(this, item)}
-                                            handleDrag={this.handleResizeDrag.bind(this, axis)}
-                                            handleStop={this.handleResizeStop} />;
-                                    })}
-                                </svg>
+                                            {/* Show small circles on control points of selected shape in SELECT_MODE */}
+                                            {this.state.activeMode === mode.SELECT_MODE && this.state.shape.points.map((item, index) => {
+                                                if (this.state.shape.type !== tools.LINE && index === this.state.shape.points.length - 1) {
+                                                    return [];
+                                                }
+                                                let point = [];
+                                                let axis = 'both';
+                                                if (this.state.shape.type === tools.ELLIPSE || this.state.shape.type === tools.CIRCLE) {
+                                                    point = this.state.shape.points[0].split(',');
+                                                    point = point.map(item => (Number)(item));
+                                                    let radius = this.state.shape.points[index + 1];
+                                                    point[index] = point[index] + radius;
+                                                    axis = index > 0 ? 'y' : 'x';
+                                                } else {
+                                                    point = item.split(',');
+                                                    point = point.map(item => (Number)(item));
+                                                }
+                                                return <Shape
+                                                    key={index}
+                                                    type={tools.CIRCLE}
+                                                    points={['0,0', '5']}
+                                                    style={{ stroke: 'black', strokeWidth: '1px', fill: 'red', cursor: 'pointer' }}
+                                                    isDraggable={true}
+                                                    axis={axis}
+                                                    position={{ x: point[0], y: point[1] }}
+                                                    handleStart={this.handleResizeStart.bind(this, item)}
+                                                    handleDrag={this.handleResizeDrag.bind(this, axis)}
+                                                    handleStop={this.handleResizeStop} />;
+                                            })}
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
                             <div className='col-md-2 canvas__groups'>
                                 <Groups shape={this.state.shape} />

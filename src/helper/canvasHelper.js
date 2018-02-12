@@ -96,7 +96,8 @@ export const defaultShapeAttributes = function (shapeType) {
             return {
                 text: undefined,
                 fontSize: '12',
-                fill: '#000000'
+                fill: '#000000',
+                groupId: undefined
             };
 
         default:
