@@ -1,12 +1,12 @@
 import React from 'react';
 
-import select from '../../assets/images/select.svg';
+//import select from '../../assets/images/select.svg';
 import eraser from '../../assets/images/eraser.svg';
-import rectangle from '../../assets/images/rectangle.svg';
-import ellipse from '../../assets/images/circle.svg';
-import triangle from '../../assets/images/triangle.svg';
-import polygon from '../../assets/images/polygon.svg';
-import line from '../../assets/images/line.svg';
+import rectangle from '../../assets/images/rectangle.png';
+import ellipse from '../../assets/images/ellipse.png';
+import triangle from '../../assets/images/triangle.png';
+import polygon from '../../assets/images/polygon.png';
+import line from '../../assets/images/line.png';
 import text from '../../assets/images/text.svg';
 
 import { tools } from '../../helper/canvasHelper';
@@ -26,7 +26,7 @@ const Toolbox = (props) => {
             <div className='row toolbar-tools'>
                 <div className='col-md-6'>
                     <div className={'toolbox__tool' + (props.selectedTool === tools.SELECT ? ' toolbox__tool-selected' : '') + (props.drawStarted ? ' toolbox__tool-disabled' : '')} onClick={() => props.selectToolHandler(tools.SELECT)}>
-                        <img alt='Toolbar icon' className="img-fluid" src={select} />
+                        <i className='fa fa-mouse-pointer fa-lg'></i>
                     </div>
                 </div>
                 <div className='col-md-6'>
@@ -57,6 +57,11 @@ const Toolbox = (props) => {
                 <div className='col-md-6'>
                     <div className={'toolbox__tool' + (props.selectedTool === tools.POLYGON ? ' toolbox__tool-selected' : '') + (props.drawStarted ? ' toolbox__tool-disabled' : '')} onClick={() => props.selectToolHandler(tools.POLYGON)}>
                         <img alt='Toolbar icon' className="img-fluid" src={polygon} />
+                    </div>
+                </div>
+                <div className='col-md-6'>
+                    <div className={'toolbox__tool' + (props.selectedTool === tools.CIRCLE ? ' toolbox__tool-selected' : '') + (props.drawStarted ? ' toolbox__tool-disabled' : '')} onClick={() => props.selectToolHandler(tools.CIRCLE)}>
+                        <i className='fa fa-circle-o fa-2x'></i>
                     </div>
                 </div>
                 <div className='col-md-6'>

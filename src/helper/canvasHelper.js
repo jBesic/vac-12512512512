@@ -3,7 +3,8 @@ const TRIANGLE = 'TRIANGLE';
 const LINE = 'LINE';
 const POLYGON = 'POLYGON';
 const ELLIPSE = 'ELLIPSE';
-//const TEXT_INPUT = 'TEXT_INPUT';
+const CIRCLE = 'CIRCLE';
+const TEXT_INPUT = 'TEXT_INPUT';
 const DELETE = 'DELETE';
 const SELECT = 'SELECT';
 
@@ -13,6 +14,8 @@ export const tools = {
     LINE,
     POLYGON,
     ELLIPSE,
+    CIRCLE,
+    TEXT_INPUT,
     DELETE,
     SELECT
 };
@@ -33,46 +36,56 @@ export const defaultShapeAttributes = function (shapeType) {
     switch (shapeType) {
         case tools.RECTANGLE:
             return {
-                borderSize: 2,
-                borderColor: '#000000',
-                fillColor: '#FFFFFF',
-                opacity: 100,
+                strokeWidth: 2,
+                stroke: '#000000',
+                fill: '#FFFFFF',
+                opacity: 1,
                 groupId: undefined
             };
 
         case tools.POLYGON:
             return {
-                borderSize: 2,
-                borderColor: '#000000',
-                fillColor: '#FFFFFF',
-                opacity: 100,
+                strokeWidth: 2,
+                stroke: '#000000',
+                fill: '#FFFFFF',
+                opacity: 1,
                 groupId: undefined
             };
 
         case tools.TRIANGLE:
             return {
-                borderSize: 2,
-                borderColor: '#000000',
-                fillColor: '#FFFFFF',
-                opacity: 100,
+                strokeWidth: 2,
+                stroke: '#000000',
+                fill: '#FFFFFF',
+                opacity: 1,
                 groupId: undefined
             };
 
         case tools.ELLIPSE:
             return {
-                borderSize: 2,
-                borderColor: '#000000',
-                fillColor: '#FFFFFF',
-                opacity: 100,
+                strokeWidth: 2,
+                stroke: '#000000',
+                fill: '#FFFFFF',
+                opacity: 1,
+                groupId: undefined
+            };
+
+        case tools.CIRCLE:
+            return {
+                strokeWidth: 2,
+                stroke: '#000000',
+                fill: '#FFFFFF',
+                opacity: 1,
                 groupId: undefined
             };
 
         case tools.LINE:
             return {
-                borderSize: 2,
-                borderColor: '#000000',
-                opacity: 100,
-                groupId: undefined
+                strokeWidth: 2,
+                stroke: '#000000',
+                opacity: 1,
+                groupId: undefined,
+                cursor: 'pointer'
             };
 
         default:

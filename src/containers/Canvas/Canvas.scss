@@ -31,7 +31,6 @@
 }
 
 .canvas__draw-wrapper {
-    border: 1px solid #ced4da;
     min-height: 600px;
 }
 
@@ -40,5 +39,6 @@
 }
 
 .canvas__shape-selected {
-    stroke-dasharray: 5
+    stroke-dasharray: 5;
+    cursor: pointer;
 }

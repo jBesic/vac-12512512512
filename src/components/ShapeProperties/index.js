@@ -1,78 +1,45 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 
 import { mode } from '../../helper/canvasHelper';
-import { updateShape } from '../../store/actions/actions';
 import './shape-properties.css';
 
-class ShapeProperties extends Component {
-    constructor(props) {
-        super();
-
-        this.state = {
-            shape: { ...props.shape }
-        };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            shape: {
-                ...nextProps.shape,
-                attributes: nextProps.shape.attributes
-            }
-        });
-    }
-
-    updateShape(attribute, value) {
-        this.setState({
-            shape: {
-                ...this.state.shape,
-                attributes: {
-                    ...this.state.shape.attributes,
-                    [attribute]: value
-                }
-            }
-        });
-
-        setTimeout(() => this.props.updateShape(this.state.shape), 10);
-    }
-
-    getPropertyType(type) {
+const ShapeProperties = (props) => {
+    const getPropertyType = (type) => {
         switch (type) {
-            case 'borderSize':
+            case 'strokeWidth':
                 return (
-                    <div key='borderSize' className='shape-properties-wrapper mb-2'>
+                    <div key='strokeWidth' className='shape-properties-wrapper mb-2'>
                         <label>Border size</label>
                         <input
                             className="form-control"
                             type='number'
-                            value={this.state.shape.attributes.borderSize}
-                            onChange={ev => this.updateShape('borderSize', ev.target.value)}
+                            value={props.shape.attributes.strokeWidth}
+                            onChange={ev => props.updateShapeProps('strokeWidth', ev.target.value)}
                             min='0' step='1' />
                     </div>
                 );
 
-            case 'borderColor':
+            case 'stroke':
                 return (
-                    <div key='borderColor' className='shape-properties-wrapper mb-2'>
+                    <div key='stroke' className='shape-properties-wrapper mb-2'>
                         <label>Border Color</label>
                         <input
                             className="form-control"
                             type='color'
-                            value={this.state.shape.attributes.borderColor}
-                            onChange={ev => this.updateShape('borderColor', ev.target.value)} />
+                            value={props.shape.attributes.stroke}
+                            onChange={ev => props.updateShapeProps('stroke', ev.target.value)} />
                     </div>
                 );
 
-            case 'fillColor':
+            case 'fill':
                 return (
-                    <div key='fillColor' className='shape-properties-wrapper mb-2'>
+                    <div key='fill' className='shape-properties-wrapper mb-2'>
                         <label>Fill Color</label>
                         <input
                             className="form-control"
                             type='color'
-                            value={this.state.shape.attributes.fillColor}
-                            onChange={ev => this.updateShape('fillColor', ev.target.value)} />
+                            value={props.shape.attributes.fill}
+                            onChange={ev => props.updateShapeProps('fill', ev.target.value)} />
                     </div>
                 );
 
@@ -83,9 +50,9 @@ class ShapeProperties extends Component {
                         <input
                             className="form-control"
                             type='number'
-                            value={this.state.shape.attributes.opacity}
-                            onChange={ev => this.updateShape('opacity', ev.target.value)}
-                            min='0' max='100' step='1' />
+                            value={props.shape.attributes.opacity}
+                            onChange={ev => props.updateShapeProps('opacity', ev.target.value)}
+                            min='0' max='1' step='0.1' />
                     </div>
                 );
 
@@ -95,8 +62,8 @@ class ShapeProperties extends Component {
                         <label>Group</label>
                         <select
                             className="form-control"
-                            value={this.state.shape.attributes.groupId}
-                            onChange={ev => this.updateShape('groupId', ev.target.value)}>
+                            value={props.shape.attributes.groupId}
+                            onChange={ev => props.updateShapeProps('groupId', ev.target.value)}>
                             <option value='undefined'>No Group</option>
                         </select>
                     </div >
@@ -107,8 +74,7 @@ class ShapeProperties extends Component {
         }
     }
 
-    render() {
-        return this.props.mode === mode.SELECT_MODE && this.state.shape.id ?
+        return props.mode === mode.SELECT_MODE && props.shape.id ?
             <div className='row shape-properties'>
                 <div className='col-md-12 mb-3'>
                     <div className="alert alert-secondary m-0 p-1">
@@ -116,19 +82,12 @@ class ShapeProperties extends Component {
                     </div>
                 </div>
                 <div className='col-md-12 mb-3'>
-                    {Object.keys(this.state.shape.attributes).map(attribute => {
-                        return this.getPropertyType(attribute);
+                    {Object.keys(props.shape.attributes).map(attribute => {
+                        return getPropertyType(attribute);
                     })}
                 </div>
             </div >
             : null;
-    }
 };
 
-function mapDispatchToProps(dispatch) {
-    return {
-        updateShape: (shape) => dispatch(updateShape(shape))
-    }
-}
-
-export default connect(null, mapDispatchToProps)(ShapeProperties);
+export default ShapeProperties;

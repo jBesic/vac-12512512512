@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Draggable from 'react-draggable';
 
 import Toolbox from '../../components/Toolbox/Toolbox';
 import ShapeProperties from '../../components/ShapeProperties';
@@ -19,7 +18,9 @@ class Canvas extends Component {
         drawStarted: false,
         selectedTool: tools.SELECT,
         mouseMoveEventNeeded: false,
-        selectedPointIndex: null
+        selectedPointIndex: null,
+        movingShapeStarted: false,
+        pointsBeforeMoving: []
     };
 
     mouseDownHandler = (event) => {
@@ -32,6 +33,9 @@ class Canvas extends Component {
     };
 
     mouseMoveHandler = (event) => {
+        /* const tmp = document.getElementById('Canvas').getBoundingClientRect();
+            let tmp2 = { x: event.clientX - tmp.left, y: event.clientY - tmp.top }; */
+
         if (this.state.mouseMoveEventNeeded === true && this.state.drawStarted === true) {
             const canvas = document.getElementById('Canvas').getBoundingClientRect();
             let newPoint = { x: event.clientX - canvas.left, y: event.clientY - canvas.top };
@@ -45,6 +49,9 @@ class Canvas extends Component {
                     break;
                 case tools.ELLIPSE:
                     points = getControlPointsForEllipse(this.state.referencePoint, newPoint);
+                    break;
+                case tools.CIRCLE:
+                    points = getControlPointsForCircle(this.state.referencePoint, newPoint);
                     break;
                 case tools.LINE:
                     points = getControlPointsForLine(this.state.referencePoint, newPoint);
@@ -87,9 +94,9 @@ class Canvas extends Component {
     };
 
     selectShape = (event, shape) => {
-        if (this.state.shape.id === shape.id) {
+        /* if (this.state.shape.id === shape.id) {
             return this.setState({ shape: { id: null, points: [] } });
-        }
+        } */
         return this.setState({ shape });
     };
 
@@ -132,7 +139,7 @@ class Canvas extends Component {
         }
 
         let mouseMoveEventNeeded = false;
-        const helper = [tools.RECTANGLE, tools.ELLIPSE, tools.LINE, tools.TRIANGLE];
+        const helper = [tools.RECTANGLE, tools.ELLIPSE, tools.LINE, tools.TRIANGLE, tools.CIRCLE];
         if (activeMode === mode.DRAW_MODE && helper.indexOf(tool) !== -1) {
             mouseMoveEventNeeded = true;
         }
@@ -154,21 +161,40 @@ class Canvas extends Component {
         this.setState({ shape: { type: null, points: [] } });
     }
 
-    handleStart = (selectedPoint, event) => {
+    handleResizeStart = (selectedPoint, event) => {
         event.stopPropagation();
         let shape = { ...this.state.shape };
         let selectedPointIndex = shape.points.indexOf(selectedPoint);
+
         if (shape.type === tools.RECTANGLE) {
             let referencePointIndex = selectedPointIndex > 1 ? selectedPointIndex - 2 : selectedPointIndex + 2;
             let referencePointHelper = shape.points[referencePointIndex].split(',');
             let referencePoint = { x: referencePointHelper[0], y: referencePointHelper[1] };
-            this.setState({ shape, referencePoint });
-        } else {
-            this.setState({ selectedPointIndex });
+            return this.setState({ shape, referencePoint });
         }
+
+        if (shape.type === tools.ELLIPSE) {
+            let centerCoords = shape.points[0].split(',');
+            centerCoords = centerCoords.map(item => (Number)(item));
+            let rx = shape.points[1];
+            let ry = shape.points[2];
+            let referencePoint = { x: centerCoords[0] - rx, y: centerCoords[1] - ry };
+            return this.setState({ shape, referencePoint });
+        }
+
+        if (shape.type === tools.CIRCLE) {
+            let centerCoords = shape.points[0].split(',');
+            centerCoords = centerCoords.map(item => (Number)(item));
+            let radius = shape.points[1];
+            let referencePoint = { x: centerCoords[0] - radius, y: centerCoords[1] };
+            return this.setState({ shape, referencePoint });
+        }
+
+        return this.setState({ selectedPointIndex });
+
     };
 
-    handleDrag = (event) => {
+    handleResizeDrag = (axis, event) => {
         event.stopPropagation();
         const canvas = document.getElementById('Canvas').getBoundingClientRect();
         let newPoint = { x: event.clientX - canvas.left, y: event.clientY - canvas.top };
@@ -176,22 +202,64 @@ class Canvas extends Component {
         let points = [];
         if (shape.type === tools.RECTANGLE) {
             points = getControlPointsForRectangle(this.state.referencePoint, newPoint);
-        } else {
+        } else if (shape.type === tools.ELLIPSE) {
+            if (axis === 'x') {
+                newPoint.y = this.state.referencePoint.y + (shape.points[2] * 2);
+            } else {
+                newPoint.x = this.state.referencePoint.x + (shape.points[1] * 2);
+            }
+            points = getControlPointsForEllipse(this.state.referencePoint, newPoint);
+        } else if (shape.type === tools.CIRCLE) {
+            points = getControlPointsForCircle(this.state.referencePoint, newPoint);
+        }
+        else {
             points = [...shape.points];
             points[this.state.selectedPointIndex] = newPoint.x + ',' + newPoint.y;
-            if (this.state.selectedPointIndex === 0) {
+            if (this.state.shape.type !== tools.LINE && this.state.selectedPointIndex === 0) {
                 points[points.length - 1] = newPoint.x + ',' + newPoint.y;
             }
         }
 
         shape.points = points;
-        console.log(shape.points);
         this.setState({ shape });
     };
 
-    handleStop = (event) => {
+    handleResizeStop = (event) => {
         event.stopPropagation();
         this.props.updateShape({ ...this.state.shape });
+    };
+
+    handleMoveStart = (event) => {
+        event.stopPropagation();
+        const canvas = document.getElementById('Canvas').getBoundingClientRect();
+        let referencePoint = { x: event.clientX - canvas.left, y: event.clientY - canvas.top };
+        let pointsBeforeMoving = [...this.state.shape.points];
+        this.setState({ referencePoint, movingShapeStarted: true, pointsBeforeMoving });
+    };
+    handleMoveDrag = (event) => {
+        event.stopPropagation();
+        const canvas = document.getElementById('Canvas').getBoundingClientRect();
+        let newPoint = { x: event.clientX - canvas.left, y: event.clientY - canvas.top };
+        let shape = { ...this.state.shape };
+        shape.points = calculateNewShapePoints(this.state.referencePoint, newPoint, [...shape.points], shape.type);
+        this.setState({ shape, referencePoint: newPoint });
+    };
+    handleMoveStop = (event) => {
+        event.stopPropagation();
+        this.props.updateShape({ ...this.state.shape, });
+        this.setState({ movingShapeStarted: false })
+    };
+
+    updateShapeProperties = (attribute, value) => {
+        let shape = {
+            ...this.state.shape,
+            attributes: {
+                ...this.state.shape.attributes,
+                [attribute]: value
+            }
+        };
+        this.setState({shape});
+        this.props.updateShape(shape)
     };
 
     render() {
@@ -226,57 +294,71 @@ class Canvas extends Component {
                                     drawStarted={this.state.drawStarted} />
                                 <ShapeProperties
                                     mode={this.state.activeMode}
-                                    shape={this.state.shape} />
+                                    shape={this.state.shape}
+                                    updateShapeProps={this.updateShapeProperties} />
                             </div>
                             <div className='col-md-8 canvas__draw-wrapper'
                                 onClick={this.canvasEventHandler}
                                 onMouseDown={this.mouseDownHandler}
                                 onMouseUp={this.mouseUpHandler}
-                                onMouseMove={this.mouseMoveHandler}
-                            >
-                                <svg
-                                    width='100%' height='100%'
-                                    id='Canvas'>
+                                onMouseMove={this.mouseMoveHandler} >
+                                <svg style={{ border: '1px solid #ced4da' }} width='100%' height='100%' id='Canvas'>
                                     {/* Show saved shapes, except shape which you currently draw or have selected */}
-                                    {this.props.shapes.map((item, index) => {
+                                    {this.props.shapes.map((item, index) => { 
                                         if (item.id === this.state.shape.id) {
                                             return [];
                                         }
-                                        return <Shape type={item.type} key={item.id} onClickHandler={this.clickShapeHandler.bind(this, item)} points={item.points} />
+                                        return <Shape type={item.type} key={item.id} onClickHandler={this.clickShapeHandler.bind(this, item)} points={item.points} style={item.attributes} />
                                     })}
 
                                     {/* Show shape you currently manage */}
-                                    <Shape
+                                    {this.state.shape.id && <Shape
                                         type={this.state.shape.type}
-                                        points={this.state.shape.points}
+                                        points={this.state.movingShapeStarted ? this.state.pointsBeforeMoving : this.state.shape.points}
                                         onClickHandler={this.clickShapeHandler.bind(this, this.state.shape)}
                                         class='canvas__shape-selected'
-                                        style={this.state.shape.style} />
+                                        style={this.state.shape.attributes}
+                                        isDraggable={this.state.activeMode === mode.SELECT_MODE ? true : false}
+                                        position={{ x: 0, y: 0 }}
+                                        handleStart={this.handleMoveStart.bind(this)}
+                                        handleDrag={this.handleMoveDrag.bind(this)}
+                                        handleStop={this.handleMoveStop.bind(this)} />}
 
                                     {/* Show circle on first point of polygon in DRAW_MODE */}
                                     {this.state.activeMode === mode.DRAW_MODE && this.state.shape.type === tools.POLYGON &&
-                                        <Shape
-                                            type='ELLIPSE'
-                                            onClickHandler={this.closePolygonHandler}
-                                            points={[this.state.referencePoint.x, this.state.referencePoint.y, 10, 10]}
-                                            style={{ stroke: 'black', strokeWidth: '2px', fill: 'red', cursor: 'pointer' }} />}
+                                        <circle
+                                            onClick={this.closePolygonHandler}
+                                            cx={this.state.referencePoint.x} cy={this.state.referencePoint.y} r='10'
+                                            style={{ stroke: 'black', strokeWidth: '2', fill: 'red', cursor: 'pointer' }} />}
 
-                                    {/* Show small circles on control points of selected shape (RECTANGLE, TRIANGLE, POLYGON) in SELECT_MODE */}
-                                    {this.state.activeMode === mode.SELECT_MODE && (this.state.shape.type === tools.RECTANGLE || this.state.shape.type === tools.TRIANGLE || this.state.shape.type === tools.POLYGON) && this.state.shape.points.map((item, index) => {
-                                        //if (index === this.state.shape.points.length - 1) return [];
-                                        console.log(this.state.shape.points);
-                                        let points = item.split(',');
-                                        points[0] = (Number)(points[0]);
-                                        points[1] = (Number)(points[1]);
-                                        return <Draggable
-                                            key={index}
-                                            axis="both"
-                                            position={{ x: points[0], y: points[1] }}
-                                            onStart={this.handleStart.bind(this, item)}
-                                            onDrag={this.handleDrag}
-                                            onStop={this.handleStop}>
-                                            <circle style={{ cursor: 'pointer' }} cx='0' cy='0' r='5' stroke='black' strokeWidth='1px' fill='red' />
-                                        </Draggable>;
+                                    {/* Show small circles on control points of selected shape in SELECT_MODE */}
+                                    {this.state.activeMode === mode.SELECT_MODE && this.state.shape.points.map((item, index) => {
+                                        if (this.state.shape.type !== tools.LINE && index === this.state.shape.points.length - 1) {
+                                            return [];
+                                        }
+                                        let point = [];
+                                        let axis = 'both';
+                                        if (this.state.shape.type === tools.ELLIPSE || this.state.shape.type === tools.CIRCLE) {
+                                            point = this.state.shape.points[0].split(',');
+                                            point = point.map(item => (Number)(item));
+                                            let radius = this.state.shape.points[index + 1];
+                                            point[index] = point[index] + radius;
+                                            axis = index > 0 ? 'y' : 'x';
+                                        } else {
+                                            point = item.split(',');
+                                            point = point.map(item => (Number)(item));
+                                        }
+                                        return <Shape
+                                                key={index}
+                                                type={tools.CIRCLE}
+                                                points={['0,0', '5']}
+                                                style={{ stroke: 'black', strokeWidth: '1px', fill: 'red', cursor: 'pointer' }}
+                                                isDraggable={true}
+                                                axis={axis}
+                                                position={{ x: point[0], y: point[1] }}
+                                                handleStart={this.handleResizeStart.bind(this, item)}
+                                                handleDrag={this.handleResizeDrag.bind(this, axis)}
+                                                handleStop={this.handleResizeStop} />;
                                     })}
                                 </svg>
                             </div>
@@ -321,16 +403,77 @@ function getControlPointsForEllipse(referencePoint, newPoint) {
     if (referencePoint.y > newPoint.y) {
         cy = referencePoint.y - ry;
     }
-    let points = [cx, cy, rx, ry];
+
+    let centerCoords = cx + ',' + cy;
+    let points = [centerCoords, rx, ry];
+
+    return points;
+}
+
+function getControlPointsForCircle(referencePoint, newPoint) {
+    let r = Math.abs((newPoint.x - referencePoint.x) / 2);
+    let cx = newPoint.x - r;
+    if (referencePoint.x > newPoint.x) {
+        cx = referencePoint.x - r;
+    }
+    let cy = referencePoint.y;
+
+    let centerCoords = cx + ',' + cy;
+    let points = [centerCoords, r];
 
     return points;
 }
 
 function getControlPointsForLine(referencePoint, newPoint) {
-    let points = [referencePoint.x, referencePoint.y, newPoint.x, newPoint.y];
+    let point1 = referencePoint.x + ',' + referencePoint.y;
+    let point2 = newPoint.x + ',' + newPoint.y;
+    let points = [point1, point2];
 
     return points;
 }
+
+function calculateNewShapePoints(referencePoint, newPoint, points, shapeType) {
+    let distanceX = newPoint.x - referencePoint.x;
+    let distanceY = newPoint.y - referencePoint.y;
+    let newPoints = points.map((item, index) => {
+        if ((shapeType === tools.ELLIPSE || shapeType === tools.CIRCLE) && index > 0) {
+            return item;
+        }
+        let helper = item.split(',');
+        helper = helper.map(item => (Number)(item));
+        helper[0] = helper[0] + distanceX;
+        helper[1] = helper[1] + distanceY;
+        return helper.join(',');
+    });
+
+    return newPoints;
+}
+
+/*function resizeRectangle(oldPoints, newPoint, selectedPointIndex) {
+                    let points = [...oldPoints];
+    points[selectedPointIndex] = newPoint.x + ',' + newPoint.y;
+    if (selectedPointIndex === 0 || selectedPointIndex === 2) {
+                    let prevIndex = selectedPointIndex ? (points.length-2) : (selectedPointIndex-1);
+        let nextIndex = selectedPointIndex + 1;
+        let tmp = points[prevIndex].split(',');
+        points[prevIndex] = newPoint.x + ',' + tmp[1];
+        tmp = points[nextIndex].split(',');
+        points[nextIndex] = tmp[0] + ',' + newPoint.y;
+    } else {
+                    let prevIndex = selectedPointIndex - 1;
+        let nextIndex = selectedPointIndex + 1;
+        let tmp = points[prevIndex].split(',');
+        points[prevIndex] = tmp[0] + ',' + newPoint.y;
+        tmp = points[nextIndex].split(',');
+        points[nextIndex] = newPoint.x + ',' + tmp[1];
+    }
+
+    if (selectedPointIndex === 0) {
+                    points[points.length - 1] = points[0];
+                }
+
+    return points;
+}*/
 
 const mapStateToProps = state => {
     return {
