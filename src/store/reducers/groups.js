@@ -200,6 +200,39 @@ const groups = (state = initState, action) => {
             };
         }
 
+        case actionTypes.MOVE_SHAPE_TO_OTHER_GROUP: {
+            const newGroups = [...state.groups];
+            const indexInArray = newGroups.findIndex(group => {
+                return group.shapeIds.indexOf(action.shapeId) !== -1;
+            });
+
+            const indexOfShapeInArray = newGroups[indexInArray].shapeIds.indexOf(action.shapeId);
+            const splicedShapeIdsArray = [...newGroups[indexInArray].shapeIds];
+            splicedShapeIdsArray.splice(indexOfShapeInArray, 1);
+
+            const indexInArrayNewGroup = newGroups.findIndex(group => {
+                return group.id === Number.parseInt(action.newGroupId, 10);
+            });
+
+            newGroups[indexInArray] = {
+                ...newGroups[indexInArray],
+                shapeIds: splicedShapeIdsArray
+            }
+
+            newGroups[indexInArrayNewGroup] = {
+                ...newGroups[indexInArrayNewGroup],
+                shapeIds: [
+                    ...newGroups[indexInArrayNewGroup].shapeIds,
+                    action.shapeId
+                ]
+            }
+
+            return {
+                ...state,
+                groups: newGroups
+            };            
+        }
+
         default:
             return state;
     }

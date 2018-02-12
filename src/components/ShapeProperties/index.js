@@ -1,6 +1,7 @@
 import React from 'react';
-
+import { connect } from 'react-redux';
 import { mode } from '../../helper/canvasHelper';
+import { moveShapeOtherGroup } from '../../store/actions/actions';
 import './shape-properties.css';
 
 const ShapeProperties = (props) => {
@@ -57,14 +58,22 @@ const ShapeProperties = (props) => {
                 );
 
             case 'groupId':
+                let matchedGroup = props.groupsSettings.groups.find(group => {
+                    return group.shapeIds.indexOf(props.shape.id) !== -1;
+                });
+
                 return (
                     <div key='groupId' className='shape-properties-wrapper mb-2'>
                         <label>Group</label>
                         <select
                             className="form-control"
-                            value={props.shape.attributes.groupId}
-                            onChange={ev => props.updateShapeProps('groupId', ev.target.value)}>
-                            <option value='undefined'>No Group</option>
+                            value={matchedGroup.id}
+                            onChange={ev => props.moveShapeOtherGroup(props.shape.id, ev.target.value)} >
+                            {props.groupsSettings.groups.map(group => {
+                                return <option
+                                    key={group.id}
+                                    value={group.id}>{group.id} Group</option>
+                            })}
                         </select>
                     </div >
                 );
@@ -74,20 +83,32 @@ const ShapeProperties = (props) => {
         }
     }
 
-        return props.mode === mode.SELECT_MODE && props.shape.id ?
-            <div className='row shape-properties'>
-                <div className='col-md-12 mb-3'>
-                    <div className="alert alert-secondary m-0 p-1">
-                        Properties
+    return props.mode === mode.SELECT_MODE && props.shape.id ?
+        <div className='row shape-properties'>
+            <div className='col-md-12 mb-3'>
+                <div className="alert alert-secondary m-0 p-1">
+                    Properties
                     </div>
-                </div>
-                <div className='col-md-12 mb-3'>
-                    {Object.keys(props.shape.attributes).map(attribute => {
-                        return getPropertyType(attribute);
-                    })}
-                </div>
-            </div >
-            : null;
+            </div>
+            <div className='col-md-12 mb-3'>
+                {Object.keys(props.shape.attributes).map(attribute => {
+                    return getPropertyType(attribute);
+                })}
+            </div>
+        </div >
+        : null;
 };
 
-export default ShapeProperties;
+function mapStateToProps(state) {
+    return {
+        groupsSettings: state.groupsSettings
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        moveShapeOtherGroup: (shapeId, newGroupId) => dispatch(moveShapeOtherGroup(shapeId, newGroupId)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ShapeProperties);

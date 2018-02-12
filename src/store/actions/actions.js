@@ -134,12 +134,20 @@ const addShapeToGroup = (shapeId) => {
     }
 };
 
-const deleteShapeFromGroup = (shapeIds) => {
+const deleteShapeFromGroup = (shapeId) => {
     return {
         type: actionTypes.DELETE_SHAPE_FROM_GROUP,
-        shapeId: shapeIds
+        shapeId: shapeId
     }
 };
+
+const moveShapeOtherGroup = (shapeId, newGroupId) => {
+    return {
+        type: actionTypes.MOVE_SHAPE_TO_OTHER_GROUP,
+        shapeId: shapeId,
+        newGroupId: newGroupId
+    }
+}
 
 export {
     AsyncRegisterUser,
@@ -153,5 +161,6 @@ export {
     moveElement,
     selectElement,
     addShapeToGroup,
-    deleteShapeFromGroup
+    deleteShapeFromGroup,
+    moveShapeOtherGroup
 };
