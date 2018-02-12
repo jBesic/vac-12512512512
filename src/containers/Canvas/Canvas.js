@@ -88,7 +88,7 @@ class Canvas extends Component {
         }
     };
 
-    deleteShape = (shape) => {
+    deleteShape = (event, shape) => {
         this.props.deleteShape(shape);
         this.props.deleteShapeFromGroup(shape.id);
     };
@@ -130,6 +130,7 @@ class Canvas extends Component {
             let shape = { id: this.props.lastUsedId + 1, type: this.state.selectedTool, attributes: defaultShapeAttributes(this.state.selectedTool), points: [referencePoint.x + ',' + referencePoint.y], text: 'Some text goes here!' };
             this.setState({ shape, activeMode: mode.SELECT_MODE, selectedTool: tools.SELECT });
             this.props.addShape(shape);
+            this.props.addShapeToGroup(shape.id);
 
         }
     };

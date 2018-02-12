@@ -66,22 +66,22 @@ const Groups = function (props) {
             </div>
             <div className='col-md-12 text-right'>
                 <span
-                    onClick={() => { props.moveElementDispatch(actionTypes.SEND_ONE_LEVEL) }}
+                    onClick={() => { props.moveElementDispatch(actionTypes.BRING_ONE_LEVEL) }}
                     className='btn group-controll'>
                     <img alt='Controll button' title='Bring to front one level' className="img-fluid" src={moveUp} />
                 </span>
                 <span
-                    onClick={() => { props.moveElementDispatch(actionTypes.BRING_ONE_LEVEL) }}
+                    onClick={() => { props.moveElementDispatch(actionTypes.SEND_ONE_LEVEL) }}
                     className='btn group-controll'>
                     <img alt='Controll button' title='Send to back one level' className="img-fluid" src={moveDown} />
                 </span>
                 <span
-                    onClick={() => { props.moveElementDispatch(actionTypes.SEND_TO_BACK) }}
+                    onClick={() => { props.moveElementDispatch(actionTypes.BRING_TO_TOP) }}
                     className='btn group-controll'>
                     <img alt='Controll button' title='Bring in front of all groups' className="img-fluid" src={bringForward} />
                 </span>
                 <span
-                    onClick={() => { props.moveElementDispatch(actionTypes.BRING_TO_TOP) }}
+                    onClick={() => { props.moveElementDispatch(actionTypes.SEND_TO_BACK) }}
                     className='btn group-controll'>
                     <img alt='Controll button' title='Send behind all groups' className="img-fluid" src={sendToBack} />
                 </span>

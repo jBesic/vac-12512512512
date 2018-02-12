@@ -147,7 +147,14 @@ const moveShapeOtherGroup = (shapeId, newGroupId) => {
         shapeId: shapeId,
         newGroupId: newGroupId
     }
-}
+};
+
+const moveShapeElement = (type, shapeId) => {
+    return {
+        type: type,
+        shapeId: shapeId
+    }
+};
 
 export {
     AsyncRegisterUser,
@@ -162,5 +169,6 @@ export {
     selectElement,
     addShapeToGroup,
     deleteShapeFromGroup,
-    moveShapeOtherGroup
+    moveShapeOtherGroup,
+    moveShapeElement
 };

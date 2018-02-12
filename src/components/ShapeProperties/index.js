@@ -1,7 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
+
 import { mode, tools } from '../../helper/canvasHelper';
-import { moveShapeOtherGroup } from '../../store/actions/actions';
+import {
+    moveShapeOtherGroup,
+    moveShapeElement
+} from '../../store/actions/actions';
+import * as actionTypes from '../../store/actions/actionTypes';
+
+import bringForward from '../../assets/images/bring-to-forward.svg';
+import sendToBack from '../../assets/images/send-to-back.svg';
+import moveDown from '../../assets/images/move-down.svg';
+import moveUp from '../../assets/images/move-up.svg';
+
 import './shape-properties.css';
 
 const ShapeProperties = (props) => {
@@ -115,6 +126,28 @@ const ShapeProperties = (props) => {
                     Properties
                     </div>
             </div>
+            <div className='col-md-12 mb-3 text-right'>
+                <span
+                    onClick={() => { props.moveShapeElementDispatch(actionTypes.SHAPE_BRING_ONE_LEVEL, props.shape.id) }}
+                    className='btn group-controll'>
+                    <img alt='Controll button' title='Bring to front one level' className="img-fluid" src={moveUp} />
+                </span>
+                <span
+                    onClick={() => { props.moveShapeElementDispatch(actionTypes.SHAPE_SEND_ONE_LEVEL, props.shape.id) }}
+                    className='btn group-controll'>
+                    <img alt='Controll button' title='Send to back one level' className="img-fluid" src={moveDown} />
+                </span>
+                <span
+                    onClick={() => { props.moveShapeElementDispatch(actionTypes.SHAPE_BRING_TO_TOP, props.shape.id) }}
+                    className='btn group-controll'>
+                    <img alt='Controll button' title='Bring in front of all groups' className="img-fluid" src={bringForward} />
+                </span>
+                <span
+                    onClick={() => { props.moveShapeElementDispatch(actionTypes.SHAPE_SEND_TO_BACK, props.shape.id) }}
+                    className='btn group-controll'>
+                    <img alt='Controll button' title='Send behind all groups' className="img-fluid" src={sendToBack} />
+                </span>
+            </div>
             <div className='col-md-12 mb-3'>
                 {Object.keys(props.shape.attributes).map(attribute => {
                     return getPropertyType(attribute);
@@ -148,6 +181,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
+        moveShapeElementDispatch: (type, shapeId) => dispatch(moveShapeElement(type, shapeId)),
         moveShapeOtherGroup: (shapeId, newGroupId) => dispatch(moveShapeOtherGroup(shapeId, newGroupId)),
     }
 }

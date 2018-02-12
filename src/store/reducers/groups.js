@@ -24,7 +24,7 @@ const groups = (state = initState, action) => {
             };
         }
 
-        case actionTypes.BRING_ONE_LEVEL: {
+        case actionTypes.SEND_ONE_LEVEL: {
             const newGroups = [...state.groups];
             const indexInArray = newGroups.findIndex(group => {
                 return group.id === state.selectedGroupId;
@@ -50,7 +50,7 @@ const groups = (state = initState, action) => {
             };
         }
 
-        case actionTypes.SEND_ONE_LEVEL: {
+        case actionTypes.BRING_ONE_LEVEL: {
             const newGroups = [...state.groups];
             const indexInArray = newGroups.findIndex(group => {
                 return group.id === state.selectedGroupId;
@@ -76,7 +76,7 @@ const groups = (state = initState, action) => {
             };
         }
 
-        case actionTypes.BRING_TO_TOP: {
+        case actionTypes.SEND_TO_BACK: {
             const newGroups = [...state.groups];
             const indexInArray = newGroups.findIndex(group => {
                 return group.id === state.selectedGroupId;
@@ -100,7 +100,7 @@ const groups = (state = initState, action) => {
             };
         }
 
-        case actionTypes.SEND_TO_BACK: {
+        case actionTypes.BRING_TO_TOP: {
             const newGroups = [...state.groups];
             const indexInArray = newGroups.findIndex(group => {
                 return group.id === state.selectedGroupId;
@@ -230,7 +230,144 @@ const groups = (state = initState, action) => {
             return {
                 ...state,
                 groups: newGroups
-            };            
+            };
+        }
+
+        case actionTypes.SHAPE_SEND_ONE_LEVEL: {
+            const newGroups = [...state.groups];
+            const indexInArray = newGroups.findIndex(group => {
+                return group.id === state.selectedGroupId;
+            });
+
+            const newGroup = { ...newGroups[indexInArray] };
+            const shapeIndexInArray = newGroup.shapeIds.indexOf(action.shapeId);
+
+            if (shapeIndexInArray === 0) {
+                return state;
+            }
+
+            newGroups[indexInArray] = newGroup;
+            let shapeIds = [...newGroup.shapeIds];
+            const firstPortion = shapeIds.slice(0, shapeIndexInArray);
+            const secondPortion = shapeIds.slice(shapeIndexInArray, shapeIds.length);
+            const aboveElement = firstPortion.pop();
+            const selectedElement = secondPortion.shift();
+
+            shapeIds = [
+                ...firstPortion,
+                selectedElement,
+                aboveElement,
+                ...secondPortion
+            ];
+
+            newGroup.shapeIds = shapeIds;
+            return {
+                ...state,
+                groups: [
+                    ...newGroups
+                ]
+            };
+        }
+
+        case actionTypes.SHAPE_BRING_ONE_LEVEL: {
+            const newGroups = [...state.groups];
+            const indexInArray = newGroups.findIndex(group => {
+                return group.id === state.selectedGroupId;
+            });
+
+            const newGroup = { ...newGroups[indexInArray] };
+            const shapeIndexInArray = newGroup.shapeIds.indexOf(action.shapeId);
+            if (shapeIndexInArray === newGroup.shapeIds.length - 1) {
+                return state;
+            }
+
+            newGroups[indexInArray] = newGroup;
+            let shapeIds = [...newGroup.shapeIds];
+            const firstPortion = shapeIds.slice(0, shapeIndexInArray);
+            const secondPortion = shapeIds.slice(shapeIndexInArray, shapeIds.length);
+            const selectedElement = secondPortion.shift();
+            const behindElement = secondPortion.shift();
+
+            shapeIds = [
+                ...firstPortion,
+                behindElement,
+                selectedElement,
+                ...secondPortion
+            ];
+
+            newGroup.shapeIds = shapeIds;
+            return {
+                ...state,
+                groups: [
+                    ...newGroups
+                ]
+            };
+        }
+
+        case actionTypes.SHAPE_BRING_TO_TOP: {
+            const newGroups = [...state.groups];
+            const indexInArray = newGroups.findIndex(group => {
+                return group.id === state.selectedGroupId;
+            });
+
+            const newGroup = { ...newGroups[indexInArray] };
+            const shapeIndexInArray = newGroup.shapeIds.indexOf(action.shapeId);
+            if (shapeIndexInArray === newGroup.shapeIds.length - 1) {
+                return state;
+            }
+
+            newGroups[indexInArray] = newGroup;
+            let shapeIds = [...newGroup.shapeIds];
+            const firstPortion = shapeIds.slice(0, shapeIndexInArray);
+            const secondPortion = shapeIds.slice(shapeIndexInArray, shapeIds.length);
+            const selectedElement = secondPortion.shift();
+
+            shapeIds = [
+                ...firstPortion,
+                ...secondPortion,
+                selectedElement
+            ];
+
+            newGroup.shapeIds = shapeIds;
+            return {
+                ...state,
+                groups: [
+                    ...newGroups
+                ]
+            };
+        }
+
+        case actionTypes.SHAPE_SEND_TO_BACK: {
+            const newGroups = [...state.groups];
+            const indexInArray = newGroups.findIndex(group => {
+                return group.id === state.selectedGroupId;
+            });
+
+            const newGroup = { ...newGroups[indexInArray] };
+            const shapeIndexInArray = newGroup.shapeIds.indexOf(action.shapeId);
+            if (shapeIndexInArray === 0) {
+                return state;
+            }
+
+            newGroups[indexInArray] = newGroup;
+            let shapeIds = [...newGroup.shapeIds];
+            const firstPortion = shapeIds.slice(0, shapeIndexInArray);
+            const secondPortion = shapeIds.slice(shapeIndexInArray, shapeIds.length);
+            const selectedElement = secondPortion.shift();
+
+            shapeIds = [
+                selectedElement,
+                ...firstPortion,
+                ...secondPortion
+            ];
+
+            newGroup.shapeIds = shapeIds;
+            return {
+                ...state,
+                groups: [
+                    ...newGroups
+                ]
+            };
         }
 
         default:
