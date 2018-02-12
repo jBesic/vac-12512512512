@@ -412,7 +412,10 @@ class Canvas extends Component {
                                 </div>
                             </div>
                             <div className='col-md-2 canvas__groups'>
-                                <Groups shape={this.state.shape} />
+                                <Groups
+                                    activeMode={this.state.activeMode}
+                                    unselectShapeHandler={this.unselectShapeHandler}
+                                    shape={this.state.shape} />
                             </div>
                         </div>
                     </div>
