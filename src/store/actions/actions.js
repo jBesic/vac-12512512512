@@ -31,7 +31,7 @@ const AsyncRegisterUser = function (userName, password) {
                 const token = response.data.data;
                 localStorage.setItem('token', token);
                 dispatch(registerSuccess(token));
-                dispatch(AuthenticationModal(false));
+                dispatch(AuthenticationModal());
             }).catch(error => {
                 dispatch(registerFailure(error.response.data.message));
             });
@@ -68,7 +68,7 @@ const AsyncLoginUser = function (userName, password) {
                 const token = response.data.data;
                 localStorage.setItem('token', token);
                 dispatch(loginSuccess(token));
-                dispatch(AuthenticationModal(false));
+                dispatch(AuthenticationModal());
             }).catch(error => {
                 dispatch(loginFailure(error.response.data.message));
             });
@@ -104,14 +104,13 @@ const AsyncLogoutUser = function (token) {
             .then(response => {
                 localStorage.removeItem('token');
                 dispatch(logoutSuccess(token));
-                dispatch(AuthenticationModal(false));
+                dispatch(AuthenticationModal());
             }).catch(error => {
                 dispatch(logoutFailure(error.response.data.message));
             });
     }
 }
 
-// Authentication modal
 const AuthenticationModal = function (component, show) {
     return {
         type: actionTypes.AUTHENTICATION_MODAL,
@@ -119,6 +118,51 @@ const AuthenticationModal = function (component, show) {
         show: show
     }
 };
+
+// Create/Edit competition
+const createEditCompetitionModal = function (component, show) {
+    return {
+        type: actionTypes.CREATE_EDIT_COMPETITION_MODAL,
+        component: component,
+        show: show
+    }
+};
+
+const createEditCompetitionRequest = function () {
+    return {
+        type: actionTypes.CREATE_EDIT_COMPETITION_REQUEST
+    }
+};
+
+const createEditCompetitionSuccess = function (competition) {
+    return {
+        type: actionTypes.CREATE_EDIT_COMPETITION_SUCCESS,
+        competition: competition
+    }
+};
+
+const createEditCompetitionFailure = function (message) {
+    return {
+        type: actionTypes.CREATE_EDIT_COMPETITION_FAILURE,
+        message: message
+    }
+};
+
+const AsyncCreateEditCompetition = function (competitonData) {
+    return dispatch => {
+        dispatch(createEditCompetitionRequest());
+
+        vacApi.saveCompetition(competitonData)
+            .then(response => {
+                dispatch(createEditCompetitionSuccess({ ...response.data.data }));
+                dispatch(createEditCompetitionModal());
+            }).catch(error => {
+                dispatch(createEditCompetitionFailure(error.response.data.message));
+            });
+    }
+}
+
+
 
 const addShape = (shape) => {
     return {
@@ -216,5 +260,7 @@ export {
     moveShapeOtherGroup,
     moveShapeElement,
     undo,
-    redo
+    redo,
+    AsyncCreateEditCompetition,
+    createEditCompetitionModal
 };
