@@ -111,7 +111,6 @@ const AsyncLogoutUser = function (token) {
     }
 }
 
-// Authentication modal
 const AuthenticationModal = function (component, show) {
     return {
         type: actionTypes.AUTHENTICATION_MODAL,
@@ -119,6 +118,51 @@ const AuthenticationModal = function (component, show) {
         show: show
     }
 };
+
+// Create/Edit competition
+const createEditCompetitionModal = function (component, show) {
+    return {
+        type: actionTypes.CREATE_EDIT_COMPETITION_MODAL,
+        component: component,
+        show: show
+    }
+};
+
+const createEditCompetitionRequest = function () {
+    return {
+        type: actionTypes.CREATE_EDIT_COMPETITION_REQUEST
+    }
+};
+
+const createEditCompetitionSuccess = function (token) {
+    return {
+        type: actionTypes.CREATE_EDIT_COMPETITION_SUCCESS,
+        token: token
+    }
+};
+
+const createEditCompetitionFailure = function (message) {
+    return {
+        type: actionTypes.CREATE_EDIT_COMPETITION_FAILURE,
+        message: message
+    }
+};
+
+const AsyncCreateEditCompetition = function (competitonData) {
+    return dispatch => {
+        dispatch(createEditCompetitionRequest());
+
+        vacApi.saveCompetition(competitonData)
+            .then(response => {
+                dispatch(createEditCompetitionSuccess());
+                // dispatch(asyncEnd());
+            }).catch(error => {
+                dispatch(createEditCompetitionFailure(error.response.data.message));
+            });
+    }
+}
+
+
 
 const addShape = (shape) => {
     return {
@@ -218,5 +262,7 @@ export {
     addShapeToGroup,
     deleteShapeFromGroup,
     moveShapeOtherGroup,
-    moveShapeElement
+    moveShapeElement,
+    AsyncCreateEditCompetition,
+    createEditCompetitionModal
 };
