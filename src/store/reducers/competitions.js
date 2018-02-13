@@ -1,7 +1,7 @@
 import * as actionTypes from '../actions/actionTypes'
 
 const INITIAL_STATE = {
-    createCompetition: true,
+    createCompetition: false,
     editCompetition: false,
     isFetching: false,
     message: '',

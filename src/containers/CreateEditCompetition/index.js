@@ -36,7 +36,7 @@ class CreateEditCompetition extends Component {
         return (
             <form className='d-block w-100' onSubmit={this.submitHandler}>
                 {this.props.competitions.message ? <div className="alert alert-danger">{this.props.competitions.message}</div> : null}
-                <h4 className="mb-4">Create/Edit competition</h4>
+                <h4 className="mb-4">{this.props.competitions.createCompetition ? 'Create' : 'Edit'} competition</h4>
                 <div className="form-group">
                     <label htmlFor="competitionName">Competition name</label>
                     <input
@@ -103,7 +103,7 @@ class CreateEditCompetition extends Component {
                 <button
                     disabled={isInvalid}
                     type="submit"
-                    className="btn btn-block btn-primary vac-btn-primary">Save</button>
+                    className="btn btn-block btn-primary vac-btn-primary">{this.props.competitions.createCompetition ? 'Create' : 'Update'}</button>
             </form>
         );
     }
