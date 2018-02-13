@@ -11,6 +11,9 @@ const canvas = (state = initState, action) => {
         case actionTypes.UPDATE_SHAPE: return addUpdateShape(state, action.shape);
         case actionTypes.DELETE_SHAPE: return deleteShape(state, action.shape);
         case actionTypes.DELETE_SHAPES: return deleteShapes(state, action.shapeIds);
+        case actionTypes.UNDO: return undo(state);
+        case actionTypes.REDO: return redo(state);
+        case actionTypes.UPDATE_HISTORY: return updateHistory(state);
         default:
             return {
                 ...state
@@ -19,6 +22,18 @@ const canvas = (state = initState, action) => {
 }
 
 export default canvas;
+
+let history = [initState];
+let historyIndex = 0;
+
+function updateHistory(state) {
+    if (historyIndex < history.length - 1) {
+        history.splice(historyIndex + 1, history.length - historyIndex + 1);
+    }
+    history.push({ ...state });
+    historyIndex++;
+    return state;
+};
 
 function addUpdateShape(state, shape) {
     let shapes = [...state.shapes];
@@ -29,12 +44,14 @@ function addUpdateShape(state, shape) {
         newShapes.sort(function (prevShape, nextShape) {
             return prevShape.id - nextShape.id;
         });
+
         return {
             ...state,
             shapes: newShapes
         };
     }
     shapes.push(shape);
+
     return {
         ...state,
         shapes,
@@ -59,4 +76,22 @@ function deleteShapes(state, shapeIds) {
         ...state,
         shapes
     }
+}
+
+function undo() {
+    let state = history[historyIndex];
+    if (historyIndex > 0) {
+        historyIndex--;
+        state = history[historyIndex];
+    }
+    return state;
+}
+
+function redo() {
+    let state = history[historyIndex];
+    if (historyIndex < history.length - 1) {
+        historyIndex++;
+        state = history[historyIndex];
+    }
+    return state;
 }

@@ -27,13 +27,17 @@ const DRAW_MODE = 'DRAW_MODE';
 const DELETE_MODE = 'DELETE_MODE';
 const PAINT_MODE = 'PAINT_MODE';
 const TEXT_MODE = 'TEXT_MODE';
+const UNDO_MODE = 'UNDO_MODE';
+const REDO_MODE = 'REDO_MODE';
 
 export const mode = {
     SELECT_MODE,
     DRAW_MODE,
     DELETE_MODE,
     PAINT_MODE,
-    TEXT_MODE
+    TEXT_MODE,
+    UNDO_MODE,
+    REDO_MODE
 };
 
 export const defaultShapeAttributes = function (shapeType) {

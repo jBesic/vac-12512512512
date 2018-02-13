@@ -11,8 +11,20 @@ const initState = {
     ]
 };
 
+let history = [initState];
+let historyIndex = 0;
+function updateHistory(state) {
+    if (historyIndex < history.length-1) {
+        history.splice(historyIndex+1, history.length - historyIndex + 1);
+    }
+    history.push({ ...state });
+    historyIndex++;
+    return state;
+};
+
 const groups = (state = initState, action) => {
     switch (action.type) {
+        case actionTypes.UPDATE_HISTORY: return updateHistory(state);
         case actionTypes.SELECT_ELEMENT: {
             if (state.selectedGroupId === action.elementId) {
                 return state;
@@ -123,7 +135,6 @@ const groups = (state = initState, action) => {
                 ]
             };
         }
-
         case actionTypes.ADD_GROUP: {
             const newGroups = [...state.groups];
             const lastUsedId = newGroups.reduce((accumulator, currentValue) => {
@@ -159,7 +170,7 @@ const groups = (state = initState, action) => {
             };
         }
 
-        case actionTypes.ADD_SHAPE_TO_GROUP: {
+        case actionTypes.ADD_SHAPE: {
             const newGroups = [...state.groups];
             const indexInArray = newGroups.findIndex(group => {
                 return group.id === state.selectedGroupId;
@@ -169,7 +180,7 @@ const groups = (state = initState, action) => {
                 ...newGroups[indexInArray],
                 shapeIds: [
                     ...newGroups[indexInArray].shapeIds,
-                    action.shapeId
+                    action.shape.id
                 ]
             };
 
@@ -179,13 +190,13 @@ const groups = (state = initState, action) => {
             };
         }
 
-        case actionTypes.DELETE_SHAPE_FROM_GROUP: {
+        case actionTypes.DELETE_SHAPE: {
             const newGroups = [...state.groups];
             const indexInArray = newGroups.findIndex(group => {
-                return group.shapeIds.indexOf(action.shapeId) !== -1;
+                return group.shapeIds.indexOf(action.shape.id) !== -1;
             });
 
-            const indexOfShapeInArray = newGroups[indexInArray].shapeIds.indexOf(action.shapeId);
+            const indexOfShapeInArray = newGroups[indexInArray].shapeIds.indexOf(action.shape.id);
             const splicedShapeIdsArray = [...newGroups[indexInArray].shapeIds];
             splicedShapeIdsArray.splice(indexOfShapeInArray, 1);
 
@@ -370,10 +381,29 @@ const groups = (state = initState, action) => {
                 ]
             };
         }
-
+        case actionTypes.UNDO: return undo(state);
+        case actionTypes.REDO: return redo(state);
         default:
             return state;
     }
 };
+
+function undo() {
+    let state = history[historyIndex];
+    if (historyIndex > 0) {
+        historyIndex--;
+        state = history[historyIndex];
+    } 
+    return state;
+}
+
+function redo() {
+    let state = history[historyIndex];
+    if (historyIndex < history.length-1) {
+        historyIndex++;
+        state = history[historyIndex];
+    } 
+    return state;
+}
 
 export default groups;
