@@ -7,7 +7,7 @@ const INITIAL_STATE = {
     message: '',
 };
 
-function registerUser(state = INITIAL_STATE, action) {
+function competitions(state = INITIAL_STATE, action) {
     switch (action.type) {
         case actionTypes.CREATE_EDIT_COMPETITION_MODAL:
             return {
@@ -43,4 +43,4 @@ function registerUser(state = INITIAL_STATE, action) {
     }
 }
 
-export default registerUser;
+export default competitions;
