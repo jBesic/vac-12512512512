@@ -24,6 +24,26 @@ class Canvas extends Component {
         selectedBucketColor: '#FFFFFF'
     };
 
+    componentWillReceiveProps = (nextProps) => {
+        if ((this.state.activeMode === mode.UNDO_MODE || this.state.activeMode === mode.REDO_MODE) && nextProps.shapes.length) {
+            let lastShape = nextProps.shapes[nextProps.shapes.length - 1];
+            if (lastShape.type === tools.POLYGON && lastShape.points.length > 1 && lastShape.points[0] !== lastShape.points[lastShape.points.length - 1]) {
+                let point = lastShape.points[0].split(',');
+                let referencePoint = { x: point[0], y: point[1] };
+                this.setState({
+                    activeMode: mode.DRAW_MODE,
+                    shape: lastShape,
+                    selectedTool: lastShape.type,
+                    drawStarted: true,
+                    referencePoint,
+                    mouseMoveEventNeeded: false
+                });
+            } else {
+                this.setState({ shape: { type: null, points: [], text: '' }, drawStarted: false, activeMode: mode.SELECT_MODE, selectedTool: tools.SELECT, mouseMoveEventNeeded: false });
+            }
+        }
+    };
+
     mouseDownHandler = (event) => {
         if (this.state.mouseMoveEventNeeded === true && this.state.drawStarted === false) {
             const canvas = document.getElementById('Canvas').getBoundingClientRect();
@@ -67,9 +87,10 @@ class Canvas extends Component {
 
     mouseUpHandler = (event) => {
         if (this.state.mouseMoveEventNeeded === true && this.state.drawStarted === true) {
+            if (this.state.shape.points.length) {
+                this.props.addShape(this.state.shape);
+            }
             this.setState({ shape: { id: null, points: [], attributes: defaultShapeAttributes(this.state.shape.type) }, drawStarted: false });
-            this.props.addShape(this.state.shape);
-            this.props.addShapeToGroup(this.state.shape.id);
         }
     };
 
@@ -103,7 +124,6 @@ class Canvas extends Component {
 
     deleteShape = (event, shape) => {
         this.props.deleteShape(shape);
-        this.props.deleteShapeFromGroup(shape.id);
     };
 
     selectShape = (event, shape) => {
@@ -135,7 +155,6 @@ class Canvas extends Component {
                 shape.points.push(referencePoint.x + ',' + referencePoint.y);
                 this.setState({ drawStarted: true, referencePoint, shape });
                 this.props.addShape(shape);
-                this.props.addShapeToGroup(shape.id);
             }
         }
         if (this.state.activeMode === mode.TEXT_MODE) {
@@ -143,7 +162,6 @@ class Canvas extends Component {
             let shape = { id: this.props.lastUsedId + 1, type: this.state.selectedTool, attributes: defaultShapeAttributes(this.state.selectedTool), points: [referencePoint.x + ',' + referencePoint.y], text: 'Some text goes here!' };
             this.setState({ shape, activeMode: mode.SELECT_MODE, selectedTool: tools.SELECT });
             this.props.addShape(shape);
-            this.props.addShapeToGroup(shape.id);
 
         }
     };
@@ -303,6 +321,16 @@ class Canvas extends Component {
         this.props.updateShape(shape);
     };
 
+    undoRedoHandler = (action) => {
+        if (action === 'undo') {
+            this.setState({ activeMode: mode.UNDO_MODE });
+            setTimeout(() => this.props.undo(), 10);
+        } else {
+            this.setState({ activeMode: mode.REDO_MODE });
+            setTimeout(() => this.props.redo(), 10);
+        }
+    };
+
     render() {
         return (
             <div className='container'>
@@ -328,18 +356,38 @@ class Canvas extends Component {
                         {/* *** Canvas Content Body  *** */}
                         <div className='row canvas__content-body mt-10'>
                             <div className='col-md-2 canvas__toolbox'>
-                                <Toolbox
-                                    onClick={this.unselectShapeHandler}
-                                    selectedTool={this.state.selectedTool}
-                                    selectToolHandler={this.selectToolHandler}
-                                    drawStarted={this.state.drawStarted} />
-                                <ShapeProperties
-                                    mode={this.state.activeMode}
-                                    shape={this.state.shape}
-                                    updateShapeProps={this.updateShapeProperties}
-                                    selectedColor={this.state.selectedBucketColor}
-                                    changeBucketColor={this.changeBucketColorHandler}
-                                    changeText={this.changeTextHandler} />
+                                <div className='row'>
+                                    <div className='col-md-12'>
+                                        <Toolbox
+                                            onClick={this.unselectShapeHandler}
+                                            selectedTool={this.state.selectedTool}
+                                            selectToolHandler={this.selectToolHandler}
+                                            drawStarted={this.state.drawStarted} /></div>
+                                </div>
+                                <div className='row'>
+                                    <div className='col-md-12'>
+                                        <div className='card mt-3'>
+                                            <div className='card-body pt-2 pb-2'>
+                                                <div className='row'>
+                                                    <div className='col-md-6'><i className='fa fa-undo fa-lg text-info' onClick={() => this.undoRedoHandler('undo')} style={{ cursor: 'pointer' }}></i></div>
+                                                    <div className='col-md-6'><i className='fa fa-repeat fa-lg text-info' onClick={() => this.undoRedoHandler('redo')} style={{ cursor: 'pointer' }}></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className='row'>
+                                    <div className='col-md-12'>
+                                        <ShapeProperties
+                                            mode={this.state.activeMode}
+                                            shape={this.state.shape}
+                                            updateShapeProps={this.updateShapeProperties}
+                                            selectedColor={this.state.selectedBucketColor}
+                                            changeBucketColor={this.changeBucketColorHandler}
+                                            changeText={this.changeTextHandler} />
+                                    </div>
+                                </div>
                             </div>
                             <div className='col-md-8'
                                 onClick={this.canvasEventHandler}
@@ -425,32 +473,6 @@ class Canvas extends Component {
     };
 };
 
-/*function resizeRectangle(oldPoints, newPoint, selectedPointIndex) {
-                    let points = [...oldPoints];
-    points[selectedPointIndex] = newPoint.x + ',' + newPoint.y;
-    if (selectedPointIndex === 0 || selectedPointIndex === 2) {
-                    let prevIndex = selectedPointIndex ? (points.length-2) : (selectedPointIndex-1);
-        let nextIndex = selectedPointIndex + 1;
-        let tmp = points[prevIndex].split(',');
-        points[prevIndex] = newPoint.x + ',' + tmp[1];
-        tmp = points[nextIndex].split(',');
-        points[nextIndex] = tmp[0] + ',' + newPoint.y;
-    } else {
-                    let prevIndex = selectedPointIndex - 1;
-        let nextIndex = selectedPointIndex + 1;
-        let tmp = points[prevIndex].split(',');
-        points[prevIndex] = tmp[0] + ',' + newPoint.y;
-        tmp = points[nextIndex].split(',');
-        points[nextIndex] = newPoint.x + ',' + tmp[1];
-    }
-
-    if (selectedPointIndex === 0) {
-                    points[points.length - 1] = points[0];
-                }
-
-    return points;
-}*/
-
 const mapStateToProps = state => {
     const sortedShapes = state.groupsSettings.groups.reduce((accumulated, group) => {
         return [...accumulated, ...group.shapeIds]
@@ -473,9 +495,9 @@ const mapDispatchToProps = dispatch => {
         addShape: (shape) => dispatch(actions.addShape(shape)),
         updateShape: (shape) => dispatch(actions.updateShape(shape)),
         deleteShape: (shape) => dispatch(actions.deleteShape(shape)),
-        addShapeToGroup: (shapeId) => dispatch(actions.addShapeToGroup(shapeId)),
-        deleteShapeFromGroup: (shapeId) => dispatch(actions.deleteShapeFromGroup(shapeId)),
         selectElementDispatch: (elementId) => dispatch(actions.selectElement(elementId)),
+        undo: () => dispatch(actions.undo()),
+        redo: () => dispatch(actions.redo())
     }
 }
 
