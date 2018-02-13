@@ -11,9 +11,15 @@ import './assets/styles/main.css';
 import reducers from './store/reducers';
 import App from './components/App';
 
+const customMiddleWare = store => next => action => {
+    next(action);
+    if (action.type === 'UNDO' || action.type === 'REDO') return;
+    next({type: 'UPDATE_HISTORY'});
+  }
+
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(freezeState(reducers), composeEnhancers(
-    applyMiddleware(reduxThunk)
+    applyMiddleware(reduxThunk, customMiddleWare)
 ));
 
 ReactDOM.render(

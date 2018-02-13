@@ -173,20 +173,6 @@ const selectElement = (elementId) => {
     }
 };
 
-const addShapeToGroup = (shapeId) => {
-    return {
-        type: actionTypes.ADD_SHAPE_TO_GROUP,
-        shapeId: shapeId
-    }
-};
-
-const deleteShapeFromGroup = (shapeId) => {
-    return {
-        type: actionTypes.DELETE_SHAPE_FROM_GROUP,
-        shapeId: shapeId
-    }
-};
-
 const moveShapeOtherGroup = (shapeId, newGroupId) => {
     return {
         type: actionTypes.MOVE_SHAPE_TO_OTHER_GROUP,
@@ -202,6 +188,18 @@ const moveShapeElement = (type, shapeId) => {
     }
 };
 
+const undo = () => {
+    return {
+        type: actionTypes.UNDO
+    }
+}
+
+const redo = () => {
+    return {
+        type: actionTypes.REDO
+    }
+}
+
 export {
     AsyncRegisterUser,
     AsyncLogoutUser,
@@ -215,8 +213,8 @@ export {
     deleteGroup,
     moveElement,
     selectElement,
-    addShapeToGroup,
-    deleteShapeFromGroup,
     moveShapeOtherGroup,
-    moveShapeElement
+    moveShapeElement,
+    undo,
+    redo
 };
