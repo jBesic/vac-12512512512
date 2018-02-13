@@ -53,7 +53,7 @@ const Navigation = function (props) {
                                 <button
                                     type='button'
                                     className="btn btn-link nav-link"
-                                    onClick={() => props.logout(localStorage.getItem('token'))}>Logout</button>
+                                    onClick={() => props.logout()}>Logout</button>
                             </li>
                     }
                 </ul>
