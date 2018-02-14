@@ -1,5 +1,6 @@
 import * as actionTypes from './actionTypes';
 import * as vacApi from '../../vacApi';
+import {toastr} from 'react-redux-toastr';
 
 // Register
 const registerRequest = function () {
@@ -32,6 +33,7 @@ const AsyncRegisterUser = function (userName, password) {
                 localStorage.setItem('token', token);
                 dispatch(registerSuccess(token));
                 dispatch(AuthenticationModal(false));
+                toastr.info('Welcome, ', userName);
             }).catch(error => {
                 dispatch(registerFailure(error.response.data.message));
             });
@@ -59,7 +61,7 @@ const loginFailure = function (message) {
     }
 };
 
-const AsyncLoginUser = function (userName, password) {
+const AsyncLoginUser = function (userName, password, payload = null) {
     return dispatch => {
         dispatch(loginRequest());
 
@@ -69,6 +71,10 @@ const AsyncLoginUser = function (userName, password) {
                 localStorage.setItem('token', token);
                 dispatch(loginSuccess(token));
                 dispatch(AuthenticationModal(false));
+                toastr.info('Welcome, ' + userName);
+                if (payload) {
+                    dispatch(AsyncSaveDrawing(payload));
+                }
             }).catch(error => {
                 dispatch(loginFailure(error.response.data.message));
             });
@@ -112,13 +118,60 @@ const AsyncLogoutUser = function (token) {
 }
 
 // Authentication modal
-const AuthenticationModal = function (component, show) {
+const AuthenticationModal = function (component, show, message = null, payload = null) {
     return {
         type: actionTypes.AUTHENTICATION_MODAL,
+        component: component,
+        show: show,
+        message: message,
+        payload: payload
+    }
+};
+
+// Create/Edit competition
+const createEditCompetitionModal = function (component, show) {
+    return {
+        type: actionTypes.CREATE_EDIT_COMPETITION_MODAL,
         component: component,
         show: show
     }
 };
+
+const createEditCompetitionRequest = function () {
+    return {
+        type: actionTypes.CREATE_EDIT_COMPETITION_REQUEST
+    }
+};
+
+const createEditCompetitionSuccess = function (token) {
+    return {
+        type: actionTypes.CREATE_EDIT_COMPETITION_SUCCESS,
+        token: token
+    }
+};
+
+const createEditCompetitionFailure = function (message) {
+    return {
+        type: actionTypes.CREATE_EDIT_COMPETITION_FAILURE,
+        message: message
+    }
+};
+
+const AsyncCreateEditCompetition = function (competitonData) {
+    return dispatch => {
+        dispatch(createEditCompetitionRequest());
+
+        vacApi.saveCompetition(competitonData)
+            .then(response => {
+                dispatch(createEditCompetitionSuccess());
+                // dispatch(asyncEnd());
+            }).catch(error => {
+                dispatch(createEditCompetitionFailure(error.response.data.message));
+            });
+    }
+}
+
+
 
 const addShape = (shape) => {
     return {
@@ -200,6 +253,53 @@ const redo = () => {
     }
 }
 
+const setDrawingRequest = function () {
+    return {
+        type: actionTypes.SET_DRAWING_REQUEST
+    }
+};
+
+const drawingRequestSuccess = function (token) {
+    return {
+        type: actionTypes.DRAWING_REQUEST_SUCCESS,
+        token: token
+    }
+};
+
+const drawingRequestFailure = function (message) {
+    return {
+        type: actionTypes.DRAWING_REQUEST_FAILURE,
+        message: message
+    }
+};
+
+const AsyncSaveDrawing = function (drawing) {
+    return dispatch => {
+        dispatch(setDrawingRequest());
+        vacApi.saveDrawing(drawing)
+            .then(response => {
+                dispatch(drawingRequestSuccess());
+                dispatch(resetCanvasGlobalState());
+                toastr.success('Saved successfully.');
+            }).catch(error => {
+                dispatch(drawingRequestFailure(error.response.data.message));
+            });
+    }
+}
+
+const resetCanvasGlobalState = () => {
+    return {
+        type: actionTypes.RESET_CANVAS_GLOBAL_STATE
+    };
+}
+
+const updateResetCanvasLocalStateField = (val) => {
+    return {
+        type: actionTypes.UPDATE_RESET_CANVAS_LOCAL_STATE_FIELD,
+        value: val
+    };
+}
+
 export {
     AsyncRegisterUser,
     AsyncLogoutUser,
@@ -216,5 +316,9 @@ export {
     moveShapeOtherGroup,
     moveShapeElement,
     undo,
-    redo
+    redo,
+    AsyncCreateEditCompetition,
+    createEditCompetitionModal,
+    AsyncSaveDrawing,
+    updateResetCanvasLocalStateField
 };

@@ -22,12 +22,45 @@ const register = function (username, password) {
         }
     });
 };
-const logout = function (token) {
+const logout = function () {
     return axios({
         method: 'post',
         url: API_ENDPOINT + '/logout',
         headers: {
-            'X-Auth-Token': token
+            'X-Auth-Token': localStorage.getItem('token')
+        }
+    });
+};
+
+const saveCompetition = function (data) {
+    return axios({
+        method: 'post',
+        url: API_ENDPOINT + '/competition',
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
+        },
+        data: {
+            name: data.competitionName,
+            topic: data.competitionTopic,
+            startDate: data.startDateTime,
+            endDate: data.competitionDuration,
+            votingStartDate: data.drawingTime,
+            votingEndDate: data.votingTime,            
+        }
+    });
+};
+
+const saveDrawing = function (data) {
+    console.log(data);
+    return axios({
+        method: 'post',
+        url: API_ENDPOINT + '/drawing',
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
+        },
+        data: {
+            name: data.name,
+            shapes: data.shapes            
         }
     });
 };
@@ -35,5 +68,7 @@ const logout = function (token) {
 export {
     register,
     login,
-    logout
+    logout,
+    saveCompetition,
+    saveDrawing
 };

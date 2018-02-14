@@ -22,9 +22,18 @@ function updateHistory(state) {
     return state;
 };
 
+function resetCanvasGlobalState() {
+    let state = initState;
+    history = [initState];
+    historyIndex = 0;
+
+    return state;
+}
+
 const groups = (state = initState, action) => {
     switch (action.type) {
         case actionTypes.UPDATE_HISTORY: return updateHistory(state);
+        case actionTypes.RESET_CANVAS_GLOBAL_STATE: return resetCanvasGlobalState();
         case actionTypes.SELECT_ELEMENT: {
             if (state.selectedGroupId === action.elementId) {
                 return state;

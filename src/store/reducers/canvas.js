@@ -2,7 +2,8 @@ import * as actionTypes from '../actions/actionTypes';
 
 const initState = {
     shapes: [],
-    lastUsedId: 0
+    lastUsedId: 0,
+    resetCanvasLocalState: false
 };
 
 const canvas = (state = initState, action) => {
@@ -14,6 +15,9 @@ const canvas = (state = initState, action) => {
         case actionTypes.UNDO: return undo(state);
         case actionTypes.REDO: return redo(state);
         case actionTypes.UPDATE_HISTORY: return updateHistory(state);
+        case actionTypes.RESET_CANVAS_GLOBAL_STATE: return resetCanvasGlobalState();
+        case actionTypes.UPDATE_RESET_CANVAS_LOCAL_STATE_FIELD: return {...state, resetCanvasLocalState: action.value};
+
         default:
             return {
                 ...state
@@ -93,5 +97,14 @@ function redo() {
         historyIndex++;
         state = history[historyIndex];
     }
+    return state;
+}
+
+function resetCanvasGlobalState() {
+    let state = initState;
+    state.resetCanvasLocalState = true;
+    history = [initState];
+    historyIndex = 0;
+
     return state;
 }

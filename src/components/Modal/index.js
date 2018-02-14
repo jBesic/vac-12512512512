@@ -2,15 +2,24 @@ import React from 'react';
 import ReactModal from 'react-modal';
 import { connect } from 'react-redux';
 
-import { AuthenticationModal } from '../../store/actions/actions';
+import {
+    AuthenticationModal,
+    createEditCompetitionModal
+} from '../../store/actions/actions';
 
 const Modal = function (props) {
-
+    let onRequestCloseHandler;
+    if (props.auth.loginActive || props.auth.registerActive) {
+        onRequestCloseHandler = props.authenticationModal;
+    }
+    if (props.competitions.createCompetition || props.competitions.editCompetition) {
+        onRequestCloseHandler = props.createEditCompetitionModal;
+    }
     return (
         <ReactModal
             isOpen={props.show}
             ariaHideApp={false}
-            onRequestClose={props.authenticationModal}
+            onRequestClose={onRequestCloseHandler}
             style={{
                 overlay: {
                     zIndex: '9999'
@@ -30,8 +39,18 @@ const Modal = function (props) {
     );
 };
 
-function mapDispatchToProps(dispatch) {
-    return { authenticationModal: () => dispatch(AuthenticationModal(false)) }
+const mapStateToProps = state => {
+    return {
+        competitions: { ...state.competitions },
+        auth: { ...state.auth }
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        authenticationModal: () => dispatch(AuthenticationModal(false)),
+        createEditCompetitionModal: () => dispatch(createEditCompetitionModal(false))
+    }
 }
 
-export default connect(null, mapDispatchToProps)(Modal);
+export default connect(mapStateToProps, mapDispatchToProps)(Modal);
