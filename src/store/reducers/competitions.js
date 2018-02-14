@@ -18,22 +18,33 @@ function competitions(state = INITIAL_STATE, action) {
                 editCompetition: action.component === 'edit' ? action.show : false
             }
 
-        case actionTypes.CREATE_EDIT_COMPETITION_REQUEST:
+        case actionTypes.ASYNC_COMPETITION_REQUEST:
             return {
                 ...state,
                 message: '',
                 isFetching: true
             };
 
-        case actionTypes.CREATE_EDIT_COMPETITION_SUCCESS:
+        case actionTypes.ASYNC_COMPETITION_SUCCESS:
+            let newCompetitions = [];
+            if (Array.isArray(action.competitions)) {
+                newCompetitions = action.competitions;
+            } else if (action.competitions.hasOwnProperty('id')) {
+                newCompetitions = [action.competitions];
+            } else {
+                newCompetitions = Object.keys(action.competitions).map(competitionKey => {
+                    return action.competitions[competitionKey];
+                })
+            }
+
             return {
                 ...state,
                 message: '',
                 isFetching: false,
-                competitions: [...state.competitions, action.competition]
+                competitions: [...state.competitions, ...newCompetitions]
             };
 
-        case actionTypes.CREATE_EDIT_COMPETITION_FAILURE:
+        case actionTypes.ASYNC_COMPETITION_FAILURE:
             return {
                 ...state,
                 isFetching: false,
