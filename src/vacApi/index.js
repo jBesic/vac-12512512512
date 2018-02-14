@@ -43,9 +43,19 @@ const saveCompetition = function (data) {
             name: data.competitionName,
             topic: data.competitionTopic,
             startDate: data.startDateTime,
-            endDate: data.competitionDuration,
-            votingStartDate: data.drawingTime,
-            votingEndDate: data.votingTime,            
+            endDate: data.drawingDuration,
+            votingStartDate: data.drawingPhase,
+            votingEndDate: data.votingPhase,            
+        }
+    });
+};
+
+const loadCompetitions = function () {
+    return axios({
+        method: 'get',
+        url: API_ENDPOINT + '/competition',
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
         }
     });
 };
@@ -70,5 +80,6 @@ export {
     login,
     logout,
     saveCompetition,
+    loadCompetitions,
     saveDrawing
 };

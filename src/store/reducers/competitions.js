@@ -4,10 +4,11 @@ const INITIAL_STATE = {
     createCompetition: false,
     editCompetition: false,
     isFetching: false,
+    competitions: [],
     message: '',
 };
 
-function registerUser(state = INITIAL_STATE, action) {
+function competitions(state = INITIAL_STATE, action) {
     switch (action.type) {
         case actionTypes.CREATE_EDIT_COMPETITION_MODAL:
             return {
@@ -17,21 +18,33 @@ function registerUser(state = INITIAL_STATE, action) {
                 editCompetition: action.component === 'edit' ? action.show : false
             }
 
-        case actionTypes.CREATE_EDIT_COMPETITION_REQUEST:
+        case actionTypes.ASYNC_COMPETITION_REQUEST:
             return {
                 ...state,
                 message: '',
                 isFetching: true
             };
 
-        case actionTypes.CREATE_EDIT_COMPETITION_SUCCESS:
+        case actionTypes.ASYNC_COMPETITION_SUCCESS:
+            let newCompetitions = [];
+            if (Array.isArray(action.competitions)) {
+                newCompetitions = action.competitions;
+            } else if (action.competitions.hasOwnProperty('id')) {
+                newCompetitions = [action.competitions];
+            } else {
+                newCompetitions = Object.keys(action.competitions).map(competitionKey => {
+                    return action.competitions[competitionKey];
+                })
+            }
+
             return {
                 ...state,
                 message: '',
-                isFetching: false
+                isFetching: false,
+                competitions: [...state.competitions, ...newCompetitions]
             };
 
-        case actionTypes.CREATE_EDIT_COMPETITION_FAILURE:
+        case actionTypes.ASYNC_COMPETITION_FAILURE:
             return {
                 ...state,
                 isFetching: false,
@@ -43,4 +56,4 @@ function registerUser(state = INITIAL_STATE, action) {
     }
 }
 
-export default registerUser;
+export default competitions;
