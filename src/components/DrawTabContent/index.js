@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 const DrawTabContent = function (props) {
     return props.competitions.length > 0 ? (
-        <table className="table table-hover m-0">
+        <table className="table table-hover m-0 vac-table">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -22,9 +22,9 @@ const DrawTabContent = function (props) {
                             <td>{competition.name}</td>
                             <td>{competition.topic}</td>
                             <td>{competition.startDate.replace('T', ' ')}</td>
-                            <td>{competition.endDate}</td>
-                            <td>{competition.votingStartDate}</td>
-                            <td>{competition.votingEndDate}</td>
+                            <td>{competition.endDate} minutes</td>
+                            <td>{competition.votingStartDate} minutes</td>
+                            <td>{competition.votingEndDate} minutes</td>
                             <td><button
                                 type='button'
                                 className='btn vac-btn-primary w-100'
