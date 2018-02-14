@@ -4,10 +4,11 @@ const INITIAL_STATE = {
     createCompetition: false,
     editCompetition: false,
     isFetching: false,
+    competitions: [],
     message: '',
 };
 
-function registerUser(state = INITIAL_STATE, action) {
+function competitions(state = INITIAL_STATE, action) {
     switch (action.type) {
         case actionTypes.CREATE_EDIT_COMPETITION_MODAL:
             return {
@@ -28,7 +29,8 @@ function registerUser(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 message: '',
-                isFetching: false
+                isFetching: false,
+                competitions: [...state.competitions, action.competition]
             };
 
         case actionTypes.CREATE_EDIT_COMPETITION_FAILURE:
@@ -43,4 +45,4 @@ function registerUser(state = INITIAL_STATE, action) {
     }
 }
 
-export default registerUser;
+export default competitions;

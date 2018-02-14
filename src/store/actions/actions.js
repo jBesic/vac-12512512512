@@ -32,7 +32,7 @@ const AsyncRegisterUser = function (userName, password) {
                 const token = response.data.data;
                 localStorage.setItem('token', token);
                 dispatch(registerSuccess(token));
-                dispatch(AuthenticationModal(false));
+                dispatch(AuthenticationModal());
                 toastr.info('Welcome, ', userName);
             }).catch(error => {
                 dispatch(registerFailure(error.response.data.message));
@@ -70,7 +70,7 @@ const AsyncLoginUser = function (userName, password, payload = null) {
                 const token = response.data.data;
                 localStorage.setItem('token', token);
                 dispatch(loginSuccess(token));
-                dispatch(AuthenticationModal(false));
+                dispatch(AuthenticationModal());
                 toastr.info('Welcome, ' + userName);
                 if (payload) {
                     dispatch(AsyncSaveDrawing(payload));
@@ -110,7 +110,7 @@ const AsyncLogoutUser = function (token) {
             .then(response => {
                 localStorage.removeItem('token');
                 dispatch(logoutSuccess(token));
-                dispatch(AuthenticationModal(false));
+                dispatch(AuthenticationModal());
             }).catch(error => {
                 dispatch(logoutFailure(error.response.data.message));
             });
@@ -143,10 +143,10 @@ const createEditCompetitionRequest = function () {
     }
 };
 
-const createEditCompetitionSuccess = function (token) {
+const createEditCompetitionSuccess = function (competition) {
     return {
         type: actionTypes.CREATE_EDIT_COMPETITION_SUCCESS,
-        token: token
+        competition: competition
     }
 };
 
@@ -163,8 +163,8 @@ const AsyncCreateEditCompetition = function (competitonData) {
 
         vacApi.saveCompetition(competitonData)
             .then(response => {
-                dispatch(createEditCompetitionSuccess());
-                // dispatch(asyncEnd());
+                dispatch(createEditCompetitionSuccess({ ...response.data.data }));
+                dispatch(createEditCompetitionModal());
             }).catch(error => {
                 dispatch(createEditCompetitionFailure(error.response.data.message));
             });

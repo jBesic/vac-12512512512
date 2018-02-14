@@ -43,9 +43,9 @@ const saveCompetition = function (data) {
             name: data.competitionName,
             topic: data.competitionTopic,
             startDate: data.startDateTime,
-            endDate: data.competitionDuration,
-            votingStartDate: data.drawingTime,
-            votingEndDate: data.votingTime,            
+            endDate: data.drawingDuration,
+            votingStartDate: data.drawingPhase,
+            votingEndDate: data.votingPhase,            
         }
     });
 };
