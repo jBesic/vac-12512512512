@@ -50,6 +50,16 @@ const saveCompetition = function (data) {
     });
 };
 
+const loadCompetitions = function () {
+    return axios({
+        method: 'get',
+        url: API_ENDPOINT + '/competition',
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
+        }
+    });
+};
+
 const saveDrawing = function (data) {
     console.log(data);
     return axios({
@@ -70,5 +80,6 @@ export {
     login,
     logout,
     saveCompetition,
+    loadCompetitions,
     saveDrawing
 };

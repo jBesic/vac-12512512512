@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { createEditCompetitionModal } from '../../store/actions/actions';
+import {
+    createEditCompetitionModal,
+    AsyncLoadCompetitions
+ } from '../../store/actions/actions';
 import DrawTabContent from '../DrawTabContent';
 import VoteTabContent from '../VoteTabContent';
 import JoinedTabContent from '../JoinedTabContent';
@@ -14,6 +17,10 @@ class CompetitionsPage extends Component {
         this.state = {
             activeTab: 'draw-tab'
         }
+    }
+
+    componentDidMount() {
+        this.props.loadCompetitions();
     }
 
     render() {
@@ -82,7 +89,8 @@ class CompetitionsPage extends Component {
 
 const mapDispatchToProps = function (dispatch) {
     return {
-        createEditCompetitionModal: () => dispatch(createEditCompetitionModal('create', true))
+        createEditCompetitionModal: () => dispatch(createEditCompetitionModal('create', true)),
+        loadCompetitions: () => dispatch(AsyncLoadCompetitions())
     };
 };
 

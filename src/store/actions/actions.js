@@ -137,36 +137,49 @@ const createEditCompetitionModal = function (component, show) {
     }
 };
 
-const createEditCompetitionRequest = function () {
+const asyncCompetitionRequest = function () {
     return {
-        type: actionTypes.CREATE_EDIT_COMPETITION_REQUEST
+        type: actionTypes.ASYNC_COMPETITION_REQUEST
     }
 };
 
-const createEditCompetitionSuccess = function (competition) {
+const asyncCompetitionSuccess = function (competitions) {
     return {
-        type: actionTypes.CREATE_EDIT_COMPETITION_SUCCESS,
-        competition: competition
+        type: actionTypes.ASYNC_COMPETITION_SUCCESS,
+        competitions: competitions
     }
 };
 
-const createEditCompetitionFailure = function (message) {
+const asyncCompetitionFailure = function (message) {
     return {
-        type: actionTypes.CREATE_EDIT_COMPETITION_FAILURE,
+        type: actionTypes.ASYNC_COMPETITION_FAILURE,
         message: message
     }
 };
 
 const AsyncCreateEditCompetition = function (competitonData) {
     return dispatch => {
-        dispatch(createEditCompetitionRequest());
+        dispatch(asyncCompetitionRequest());
 
         vacApi.saveCompetition(competitonData)
             .then(response => {
-                dispatch(createEditCompetitionSuccess({ ...response.data.data }));
+                dispatch(asyncCompetitionSuccess({ ...response.data.data }));
                 dispatch(createEditCompetitionModal());
             }).catch(error => {
-                dispatch(createEditCompetitionFailure(error.response.data.message));
+                dispatch(asyncCompetitionFailure(error.response.data.message));
+            });
+    }
+}
+
+const AsyncLoadCompetitions = function () {
+    return dispatch => {
+        dispatch(asyncCompetitionRequest());
+
+        vacApi.loadCompetitions()
+            .then(response => {
+                dispatch(asyncCompetitionSuccess({ ...response.data.data }));
+            }).catch(error => {
+                dispatch(asyncCompetitionFailure(error.response.data.message));
             });
     }
 }
@@ -318,6 +331,7 @@ export {
     undo,
     redo,
     AsyncCreateEditCompetition,
+    AsyncLoadCompetitions,
     createEditCompetitionModal,
     AsyncSaveDrawing,
     updateResetCanvasLocalStateField
