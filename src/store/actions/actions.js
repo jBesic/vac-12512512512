@@ -1,5 +1,6 @@
 import * as actionTypes from './actionTypes';
 import * as vacApi from '../../vacApi';
+import {toastr} from 'react-redux-toastr';
 
 // Register
 const registerRequest = function () {
@@ -32,6 +33,7 @@ const AsyncRegisterUser = function (userName, password) {
                 localStorage.setItem('token', token);
                 dispatch(registerSuccess(token));
                 dispatch(AuthenticationModal(false));
+                toastr.info('Welcome, ', userName);
             }).catch(error => {
                 dispatch(registerFailure(error.response.data.message));
             });
@@ -59,7 +61,7 @@ const loginFailure = function (message) {
     }
 };
 
-const AsyncLoginUser = function (userName, password) {
+const AsyncLoginUser = function (userName, password, payload = null) {
     return dispatch => {
         dispatch(loginRequest());
 
@@ -69,6 +71,10 @@ const AsyncLoginUser = function (userName, password) {
                 localStorage.setItem('token', token);
                 dispatch(loginSuccess(token));
                 dispatch(AuthenticationModal(false));
+                toastr.info('Welcome, ' + userName);
+                if (payload) {
+                    dispatch(AsyncSaveDrawing(payload));
+                }
             }).catch(error => {
                 dispatch(loginFailure(error.response.data.message));
             });
@@ -111,11 +117,14 @@ const AsyncLogoutUser = function (token) {
     }
 }
 
-const AuthenticationModal = function (component, show) {
+// Authentication modal
+const AuthenticationModal = function (component, show, message = null, payload = null) {
     return {
         type: actionTypes.AUTHENTICATION_MODAL,
         component: component,
-        show: show
+        show: show,
+        message: message,
+        payload: payload
     }
 };
 
@@ -244,6 +253,53 @@ const redo = () => {
     }
 }
 
+const setDrawingRequest = function () {
+    return {
+        type: actionTypes.SET_DRAWING_REQUEST
+    }
+};
+
+const drawingRequestSuccess = function (token) {
+    return {
+        type: actionTypes.DRAWING_REQUEST_SUCCESS,
+        token: token
+    }
+};
+
+const drawingRequestFailure = function (message) {
+    return {
+        type: actionTypes.DRAWING_REQUEST_FAILURE,
+        message: message
+    }
+};
+
+const AsyncSaveDrawing = function (drawing) {
+    return dispatch => {
+        dispatch(setDrawingRequest());
+        vacApi.saveDrawing(drawing)
+            .then(response => {
+                dispatch(drawingRequestSuccess());
+                dispatch(resetCanvasGlobalState());
+                toastr.success('Saved successfully.');
+            }).catch(error => {
+                dispatch(drawingRequestFailure(error.response.data.message));
+            });
+    }
+}
+
+const resetCanvasGlobalState = () => {
+    return {
+        type: actionTypes.RESET_CANVAS_GLOBAL_STATE
+    };
+}
+
+const updateResetCanvasLocalStateField = (val) => {
+    return {
+        type: actionTypes.UPDATE_RESET_CANVAS_LOCAL_STATE_FIELD,
+        value: val
+    };
+}
+
 export {
     AsyncRegisterUser,
     AsyncLogoutUser,
@@ -262,5 +318,7 @@ export {
     undo,
     redo,
     AsyncCreateEditCompetition,
-    createEditCompetitionModal
+    createEditCompetitionModal,
+    AsyncSaveDrawing,
+    updateResetCanvasLocalStateField
 };
