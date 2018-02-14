@@ -1,26 +1,86 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { createEditCompetitionModal } from '../../store/actions/actions';
+import DrawTabContent from '../DrawTabContent';
+import VoteTabContent from '../VoteTabContent';
+import JoinedTabContent from '../JoinedTabContent';
+import OwnTabContent from '../OwnTabContent';
 
-const CompetitionsPage = function (props) {
-    return (
-        <div className="container">
-            <h2 className='mb-5'>Competitions</h2>
-            <div className='row'>
-                <div className='col-md-12 d-flex justify-content-end'>
-                    <button
-                        onClick={() => {
-                            props.createEditCompetitionModal();
-                        }}
-                        className='btn btn-primary vac-btn-primary'>Add New</button>
+class CompetitionsPage extends Component {
+    constructor(props) {
+        super();
+
+        this.state = {
+            activeTab: 'draw-tab'
+        }
+    }
+
+    render() {
+        return (
+            <div className="container">
+                <h2 className='mb-5'>Competitions</h2>
+                <div className='row'>
+                    <div className='col-md-12 d-flex mb-4'>
+                        <button
+                            type='button'
+                            className='ml-auto btn vac-btn-primary'
+                            onClick={() => { this.props.createEditCompetitionModal(); }}>Add New</button>
+                    </div>
+                    <div className='col-md-12'>
+                        <ul className="nav nav-tabs" role="tablist">
+                            <li className="nav-item">
+                                <button
+                                    className={"nav-link" + (this.state.activeTab === 'draw-tab' ? ' active' : '')} role="tab"
+                                    onClick={() => this.setState({ activeTab: 'draw-tab' })}>Draw</button>
+                            </li>
+                            <li className="nav-item">
+                                <button
+                                    className={"nav-link" + (this.state.activeTab === 'vote-tab' ? ' active' : '')} role="tab"
+                                    onClick={() => this.setState({ activeTab: 'vote-tab' })}>Vote</button>
+                            </li>
+                            <li className="nav-item">
+                                <button
+                                    className={"nav-link" + (this.state.activeTab === 'joined-tab' ? ' active' : '')} role="tab"
+                                    onClick={() => this.setState({ activeTab: 'joined-tab' })}>Joined</button>
+                            </li>
+                            <li className="nav-item">
+                                <button
+                                    className={"nav-link" + (this.state.activeTab === 'own-tab' ? ' active' : '')} role="tab"
+                                    onClick={() => this.setState({ activeTab: 'own-tab' })}>Own</button>
+                            </li>
+                        </ul>
+                        <div className="tab-content p-4" style={{ backgroundColor: 'white' }}>
+                            {this.state.activeTab === 'draw-tab' ? (
+                                <div className="tab-pane fade show active" role="tabpanel">
+                                    <DrawTabContent />
+                                </div>
+                            ) : null}
+                            {this.state.activeTab === 'vote-tab' ? (
+                                <div className="tab-pane fade show active" role="tabpanel">
+                                    <VoteTabContent />
+                                </div>
+                            ) : null}
+                            {this.state.activeTab === 'joined-tab' ? (
+                                <div className="tab-pane fade show active" role="tabpanel">
+                                    <JoinedTabContent />
+                                </div>
+                            ) : null}
+                            {this.state.activeTab === 'own-tab' ? (
+                                <div className="tab-pane fade show active" role="tabpanel">
+                                    <OwnTabContent />
+                                </div>
+                            ) : null}
+                        </div>
+                    </div>
                 </div>
+
             </div>
-        </div>
-    )
+        );
+    }
 };
 
-const mapDispatchToProps = function(dispatch) {
+const mapDispatchToProps = function (dispatch) {
     return {
         createEditCompetitionModal: () => dispatch(createEditCompetitionModal('create', true))
     };

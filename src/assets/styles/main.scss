@@ -99,6 +99,15 @@ body,
     width: 100%;
 }
 
+.nav-link {
+    cursor: pointer;
+
+    &:focus {
+        box-shadow: unset;
+        outline: 0;
+    }
+}
+
 .form-control {
     outline: 0;
 
@@ -158,5 +167,6 @@ body {
 
     &:focus {
         box-shadow: unset;
+        border: 0;
     }
 }

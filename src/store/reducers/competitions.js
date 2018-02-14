@@ -26,7 +26,6 @@ function competitions(state = INITIAL_STATE, action) {
             };
 
         case actionTypes.CREATE_EDIT_COMPETITION_SUCCESS:
-            console.log(action.competition)
             return {
                 ...state,
                 message: '',
