@@ -129,11 +129,12 @@ const AuthenticationModal = function (component, show, message = null, payload =
 };
 
 // Create/Edit competition
-const createEditCompetitionModal = function (component, show) {
+const manageCompetitionModal = function (component, show, competitionId) {
     return {
-        type: actionTypes.CREATE_EDIT_COMPETITION_MODAL,
+        type: actionTypes.COMPETITION_MODAL,
         component: component,
-        show: show
+        show: show,
+        competitionId: competitionId
     }
 };
 
@@ -157,6 +158,13 @@ const asyncCompetitionFailure = function (message) {
     }
 };
 
+const startCompetition = function(competitionDetails) {
+    return {
+        type: actionTypes.START_COMPETITION,
+        competitionDetails: competitionDetails
+    }
+}
+
 const AsyncCreateEditCompetition = function (competitonData) {
     return dispatch => {
         dispatch(asyncCompetitionRequest());
@@ -164,7 +172,7 @@ const AsyncCreateEditCompetition = function (competitonData) {
         vacApi.saveCompetition(competitonData)
             .then(response => {
                 dispatch(asyncCompetitionSuccess({ ...response.data.data }));
-                dispatch(createEditCompetitionModal());
+                dispatch(manageCompetitionModal());
             }).catch(error => {
                 dispatch(asyncCompetitionFailure(error.response.data.message));
             });
@@ -332,7 +340,8 @@ export {
     redo,
     AsyncCreateEditCompetition,
     AsyncLoadCompetitions,
-    createEditCompetitionModal,
+    manageCompetitionModal,
     AsyncSaveDrawing,
-    updateResetCanvasLocalStateField
+    updateResetCanvasLocalStateField,
+    startCompetition
 };

@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import {
-    createEditCompetitionModal,
+    manageCompetitionModal,
     AsyncLoadCompetitions
- } from '../../store/actions/actions';
+} from '../../store/actions/actions';
 import DrawTabContent from '../DrawTabContent';
 import VoteTabContent from '../VoteTabContent';
 import JoinedTabContent from '../JoinedTabContent';
@@ -20,7 +20,9 @@ class CompetitionsPage extends Component {
     }
 
     componentDidMount() {
-        this.props.loadCompetitions();
+        if (this.props.competitions.length === 0) {
+            this.props.loadCompetitions();
+        }
     }
 
     render() {
@@ -32,7 +34,7 @@ class CompetitionsPage extends Component {
                         <button
                             type='button'
                             className='ml-auto btn vac-btn-primary'
-                            onClick={() => { this.props.createEditCompetitionModal(); }}>Add New</button>
+                            onClick={() => { this.props.manageCompetitionModal('create', true); }}>Add New</button>
                     </div>
                     <div className='col-md-12'>
                         <ul className="nav nav-tabs" role="tablist">
@@ -87,11 +89,17 @@ class CompetitionsPage extends Component {
     }
 };
 
+const mapStateToProps = function (state) {
+    return {
+        competitions: [...state.competitions.competitions]
+    };
+};
+
 const mapDispatchToProps = function (dispatch) {
     return {
-        createEditCompetitionModal: () => dispatch(createEditCompetitionModal('create', true)),
+        manageCompetitionModal: (component, show) => dispatch(manageCompetitionModal(component, show)),
         loadCompetitions: () => dispatch(AsyncLoadCompetitions())
     };
 };
 
-export default connect(null, mapDispatchToProps)(CompetitionsPage);
+export default connect(mapStateToProps, mapDispatchToProps)(CompetitionsPage);
