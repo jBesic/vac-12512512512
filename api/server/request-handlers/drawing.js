@@ -4,7 +4,6 @@ const errs = require('restify-errors');
 
 async function list(req, res, next) {
     const drawings = await Drawing.findAll();
-    console.log()
     res.send({ code: "Success", data: drawings });
     return next();
 }

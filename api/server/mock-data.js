@@ -8,8 +8,29 @@ module.exports.mockUserData = async function mockUserData(UserModel) {
 
 module.exports.mockDrawingData = async function mockDrawingData(DrawingModel) {
     await DrawingModel.bulkCreate([
-        { name: 'Drawing01', topic: 'random 01', userId: 1, shapes: [] },
-        { name: 'Drawing02', topic: 'random 02', userId: 2, shapes: [{foo:1}] },
-        { name: 'Drawing03', topic: 'random 03', userId: 3 },
+        { name: 'Drawing01 C1', competitionId: 1, userId: 1, shapes: [] },
+        { name: 'Drawing02 C1', competitionId: 1, userId: 2, shapes: [{ foo: 1 }] },
+        { name: 'Drawing03 C1', competitionId: 1, userId: 3 },
+        { name: 'Drawing01 C2', competitionId: 2, userId: 1, shapes: [] },
+        { name: 'Drawing02 C2', competitionId: 2, userId: 2, shapes: [{ foo: 1 }] },
+        { name: 'Drawing03 C2', competitionId: 2, userId: 3 },
+    ]);
+}
+
+module.exports.mockVoteData = async function mockVoteData(VoteModel) {
+    await VoteModel.bulkCreate([
+        { userId: 1, drawingId: 1, value: 1 },
+        { userId: 1, drawingId: 2, value: 2 },
+        { userId: 1, drawingId: 3, value: 3 },
+        { userId: 1, drawingId: 4, value: 3 },
+        { userId: 2, drawingId: 1, value: 1 },
+        { userId: 3, drawingId: 1, value: 3 },
+    ]);
+}
+
+module.exports.mockCompetitionData = async function mockCompetitionData(CompetitionModel) {
+    await CompetitionModel.bulkCreate([
+        { createdBy: 2, name: 'First competiton', topic: 'random' },
+        { createdBy: 1, name: 'Second competiton', topic: 'random' },
     ]);
 }

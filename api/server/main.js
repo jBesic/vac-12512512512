@@ -4,6 +4,7 @@ const corsMiddleware = require('restify-cors-middleware');
 // REQUEST HANDLERS IMPORT
 const AuthHandlers = require('./request-handlers/auth');
 const DrawingHandlers = require('./request-handlers/drawing');
+const VotingHandlers = require('./request-handlers/vote');
 
 // SERVER SETUP
 const cors = corsMiddleware({
@@ -32,6 +33,11 @@ server.get('/drawing', DrawingHandlers.list);
 server.post('/drawing', DrawingHandlers.create);
 server.put('/drawing/:id', DrawingHandlers.update);
 server.del('/drawing/:id', DrawingHandlers.delete);
+
+// VOTE
+server.post('/vote', VotingHandlers.create);
+server.del('/vote/:drawingId', VotingHandlers.delete);
+
 
 // INIT SERVER
 server.listen(8080, () => console.log('%s listening at %s', server.name, server.url));
