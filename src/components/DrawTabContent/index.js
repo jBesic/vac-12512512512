@@ -40,8 +40,15 @@ const DrawTabContent = function (props) {
 };
 
 const mapStateToProps = function (state) {
+    const availableCompetitions = state.competitions.competitions.filter(competition => {
+        const now = new Date();
+        const startDate = new Date(competition.startDate);
+        const passedTime = now - startDate;
+        return competition.votingStartDate - passedTime > competition.endDate;
+    });
+    
     return {
-        competitions: [...state.competitions.competitions]
+        competitions: availableCompetitions
     };
 };
 
