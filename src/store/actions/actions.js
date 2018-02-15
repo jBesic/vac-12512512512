@@ -129,11 +129,12 @@ const AuthenticationModal = function (component, show, message = null, payload =
 };
 
 // Create/Edit competition
-const manageCompetitionModal = function (component, show) {
+const manageCompetitionModal = function (component, show, competitionId) {
     return {
         type: actionTypes.COMPETITION_MODAL,
         component: component,
-        show: show
+        show: show,
+        competitionId: competitionId
     }
 };
 

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
-import { startCompetition } from '../../store/actions/actions';
+import { startCompetition, manageCompetitionModal, AsyncLoadCompetitions } from '../../store/actions/actions';
 
 class StartCompetition extends Component {
     constructor(props) {
@@ -12,20 +13,61 @@ class StartCompetition extends Component {
 
         this.state = {
             competitionId: '',
-            competitionDetails: {}
+            competitionDetails: {},
+            message: ''
         };
     }
 
-    competitionDetails(competitionId) {
-        if (competitionId === '') return true;
+    componentWillMount() {
+        const newState = {};
+        if (this.props.manageCompetitionId !== '') {
+            newState.competitionId = this.props.manageCompetitionId;
+            newState.competitionDetails = this.choosedCompetition(this.props.manageCompetitionId);
+        }
 
-        const selectedCompetition = this.props.competitions.find(competition => {
+        this.setState(newState);
+    }
+
+    componentDidMount() {
+        if (this.props.competitions.length === 0) {
+            this.props.loadCompetitions();
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.started.hasOwnProperty('id')) {
+            nextProps.history.push('/canvas');
+            this.props.manageCompetitionModal();
+        }
+
+        const newState = {};
+        if (nextProps.message !== '') {
+            newState.competitionId = '';
+            newState.competitionDetails = {};
+            newState.message = nextProps.message;
+        }
+
+        this.setState(newState);
+    }
+
+    choosedCompetition(competitionId) {
+        if (competitionId === '') return {};
+
+        return this.props.competitions.find(competition => {
             return competition.id === Number.parseInt(competitionId, 10);
         });
+    }
+
+    competitionDetails(competitionId) {
+        const selectedCompetition = this.choosedCompetition(competitionId);
+        if (Object.keys(selectedCompetition).length === 0) {
+            return true;
+        }
 
         this.setState({
             competitionId: competitionId,
-            competitionDetails: selectedCompetition
+            competitionDetails: selectedCompetition,
+            message: ''
         })
     }
 
@@ -38,7 +80,7 @@ class StartCompetition extends Component {
         const isInvalid = this.state.competitionId === '';
         return (
             <form className='d-block w-100' onSubmit={this.submitHandler}>
-                {this.props.competitions.message ? <div className="alert alert-danger">{this.props.competitions.message}</div> : null}
+                {this.state.message ? <div className="alert alert-danger">{this.state.message}</div> : null}
                 <h4 className="mb-4">Join to the competition</h4>
                 <p>Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pro</p>
                 <div className="form-group">
@@ -122,15 +164,27 @@ class StartCompetition extends Component {
 }
 
 function mapStateToProps(state) {
+    const availableCompetitions = state.competitions.competitions.filter(competition => {
+        const now = new Date();
+        const startDate = new Date(competition.startDate);
+        const passedTime = now - startDate;
+        return competition.votingStartDate - passedTime > competition.endDate;
+    });
+
     return {
-        competitions: state.competitions.competitions
+        competitions: availableCompetitions,
+        message: state.competitions.message,
+        started: state.competitions.started,
+        manageCompetitionId: state.competitions.manageCompetitionId
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        startCompetitionDispatch: competitionDetails => dispatch(startCompetition(competitionDetails))
+        startCompetitionDispatch: competitionDetails => dispatch(startCompetition(competitionDetails)),
+        manageCompetitionModal: () => dispatch(manageCompetitionModal()),
+        loadCompetitions: () => dispatch(AsyncLoadCompetitions())
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(StartCompetition);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(StartCompetition));

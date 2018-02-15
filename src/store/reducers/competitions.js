@@ -7,6 +7,7 @@ const INITIAL_STATE = {
     isFetching: false,
     competitions: [],
     started: {},
+    manageCompetitionId: '',
     message: '',
 };
 
@@ -18,7 +19,8 @@ function competitions(state = INITIAL_STATE, action) {
                 message: '',
                 createCompetition: action.component === 'create' ? action.show : false,
                 editCompetition: action.component === 'edit' ? action.show : false,
-                startCompetition: action.component === 'start' ? action.show : false
+                startCompetition: action.component === 'start' ? action.show : false,
+                manageCompetitionId: action.component !== 'create' && action.competitionId && (action.component === 'start' || action.component === 'edit') ? action.competitionId : '',
             }
 
         case actionTypes.ASYNC_COMPETITION_REQUEST:
@@ -55,10 +57,25 @@ function competitions(state = INITIAL_STATE, action) {
             };
 
         case actionTypes.START_COMPETITION:
+            const now = new Date();
+            const startDate = new Date(action.competitionDetails.startDate);
+            if (now > startDate) {
+                return {
+                    ...state,
+                    message: 'Sorry, the competition draw phase is end.'
+                }
+            }
             return {
                 ...state,
                 started: action.competitionDetails
             }
+
+        case actionTypes.UPDATE_RESET_CANVAS_LOCAL_STATE_FIELD:
+            return {
+                ...state,
+                started: {},
+                manageCompetitionId: ''
+            };
 
         default:
             return state;

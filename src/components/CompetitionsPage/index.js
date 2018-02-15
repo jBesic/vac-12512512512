@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import {
     manageCompetitionModal,
     AsyncLoadCompetitions
- } from '../../store/actions/actions';
+} from '../../store/actions/actions';
 import DrawTabContent from '../DrawTabContent';
 import VoteTabContent from '../VoteTabContent';
 import JoinedTabContent from '../JoinedTabContent';
@@ -20,7 +20,9 @@ class CompetitionsPage extends Component {
     }
 
     componentDidMount() {
-        this.props.loadCompetitions();
+        if (this.props.competitions.length === 0) {
+            this.props.loadCompetitions();
+        }
     }
 
     render() {
@@ -87,6 +89,12 @@ class CompetitionsPage extends Component {
     }
 };
 
+const mapStateToProps = function (state) {
+    return {
+        competitions: [...state.competitions.competitions]
+    };
+};
+
 const mapDispatchToProps = function (dispatch) {
     return {
         manageCompetitionModal: (component, show) => dispatch(manageCompetitionModal(component, show)),
@@ -94,4 +102,4 @@ const mapDispatchToProps = function (dispatch) {
     };
 };
 
-export default connect(null, mapDispatchToProps)(CompetitionsPage);
+export default connect(mapStateToProps, mapDispatchToProps)(CompetitionsPage);

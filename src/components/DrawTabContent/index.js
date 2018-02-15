@@ -30,7 +30,7 @@ const DrawTabContent = function (props) {
                             <td><button
                                 type='button'
                                 className='btn vac-btn-primary w-100'
-                                onClick={() => props.manageCompetitionModal('start', true)}>Join</button></td>
+                                onClick={() => props.manageCompetitionModal('start', true, competition.id)}>Join</button></td>
                         </tr>
                     );
                 })}
@@ -47,7 +47,7 @@ const mapStateToProps = function (state) {
 
 const mapDispatchToProps = function (dispatch) {
     return {
-        manageCompetitionModal: (component, show) => dispatch(manageCompetitionModal(component, show))
+        manageCompetitionModal: (component, show, competitionId) => dispatch(manageCompetitionModal(component, show, competitionId))
     };
 };
 

@@ -12,7 +12,7 @@ const Modal = function (props) {
     if (props.auth.loginActive || props.auth.registerActive) {
         onRequestCloseHandler = props.authenticationModal;
     }
-    if (props.competitions.createCompetition || props.competitions.editCompetition) {
+    if (props.competitions.createCompetition || props.competitions.editCompetition || props.competitions.startCompetition) {
         onRequestCloseHandler = props.manageCompetitionModal;
     }
     return (
