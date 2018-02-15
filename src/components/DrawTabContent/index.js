@@ -43,7 +43,7 @@ const mapStateToProps = function (state) {
     const availableCompetitions = state.competitions.competitions.filter(competition => {
         const now = new Date();
         const startDate = new Date(competition.startDate);
-        const passedTime = now - startDate;
+        const passedTime = parseInt((now - startDate) / 60000, 10);
         return competition.votingStartDate - passedTime > competition.endDate;
     });
     
