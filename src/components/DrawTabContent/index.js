@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { manageCompetitionModal } from '../../store/actions/actions';
+
 const DrawTabContent = function (props) {
     return props.competitions.length > 0 ? (
         <table className="table table-hover m-0 vac-table">
@@ -28,7 +30,7 @@ const DrawTabContent = function (props) {
                             <td><button
                                 type='button'
                                 className='btn vac-btn-primary w-100'
-                                onClick={() => console.log('action')}>Join</button></td>
+                                onClick={() => props.manageCompetitionModal('start', true)}>Join</button></td>
                         </tr>
                     );
                 })}
@@ -43,4 +45,10 @@ const mapStateToProps = function (state) {
     };
 };
 
-export default connect(mapStateToProps)(DrawTabContent);
+const mapDispatchToProps = function (dispatch) {
+    return {
+        manageCompetitionModal: (component, show) => dispatch(manageCompetitionModal(component, show))
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DrawTabContent);

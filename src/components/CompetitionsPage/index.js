@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import {
-    createEditCompetitionModal,
+    manageCompetitionModal,
     AsyncLoadCompetitions
  } from '../../store/actions/actions';
 import DrawTabContent from '../DrawTabContent';
@@ -32,7 +32,7 @@ class CompetitionsPage extends Component {
                         <button
                             type='button'
                             className='ml-auto btn vac-btn-primary'
-                            onClick={() => { this.props.createEditCompetitionModal(); }}>Add New</button>
+                            onClick={() => { this.props.manageCompetitionModal('create', true); }}>Add New</button>
                     </div>
                     <div className='col-md-12'>
                         <ul className="nav nav-tabs" role="tablist">
@@ -89,7 +89,7 @@ class CompetitionsPage extends Component {
 
 const mapDispatchToProps = function (dispatch) {
     return {
-        createEditCompetitionModal: () => dispatch(createEditCompetitionModal('create', true)),
+        manageCompetitionModal: (component, show) => dispatch(manageCompetitionModal(component, show)),
         loadCompetitions: () => dispatch(AsyncLoadCompetitions())
     };
 };

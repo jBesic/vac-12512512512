@@ -40,12 +40,12 @@ const saveCompetition = function (data) {
             'X-Auth-Token': localStorage.getItem('token')
         },
         data: {
-            name: data.competitionName,
-            topic: data.competitionTopic,
-            startDate: data.startDateTime,
-            endDate: data.drawingDuration,
-            votingStartDate: data.drawingPhase,
-            votingEndDate: data.votingPhase,            
+            name: data.name,
+            topic: data.topic,
+            startDate: data.startDate,
+            endDate: data.endDate,
+            votingStartDate: data.votingStartDate,
+            votingEndDate: data.votingEndDate,            
         }
     });
 };
