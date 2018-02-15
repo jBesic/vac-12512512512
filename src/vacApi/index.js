@@ -34,8 +34,8 @@ const logout = function () {
 
 const saveCompetition = function (data) {
     return axios({
-        method: 'post',
-        url: API_ENDPOINT + '/competition',
+        method: (data.id ? 'put' : 'post'),
+        url: API_ENDPOINT + '/competition' + (data.id ? '/' + data.id : ''),
         headers: {
             'X-Auth-Token': localStorage.getItem('token')
         },
@@ -45,7 +45,7 @@ const saveCompetition = function (data) {
             startDate: data.startDate,
             endDate: data.endDate,
             votingStartDate: data.votingStartDate,
-            votingEndDate: data.votingEndDate,            
+            votingEndDate: data.votingEndDate,
         }
     });
 };
@@ -70,7 +70,7 @@ const saveDrawing = function (data) {
         },
         data: {
             name: data.name,
-            shapes: data.shapes            
+            shapes: data.shapes
         }
     });
 };

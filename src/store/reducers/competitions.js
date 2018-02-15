@@ -32,21 +32,33 @@ function competitions(state = INITIAL_STATE, action) {
 
         case actionTypes.ASYNC_COMPETITION_SUCCESS:
             let newCompetitions = [];
-            if (Array.isArray(action.competitions)) {
-                newCompetitions = action.competitions;
-            } else if (action.competitions.hasOwnProperty('id')) {
-                newCompetitions = [...state.competitions, action.competitions];
+
+            if (action.competitions.hasOwnProperty('id')) {
+                newCompetitions = state.competitions.filter(competition => {
+                    return competition.id !== action.competitions.id
+                });
+
+                newCompetitions.push(action.competitions);
             } else {
-                newCompetitions = Object.keys(action.competitions).map(competitionKey => {
-                    return action.competitions[competitionKey];
-                })
+                Object.keys(action.competitions).reduce((accumulator, competitionKey) => {
+                    if (typeof action.competitions[competitionKey] === 'object') {
+                        newCompetitions.push(action.competitions[competitionKey]);
+                    }
+                    return newCompetitions;
+                }, newCompetitions);
+            }
+
+            if (newCompetitions.length === 0) {
+                newCompetitions = [...state.competitions];
             }
 
             return {
                 ...state,
                 message: '',
                 isFetching: false,
-                competitions: [...newCompetitions]
+                competitions: [...newCompetitions.sort((competitionA, competitionB) => {
+                    return competitionA.id - competitionB.id
+                })]
             };
 
         case actionTypes.ASYNC_COMPETITION_FAILURE:

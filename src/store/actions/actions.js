@@ -1,6 +1,6 @@
 import * as actionTypes from './actionTypes';
 import * as vacApi from '../../vacApi';
-import {toastr} from 'react-redux-toastr';
+import { toastr } from 'react-redux-toastr';
 
 // Register
 const registerRequest = function () {
@@ -158,7 +158,7 @@ const asyncCompetitionFailure = function (message) {
     }
 };
 
-const startCompetition = function(competitionDetails) {
+const startCompetition = function (competitionDetails) {
     return {
         type: actionTypes.START_COMPETITION,
         competitionDetails: competitionDetails
@@ -171,7 +171,9 @@ const AsyncCreateEditCompetition = function (competitonData) {
 
         vacApi.saveCompetition(competitonData)
             .then(response => {
-                dispatch(asyncCompetitionSuccess({ ...response.data.data }));
+                const responseData = competitonData.hasOwnProperty('id') ? competitonData : response.data.data;
+
+                dispatch(asyncCompetitionSuccess({ ...responseData }));
                 dispatch(manageCompetitionModal());
             }).catch(error => {
                 dispatch(asyncCompetitionFailure(error.response.data.message));
