@@ -44,7 +44,7 @@ const mapStateToProps = function (state) {
         const now = new Date();
         const startDate = new Date(competition.startDate);
         const passedTime = parseInt((now - startDate) / 60000, 10);
-        return competition.votingStartDate - passedTime > competition.endDate;
+        return passedTime > 0 && competition.votingStartDate - passedTime > competition.endDate;
     });
     
     return {

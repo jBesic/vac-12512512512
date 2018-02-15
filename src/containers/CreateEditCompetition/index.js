@@ -21,6 +21,23 @@ class CreateEditCompetition extends Component {
         this.state.votingEndDate = 2 * Number.parseInt(this.state.endDate, 10);
     }
 
+    componentWillMount() {
+        let newState = {};
+        if (this.props.competitions.manageCompetitionId !== '') {
+            newState = this.choosedCompetition(this.props.competitions.manageCompetitionId);
+        }
+
+        this.setState(newState);
+    }
+
+    choosedCompetition(competitionId) {
+        if (competitionId === '') return {};
+
+        return this.props.competitions.competitions.find(competition => {
+            return competition.id === Number.parseInt(competitionId, 10);
+        });
+    }
+
     setPropertyByName(propertyKey, value) {
         let drawingVotingPhase = {};
         if (propertyKey === 'endDate') {
