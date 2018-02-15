@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 import Toolbox from '../../components/Toolbox/Toolbox';
 import ShapeProperties from '../../components/ShapeProperties';
@@ -22,8 +23,41 @@ class Canvas extends Component {
         selectedPointIndex: null,
         movingShapeStarted: false,
         pointsBeforeMoving: [],
-        selectedBucketColor: '#FFFFFF'
+        selectedBucketColor: '#FFFFFF',
+        remainingTime: null,
+        intervalId: null
     };
+
+    componentDidMount = () => {
+        if (this.props.competition.hasOwnProperty('id')) {
+            const competitionStarted = parseInt(Date.now() / 1000, 10);
+            const newState = {
+                remainingTime: this.props.competition.endDate + ':00'
+            };
+
+            const intervalId = setInterval(() => {
+                const now = parseInt(Date.now() / 1000, 10);
+                const timeleft = competitionStarted + this.props.competition.endDate * 60 - now;
+                if (timeleft <= 0) {
+                    clearInterval(this.state.intervalId);
+                    newState.remainingTime = '0:00';
+                    this.saveDrawingHandler();
+                } else {
+                    newState.remainingTime = parseInt(timeleft / 60, 10) + ':' + ('0' + timeleft % 60).slice(-2);
+                }
+
+                this.setState(newState);
+            }, 1000)
+
+            newState.intervalId = intervalId;
+            this.setState(newState);
+        }
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.state.intervalId);
+        this.props.updateResetCanvasLocalStateField(false);
+    }
 
     componentWillReceiveProps = (nextProps) => {
         // check is reset needed
@@ -39,7 +73,9 @@ class Canvas extends Component {
                 selectedPointIndex: null,
                 movingShapeStarted: false,
                 pointsBeforeMoving: [],
-                selectedBucketColor: '#FFFFFF'
+                selectedBucketColor: '#FFFFFF',
+                remainingTime: null,
+                intervalId: null
             });
             this.props.updateResetCanvasLocalStateField(false);
         }
@@ -63,7 +99,7 @@ class Canvas extends Component {
         }
     };
     changeDrawingName = (name) => {
-        this.setState({drawingName: name})
+        this.setState({ drawingName: name })
     };
 
     mouseDownHandler = (event) => {
@@ -362,7 +398,7 @@ class Canvas extends Component {
         if (this.props.isLoged === true) {
             return this.props.saveDrawing(drawing);
         }
-        
+
         return this.props.modal('login', true, 'Save drawing is allowed only for logged users.', drawing);
     };
 
@@ -379,9 +415,9 @@ class Canvas extends Component {
                         <input value={this.state.drawingName} onChange={(ev) => this.changeDrawingName(ev.target.value)} type="text" className="form-control" placeholder='Enter a name of your art...' />
                     </div>
                     <div className='col-md-6 text-center'>
-                        <div className="alert alert-light m-0 p-2">
-                            Remaining time: <strong>2:33 min</strong>
-                        </div>
+                        {this.props.competition.id ? <div className="alert alert-light m-0 p-2">
+                            Remaining time: <strong>{this.state.remainingTime} minutes</strong>
+                        </div> : null}
                     </div>
                     <div className='col-md-2'><button disabled={this.state.drawingName === '' || this.props.shapes.length === 0} type="button" className="btn vac-btn-primary canvas__save-button" onClick={this.saveDrawingHandler}>Save</button></div>
                 </div>
@@ -523,7 +559,8 @@ const mapStateToProps = state => {
         isLoged: state.auth.isLoged,
         shapes: clonnedShapes,
         groupsSettings: state.groupsSettings,
-        resetCanvasLocalState: state.canvas.resetCanvasLocalState
+        resetCanvasLocalState: state.canvas.resetCanvasLocalState,
+        competition: state.competitions.started
     }
 }
 
@@ -541,4 +578,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Canvas);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Canvas));

@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { createEditCompetitionModal } from '../../store/actions/actions';
+import {
+    manageCompetitionModal,
+    AsyncLoadCompetitions
+} from '../../store/actions/actions';
 import DrawTabContent from '../DrawTabContent';
 import VoteTabContent from '../VoteTabContent';
 import JoinedTabContent from '../JoinedTabContent';
@@ -16,6 +19,12 @@ class CompetitionsPage extends Component {
         }
     }
 
+    componentDidMount() {
+        if (this.props.competitions.length === 0) {
+            this.props.loadCompetitions();
+        }
+    }
+
     render() {
         return (
             <div className="container">
@@ -25,7 +34,7 @@ class CompetitionsPage extends Component {
                         <button
                             type='button'
                             className='ml-auto btn vac-btn-primary'
-                            onClick={() => { this.props.createEditCompetitionModal(); }}>Add New</button>
+                            onClick={() => { this.props.manageCompetitionModal('create', true); }}>Add New</button>
                     </div>
                     <div className='col-md-12'>
                         <ul className="nav nav-tabs" role="tablist">
@@ -80,10 +89,17 @@ class CompetitionsPage extends Component {
     }
 };
 
-const mapDispatchToProps = function (dispatch) {
+const mapStateToProps = function (state) {
     return {
-        createEditCompetitionModal: () => dispatch(createEditCompetitionModal('create', true))
+        competitions: [...state.competitions.competitions]
     };
 };
 
-export default connect(null, mapDispatchToProps)(CompetitionsPage);
+const mapDispatchToProps = function (dispatch) {
+    return {
+        manageCompetitionModal: (component, show) => dispatch(manageCompetitionModal(component, show)),
+        loadCompetitions: () => dispatch(AsyncLoadCompetitions())
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CompetitionsPage);

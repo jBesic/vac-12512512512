@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 const VoteTabContent = function (props) {
     return props.competitions.length > 0 ? (
-        <table className="table table-hover m-0">
+        <table className="table table-hover m-0 vac-table">
             <thead>
                 <tr>
                     <th>Name</th>

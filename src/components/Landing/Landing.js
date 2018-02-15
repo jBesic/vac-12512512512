@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
+import { manageCompetitionModal } from '../../store/actions/actions';
+
 import './Landing.css';
 
 const Landing = function (props) {
@@ -13,7 +15,12 @@ const Landing = function (props) {
                 <p className="lead">Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pro</p>
                 <div>
                     <Link className="btn vac-btn-primary btn-lg m-1" to='/canvas'>Draw for fun</Link>
-                    <Link className="btn vac-btn-primary btn-lg m-1" to='/choose-competition'>Join to competition</Link>
+                    <button
+                        type='button'
+                        className="btn vac-btn-primary btn-lg m-1"
+                        onClick={() => {
+                            props.manageCompetitionModal('start', true)
+                        }}>Join to competition</button>
                     <Link className="btn vac-btn-primary btn-lg m-1" to='/galleries'>Browse galleries</Link>
                     {props.auth.isLoged ? <Link className="btn vac-btn-primary btn-lg m-1" to='/galleries'>Vote for arts</Link> : null}
                 </div>
@@ -22,10 +29,16 @@ const Landing = function (props) {
     );
 }
 
+const mapDispatchToProps = function (dispatch) {
+    return {
+        manageCompetitionModal: (component, show) => dispatch(manageCompetitionModal(component, show))
+    };
+};
+
 function mapStateToProps(state) {
     return {
         auth: state.auth
     }
 }
 
-export default connect(mapStateToProps)(Landing);
+export default connect(mapStateToProps, mapDispatchToProps)(Landing);

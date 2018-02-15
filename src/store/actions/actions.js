@@ -129,44 +129,65 @@ const AuthenticationModal = function (component, show, message = null, payload =
 };
 
 // Create/Edit competition
-const createEditCompetitionModal = function (component, show) {
+const manageCompetitionModal = function (component, show, competitionId) {
     return {
-        type: actionTypes.CREATE_EDIT_COMPETITION_MODAL,
+        type: actionTypes.COMPETITION_MODAL,
         component: component,
-        show: show
+        show: show,
+        competitionId: competitionId
     }
 };
 
-const createEditCompetitionRequest = function () {
+const asyncCompetitionRequest = function () {
     return {
-        type: actionTypes.CREATE_EDIT_COMPETITION_REQUEST
+        type: actionTypes.ASYNC_COMPETITION_REQUEST
     }
 };
 
-const createEditCompetitionSuccess = function (competition) {
+const asyncCompetitionSuccess = function (competitions) {
     return {
-        type: actionTypes.CREATE_EDIT_COMPETITION_SUCCESS,
-        competition: competition
+        type: actionTypes.ASYNC_COMPETITION_SUCCESS,
+        competitions: competitions
     }
 };
 
-const createEditCompetitionFailure = function (message) {
+const asyncCompetitionFailure = function (message) {
     return {
-        type: actionTypes.CREATE_EDIT_COMPETITION_FAILURE,
+        type: actionTypes.ASYNC_COMPETITION_FAILURE,
         message: message
     }
 };
 
+const startCompetition = function(competitionDetails) {
+    return {
+        type: actionTypes.START_COMPETITION,
+        competitionDetails: competitionDetails
+    }
+}
+
 const AsyncCreateEditCompetition = function (competitonData) {
     return dispatch => {
-        dispatch(createEditCompetitionRequest());
+        dispatch(asyncCompetitionRequest());
 
         vacApi.saveCompetition(competitonData)
             .then(response => {
-                dispatch(createEditCompetitionSuccess({ ...response.data.data }));
-                dispatch(createEditCompetitionModal());
+                dispatch(asyncCompetitionSuccess({ ...response.data.data }));
+                dispatch(manageCompetitionModal());
             }).catch(error => {
-                dispatch(createEditCompetitionFailure(error.response.data.message));
+                dispatch(asyncCompetitionFailure(error.response.data.message));
+            });
+    }
+}
+
+const AsyncLoadCompetitions = function () {
+    return dispatch => {
+        dispatch(asyncCompetitionRequest());
+
+        vacApi.loadCompetitions()
+            .then(response => {
+                dispatch(asyncCompetitionSuccess({ ...response.data.data }));
+            }).catch(error => {
+                dispatch(asyncCompetitionFailure(error.response.data.message));
             });
     }
 }
@@ -318,7 +339,9 @@ export {
     undo,
     redo,
     AsyncCreateEditCompetition,
-    createEditCompetitionModal,
+    AsyncLoadCompetitions,
+    manageCompetitionModal,
     AsyncSaveDrawing,
-    updateResetCanvasLocalStateField
+    updateResetCanvasLocalStateField,
+    startCompetition
 };
