@@ -34,18 +34,43 @@ const logout = function () {
 
 const saveCompetition = function (data) {
     return axios({
-        method: 'post',
-        url: API_ENDPOINT + '/competition',
+        method: (data.id ? 'put' : 'post'),
+        url: API_ENDPOINT + '/competition' + (data.id ? '/' + data.id : ''),
         headers: {
             'X-Auth-Token': localStorage.getItem('token')
         },
         data: {
-            name: data.competitionName,
-            topic: data.competitionTopic,
-            startDate: data.startDateTime,
-            endDate: data.drawingDuration,
-            votingStartDate: data.drawingPhase,
-            votingEndDate: data.votingPhase,            
+            name: data.name,
+            topic: data.topic,
+            startDate: data.startDate,
+            endDate: data.endDate,
+            votingStartDate: data.votingStartDate,
+            votingEndDate: data.votingEndDate,
+        }
+    });
+};
+
+const loadCompetitions = function () {
+    return axios({
+        method: 'get',
+        url: API_ENDPOINT + '/competition',
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
+        }
+    });
+};
+
+const saveDrawing = function (data) {
+    console.log(data);
+    return axios({
+        method: 'post',
+        url: API_ENDPOINT + '/drawing',
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
+        },
+        data: {
+            name: data.name,
+            shapes: data.shapes
         }
     });
 };
@@ -54,5 +79,7 @@ export {
     register,
     login,
     logout,
-    saveCompetition
+    saveCompetition,
+    loadCompetitions,
+    saveDrawing
 };

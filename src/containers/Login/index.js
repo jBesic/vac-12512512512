@@ -12,7 +12,7 @@ class Login extends Component {
         this.state = {
             username: '',
             password: '',
-            showMessage: false
+            showMessage: true
         };
     }
 
@@ -28,7 +28,7 @@ class Login extends Component {
         this.setState({
             showMessage: true
         });
-        this.props.loginDispatch(this.state.username, this.state.password);
+        this.props.loginDispatch(this.state.username, this.state.password, this.props.auth.payload);
     }
 
     render() {
@@ -75,7 +75,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        loginDispatch: (username, password) => dispatch(AsyncLoginUser(username, password))
+        loginDispatch: (username, password, payload = null) => dispatch(AsyncLoginUser(username, password, payload))
     }
 }
 

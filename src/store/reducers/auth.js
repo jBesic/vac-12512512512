@@ -24,7 +24,8 @@ function registerUser(state = INITIAL_STATE, action) {
         case AUTHENTICATION_MODAL:
             return {
                 ...state,
-                message: '',
+                message: action.message ? action.message : '',
+                payload: action.payload ? action.payload : '',
                 loginActive: action.component === 'login' ? action.show : false,
                 registerActive: action.component === 'register' ? action.show : false
             }

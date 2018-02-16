@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import {
     AuthenticationModal,
-    createEditCompetitionModal
+    manageCompetitionModal
 } from '../../store/actions/actions';
 
 const Modal = function (props) {
@@ -12,8 +12,8 @@ const Modal = function (props) {
     if (props.auth.loginActive || props.auth.registerActive) {
         onRequestCloseHandler = props.authenticationModal;
     }
-    if (props.competitions.createCompetition || props.competitions.editCompetition) {
-        onRequestCloseHandler = props.createEditCompetitionModal;
+    if (props.competitions.createCompetition || props.competitions.editCompetition || props.competitions.startCompetition) {
+        onRequestCloseHandler = props.manageCompetitionModal;
     }
     return (
         <ReactModal
@@ -48,8 +48,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        authenticationModal: () => dispatch(AuthenticationModal(false)),
-        createEditCompetitionModal: () => dispatch(createEditCompetitionModal(false))
+        authenticationModal: () => dispatch(AuthenticationModal()),
+        manageCompetitionModal: () => dispatch(manageCompetitionModal())
     }
 }
 

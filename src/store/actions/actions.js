@@ -1,5 +1,6 @@
 import * as actionTypes from './actionTypes';
 import * as vacApi from '../../vacApi';
+import { toastr } from 'react-redux-toastr';
 
 // Register
 const registerRequest = function () {
@@ -32,6 +33,7 @@ const AsyncRegisterUser = function (userName, password) {
                 localStorage.setItem('token', token);
                 dispatch(registerSuccess(token));
                 dispatch(AuthenticationModal());
+                toastr.info('Welcome, ', userName);
             }).catch(error => {
                 dispatch(registerFailure(error.response.data.message));
             });
@@ -59,7 +61,7 @@ const loginFailure = function (message) {
     }
 };
 
-const AsyncLoginUser = function (userName, password) {
+const AsyncLoginUser = function (userName, password, payload = null) {
     return dispatch => {
         dispatch(loginRequest());
 
@@ -69,6 +71,10 @@ const AsyncLoginUser = function (userName, password) {
                 localStorage.setItem('token', token);
                 dispatch(loginSuccess(token));
                 dispatch(AuthenticationModal());
+                toastr.info('Welcome, ' + userName);
+                if (payload) {
+                    dispatch(AsyncSaveDrawing(payload));
+                }
             }).catch(error => {
                 dispatch(loginFailure(error.response.data.message));
             });
@@ -111,53 +117,79 @@ const AsyncLogoutUser = function (token) {
     }
 }
 
-const AuthenticationModal = function (component, show) {
+// Authentication modal
+const AuthenticationModal = function (component, show, message = null, payload = null) {
     return {
         type: actionTypes.AUTHENTICATION_MODAL,
         component: component,
-        show: show
+        show: show,
+        message: message,
+        payload: payload
     }
 };
 
 // Create/Edit competition
-const createEditCompetitionModal = function (component, show) {
+const manageCompetitionModal = function (component, show, competitionId) {
     return {
-        type: actionTypes.CREATE_EDIT_COMPETITION_MODAL,
+        type: actionTypes.COMPETITION_MODAL,
         component: component,
-        show: show
+        show: show,
+        competitionId: competitionId
     }
 };
 
-const createEditCompetitionRequest = function () {
+const asyncCompetitionRequest = function () {
     return {
-        type: actionTypes.CREATE_EDIT_COMPETITION_REQUEST
+        type: actionTypes.ASYNC_COMPETITION_REQUEST
     }
 };
 
-const createEditCompetitionSuccess = function (competition) {
+const asyncCompetitionSuccess = function (competitions) {
     return {
-        type: actionTypes.CREATE_EDIT_COMPETITION_SUCCESS,
-        competition: competition
+        type: actionTypes.ASYNC_COMPETITION_SUCCESS,
+        competitions: competitions
     }
 };
 
-const createEditCompetitionFailure = function (message) {
+const asyncCompetitionFailure = function (message) {
     return {
-        type: actionTypes.CREATE_EDIT_COMPETITION_FAILURE,
+        type: actionTypes.ASYNC_COMPETITION_FAILURE,
         message: message
     }
 };
 
+const startCompetition = function (competitionDetails) {
+    return {
+        type: actionTypes.START_COMPETITION,
+        competitionDetails: competitionDetails
+    }
+}
+
 const AsyncCreateEditCompetition = function (competitonData) {
     return dispatch => {
-        dispatch(createEditCompetitionRequest());
+        dispatch(asyncCompetitionRequest());
 
         vacApi.saveCompetition(competitonData)
             .then(response => {
-                dispatch(createEditCompetitionSuccess({ ...response.data.data }));
-                dispatch(createEditCompetitionModal());
+                const responseData = competitonData.hasOwnProperty('id') ? competitonData : response.data.data;
+
+                dispatch(asyncCompetitionSuccess({ ...responseData }));
+                dispatch(manageCompetitionModal());
             }).catch(error => {
-                dispatch(createEditCompetitionFailure(error.response.data.message));
+                dispatch(asyncCompetitionFailure(error.response.data.message));
+            });
+    }
+}
+
+const AsyncLoadCompetitions = function () {
+    return dispatch => {
+        dispatch(asyncCompetitionRequest());
+
+        vacApi.loadCompetitions()
+            .then(response => {
+                dispatch(asyncCompetitionSuccess({ ...response.data.data }));
+            }).catch(error => {
+                dispatch(asyncCompetitionFailure(error.response.data.message));
             });
     }
 }
@@ -244,6 +276,53 @@ const redo = () => {
     }
 }
 
+const setDrawingRequest = function () {
+    return {
+        type: actionTypes.SET_DRAWING_REQUEST
+    }
+};
+
+const drawingRequestSuccess = function (token) {
+    return {
+        type: actionTypes.DRAWING_REQUEST_SUCCESS,
+        token: token
+    }
+};
+
+const drawingRequestFailure = function (message) {
+    return {
+        type: actionTypes.DRAWING_REQUEST_FAILURE,
+        message: message
+    }
+};
+
+const AsyncSaveDrawing = function (drawing) {
+    return dispatch => {
+        dispatch(setDrawingRequest());
+        vacApi.saveDrawing(drawing)
+            .then(response => {
+                dispatch(drawingRequestSuccess());
+                dispatch(resetCanvasGlobalState());
+                toastr.success('Saved successfully.');
+            }).catch(error => {
+                dispatch(drawingRequestFailure(error.response.data.message));
+            });
+    }
+}
+
+const resetCanvasGlobalState = () => {
+    return {
+        type: actionTypes.RESET_CANVAS_GLOBAL_STATE
+    };
+}
+
+const updateResetCanvasLocalStateField = (val) => {
+    return {
+        type: actionTypes.UPDATE_RESET_CANVAS_LOCAL_STATE_FIELD,
+        value: val
+    };
+}
+
 export {
     AsyncRegisterUser,
     AsyncLogoutUser,
@@ -262,5 +341,9 @@ export {
     undo,
     redo,
     AsyncCreateEditCompetition,
-    createEditCompetitionModal
+    AsyncLoadCompetitions,
+    manageCompetitionModal,
+    AsyncSaveDrawing,
+    updateResetCanvasLocalStateField,
+    startCompetition
 };

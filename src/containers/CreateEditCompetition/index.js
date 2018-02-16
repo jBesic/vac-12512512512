@@ -11,21 +11,38 @@ class CreateEditCompetition extends Component {
         this.submitHandler = this.submitHandler.bind(this);
 
         this.state = {
-            competitionName: '',
-            competitionTopic: '',
-            startDateTime: '',
-            drawingDuration: 5
+            name: '',
+            topic: '',
+            startDate: '',
+            endDate: 5
         };
 
-        this.state.drawingPhase = 2 * Number.parseInt(this.state.drawingDuration, 10);
-        this.state.votingPhase = 2 * Number.parseInt(this.state.drawingDuration, 10);
+        this.state.votingStartDate = 2 * Number.parseInt(this.state.endDate, 10);
+        this.state.votingEndDate = 2 * Number.parseInt(this.state.endDate, 10);
+    }
+
+    componentWillMount() {
+        let newState = {};
+        if (this.props.competitions.manageCompetitionId !== '') {
+            newState = this.choosedCompetition(this.props.competitions.manageCompetitionId);
+        }
+
+        this.setState(newState);
+    }
+
+    choosedCompetition(competitionId) {
+        if (competitionId === '') return {};
+
+        return this.props.competitions.competitions.find(competition => {
+            return competition.id === Number.parseInt(competitionId, 10);
+        });
     }
 
     setPropertyByName(propertyKey, value) {
         let drawingVotingPhase = {};
-        if (propertyKey === 'drawingDuration') {
-            drawingVotingPhase.drawingPhase = 2 * Number.parseInt(value, 10);
-            drawingVotingPhase.votingPhase = 2 * Number.parseInt(value, 10);
+        if (propertyKey === 'endDate') {
+            drawingVotingPhase.votingStartDate = 2 * Number.parseInt(value, 10);
+            drawingVotingPhase.votingEndDate = 2 * Number.parseInt(value, 10);
         }
 
         this.setState({
@@ -40,68 +57,68 @@ class CreateEditCompetition extends Component {
     }
 
     render() {
-        const isInvalid = this.state.competitionName === '' || this.state.competitionTopic === '' || this.state.startDateTime === '' || this.state.drawingDuration === '' || this.state.drawingPhase === '' || this.state.votingPhase === '';
+        const isInvalid = this.state.name === '' || this.state.topic === '' || this.state.startDate === '' || this.state.endDate === '' || this.state.votingStartDate === '' || this.state.votingEndDate === '';
 
         return (
             <form className='d-block w-100' onSubmit={this.submitHandler}>
                 {this.props.competitions.message ? <div className="alert alert-danger">{this.props.competitions.message}</div> : null}
                 <h4 className="mb-4">{this.props.competitions.createCompetition ? 'Create' : 'Edit'} competition</h4>
                 <div className="form-group">
-                    <label htmlFor="competitionName">Name</label>
+                    <label htmlFor="name">Name</label>
                     <input
                         type="text"
                         className="form-control"
-                        id="competitionName"
-                        onChange={ev => this.setPropertyByName('competitionName', ev.target.value)}
-                        value={this.state.competitionName} />
+                        id="name"
+                        onChange={ev => this.setPropertyByName('name', ev.target.value)}
+                        value={this.state.name} />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="competitionTopic">Topic</label>
+                    <label htmlFor="topic">Topic</label>
                     <input
                         type="text"
                         className="form-control"
-                        id="competitionTopic"
-                        onChange={ev => this.setPropertyByName('competitionTopic', ev.target.value)}
-                        value={this.state.competitionTopic} />
+                        id="topic"
+                        onChange={ev => this.setPropertyByName('topic', ev.target.value)}
+                        value={this.state.topic} />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="startDateTime">Start date &amp; time</label>
+                    <label htmlFor="startDate">Start date &amp; time</label>
                     <input
                         type="datetime-local"
                         className="form-control"
-                        id="startDateTime"
-                        onChange={ev => this.setPropertyByName('startDateTime', ev.target.value)}
-                        value={this.state.startDateTime} />
+                        id="startDate"
+                        onChange={ev => this.setPropertyByName('startDate', ev.target.value)}
+                        value={this.state.startDate} />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="drawingDuration">Drawing duration</label>
+                    <label htmlFor="endDate">Drawing duration</label>
                     <input
                         type="number"
                         min='5' max='30'
                         className="form-control"
-                        id="drawingDuration"
-                        onChange={ev => this.setPropertyByName('drawingDuration', ev.target.value)}
-                        value={this.state.drawingDuration} />
+                        id="endDate"
+                        onChange={ev => this.setPropertyByName('endDate', ev.target.value)}
+                        value={this.state.endDate} />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="drawingPhase">Drawing phase duration</label>
+                    <label htmlFor="votingStartDate">Drawing phase duration</label>
                     <input
                         type="number"
-                        min={2 * Number.parseInt(this.state.drawingDuration, 10)}
+                        min={2 * Number.parseInt(this.state.endDate, 10)}
                         className="form-control"
-                        id="drawingPhase"
-                        onChange={ev => this.setPropertyByName('drawingPhase', ev.target.value)}
-                        value={this.state.drawingPhase} />
+                        id="votingStartDate"
+                        onChange={ev => this.setPropertyByName('votingStartDate', ev.target.value)}
+                        value={this.state.votingStartDate} />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="votingPhase">Voting phase duration</label>
+                    <label htmlFor="votingEndDate">Voting phase duration</label>
                     <input
                         type="number"
-                        min={2 * Number.parseInt(this.state.drawingDuration, 10)}
+                        min={2 * Number.parseInt(this.state.endDate, 10)}
                         className="form-control"
-                        id="votingPhase"
-                        onChange={ev => this.setPropertyByName('votingPhase', ev.target.value)}
-                        value={this.state.votingPhase} />
+                        id="votingEndDate"
+                        onChange={ev => this.setPropertyByName('votingEndDate', ev.target.value)}
+                        value={this.state.votingEndDate} />
                 </div>
                 <button
                     disabled={isInvalid}

@@ -1,6 +1,7 @@
 @import 'bootstrap/scss/bootstrap.scss';
 @import './_palette.scss';
 @import './_base.scss';
+@import 'react-redux-toastr/src/styles/index';
 
 
 * {
@@ -141,6 +142,12 @@ body {
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center bottom;
+    }
+}
+
+.vac-table {
+    td {
+        vertical-align: middle;
     }
 }
 

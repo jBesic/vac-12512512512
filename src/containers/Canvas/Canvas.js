@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 import Toolbox from '../../components/Toolbox/Toolbox';
 import ShapeProperties from '../../components/ShapeProperties';
@@ -12,6 +13,7 @@ import './Canvas.css';
 
 class Canvas extends Component {
     state = {
+        drawingName: '',
         shape: { type: null, points: [], text: '' },
         referencePoint: { x: null, y: null },
         activeMode: mode.SELECT_MODE,
@@ -21,10 +23,63 @@ class Canvas extends Component {
         selectedPointIndex: null,
         movingShapeStarted: false,
         pointsBeforeMoving: [],
-        selectedBucketColor: '#FFFFFF'
+        selectedBucketColor: '#FFFFFF',
+        remainingTime: null,
+        intervalId: null
     };
 
+    componentDidMount = () => {
+        if (this.props.competition.hasOwnProperty('id')) {
+            const competitionStarted = parseInt(Date.now() / 1000, 10);
+            const newState = {
+                remainingTime: this.props.competition.endDate + ':00'
+            };
+
+            const intervalId = setInterval(() => {
+                const now = parseInt(Date.now() / 1000, 10);
+                const timeleft = competitionStarted + this.props.competition.endDate * 60 - now;
+                if (timeleft <= 0) {
+                    clearInterval(this.state.intervalId);
+                    newState.remainingTime = '0:00';
+                    this.saveDrawingHandler();
+                } else {
+                    newState.remainingTime = parseInt(timeleft / 60, 10) + ':' + ('0' + timeleft % 60).slice(-2);
+                }
+
+                this.setState(newState);
+            }, 1000)
+
+            newState.intervalId = intervalId;
+            this.setState(newState);
+        }
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.state.intervalId);
+        this.props.updateResetCanvasLocalStateField(false);
+    }
+
     componentWillReceiveProps = (nextProps) => {
+        // check is reset needed
+        if (nextProps.resetCanvasLocalState === true) {
+            this.setState({
+                drawingName: '',
+                shape: { type: null, points: [], text: '' },
+                referencePoint: { x: null, y: null },
+                activeMode: mode.SELECT_MODE,
+                drawStarted: false,
+                selectedTool: tools.SELECT,
+                mouseMoveEventNeeded: false,
+                selectedPointIndex: null,
+                movingShapeStarted: false,
+                pointsBeforeMoving: [],
+                selectedBucketColor: '#FFFFFF',
+                remainingTime: null,
+                intervalId: null
+            });
+            this.props.updateResetCanvasLocalStateField(false);
+        }
+
         if ((this.state.activeMode === mode.UNDO_MODE || this.state.activeMode === mode.REDO_MODE) && nextProps.shapes.length) {
             let lastShape = nextProps.shapes[nextProps.shapes.length - 1];
             if (lastShape.type === tools.POLYGON && lastShape.points.length > 1 && lastShape.points[0] !== lastShape.points[lastShape.points.length - 1]) {
@@ -42,6 +97,9 @@ class Canvas extends Component {
                 this.setState({ shape: { type: null, points: [], text: '' }, drawStarted: false, activeMode: mode.SELECT_MODE, selectedTool: tools.SELECT, mouseMoveEventNeeded: false });
             }
         }
+    };
+    changeDrawingName = (name) => {
+        this.setState({ drawingName: name })
     };
 
     mouseDownHandler = (event) => {
@@ -329,6 +387,19 @@ class Canvas extends Component {
             this.setState({ activeMode: mode.REDO_MODE });
             setTimeout(() => this.props.redo(), 10);
         }
+
+    };
+    saveDrawingHandler = () => {
+        let drawing = {
+            name: this.state.drawingName,
+            shapes: this.props.shapes
+        };
+        console.log('drawing', drawing);
+        if (this.props.isLoged === true) {
+            return this.props.saveDrawing(drawing);
+        }
+
+        return this.props.modal('login', true, 'Save drawing is allowed only for logged users.', drawing);
     };
 
     render() {
@@ -341,14 +412,14 @@ class Canvas extends Component {
                 {/* *** Canvas Content Header *** */}
                 <div className='row d-flex align-items-center'>
                     <div className='col-md-4'>
-                        <input type="text" className="form-control" placeholder='Enter a name of your art...' />
+                        <input value={this.state.drawingName} onChange={(ev) => this.changeDrawingName(ev.target.value)} type="text" className="form-control" placeholder='Enter a name of your art...' />
                     </div>
                     <div className='col-md-6 text-center'>
-                        <div className="alert alert-light m-0 p-2">
-                            Remaining time: <strong>2:33 min</strong>
-                        </div>
+                        {this.props.competition.id ? <div className="alert alert-light m-0 p-2">
+                            Remaining time: <strong>{this.state.remainingTime} minutes</strong>
+                        </div> : null}
                     </div>
-                    <div className='col-md-2'><button type="button" className="btn vac-btn-primary canvas__save-button">Save</button></div>
+                    <div className='col-md-2'><button disabled={this.state.drawingName === '' || this.props.shapes.length === 0} type="button" className="btn vac-btn-primary canvas__save-button" onClick={this.saveDrawingHandler}>Save</button></div>
                 </div>
 
                 <div className='row'>
@@ -485,8 +556,11 @@ const mapStateToProps = state => {
 
     return {
         lastUsedId: state.canvas.lastUsedId,
+        isLoged: state.auth.isLoged,
         shapes: clonnedShapes,
-        groupsSettings: state.groupsSettings
+        groupsSettings: state.groupsSettings,
+        resetCanvasLocalState: state.canvas.resetCanvasLocalState,
+        competition: state.competitions.started
     }
 }
 
@@ -497,8 +571,11 @@ const mapDispatchToProps = dispatch => {
         deleteShape: (shape) => dispatch(actions.deleteShape(shape)),
         selectElementDispatch: (elementId) => dispatch(actions.selectElement(elementId)),
         undo: () => dispatch(actions.undo()),
-        redo: () => dispatch(actions.redo())
+        redo: () => dispatch(actions.redo()),
+        modal: (component, show, message, payload = null) => dispatch(actions.AuthenticationModal(component, show, message, payload)),
+        saveDrawing: (drawing) => dispatch(actions.AsyncSaveDrawing(drawing)),
+        updateResetCanvasLocalStateField: (val) => dispatch(actions.updateResetCanvasLocalStateField(val)),
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Canvas);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Canvas));
