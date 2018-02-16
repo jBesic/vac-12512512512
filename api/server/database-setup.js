@@ -5,9 +5,9 @@ const FORCE_RECREATE_MODELS = true;
 
 const database = new Sequelize('vector_art_champions', 'root', '', {
     host: 'localhost',
-    dialect: 'mysql',
-    // dialect: 'sqlite',
-    // storage: './server/database.sqlite',
+    // dialect: 'mysql',
+    dialect: 'sqlite',
+    storage: './server/database.sqlite',
     pool: { max: 5, min: 0, acquire: 30000, idle: 10000 },
     operatorsAliases: false
 });
@@ -23,11 +23,11 @@ const Competition = database.define('competition', {
     name: Sequelize.STRING,
     topic: Sequelize.STRING,
     shapes: Sequelize.JSON,
-    startDate: Sequelize.DATE,
-    endDate: Sequelize.DATE,
-    votingStartDate: Sequelize.DATE,
-    votingEndDate: Sequelize.DATE,
-    createdBy: {
+    startDate: Sequelize.STRING,
+    endDate: Sequelize.STRING,
+    votingStartDate: Sequelize.STRING,
+    votingEndDate: Sequelize.STRING,
+    userId: {
         type: Sequelize.INTEGER,
         references: { model: User, key: 'id' }
     }
@@ -63,4 +63,5 @@ const Drawing = database.define('drawing', {
 
 module.exports.User = User;
 module.exports.Drawing = Drawing;
+module.exports.Competition = Competition;
 module.exports.database = database;

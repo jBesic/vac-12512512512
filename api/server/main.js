@@ -4,6 +4,7 @@ const corsMiddleware = require('restify-cors-middleware');
 // REQUEST HANDLERS IMPORT
 const AuthHandlers = require('./request-handlers/auth');
 const DrawingHandlers = require('./request-handlers/drawing');
+const CompetitionHandlers = require('./request-handlers/competiton');
 
 // SERVER SETUP
 const cors = corsMiddleware({
@@ -18,7 +19,12 @@ const server = restify.createServer({ name: 'vac-api' })
     .use(cors.actual)
     .use(restify.plugins.bodyParser({ mapParams: true }))
     .use(restify.plugins.gzipResponse())
-    .use(AuthHandlers.authFilter); // AUTH CHECK
+    .use(AuthHandlers.authFilter)
+    .use((req, res, next) => {
+        setTimeout(() => {
+            next();
+        }, 1000)
+    }) // AUTH CHECK
 
 
 // LOGIN, LOGOUT AND REGISTER
@@ -32,6 +38,13 @@ server.get('/drawing', DrawingHandlers.list);
 server.post('/drawing', DrawingHandlers.create);
 server.put('/drawing/:id', DrawingHandlers.update);
 server.del('/drawing/:id', DrawingHandlers.delete);
+
+// COMPETITION
+server.head('/competition', CompetitionHandlers.list);
+server.get('/competition', CompetitionHandlers.list);
+server.post('/competition', CompetitionHandlers.create);
+server.put('/competition/:id', CompetitionHandlers.update);
+server.del('/competition/:id', CompetitionHandlers.delete);
 
 // INIT SERVER
 server.listen(8080, () => console.log('%s listening at %s', server.name, server.url));
