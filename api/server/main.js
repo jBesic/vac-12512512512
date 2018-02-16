@@ -5,6 +5,7 @@ const corsMiddleware = require('restify-cors-middleware');
 const AuthHandlers = require('./request-handlers/auth');
 const DrawingHandlers = require('./request-handlers/drawing');
 const CompetitionHandlers = require('./request-handlers/competiton');
+const UserHandlers = require('./request-handlers/user');
 const VotingHandlers = require('./request-handlers/vote');
 
 // SERVER SETUP
@@ -20,12 +21,7 @@ const server = restify.createServer({ name: 'vac-api' })
     .use(cors.actual)
     .use(restify.plugins.bodyParser({ mapParams: true }))
     .use(restify.plugins.gzipResponse())
-    .use(AuthHandlers.authFilter)
-    .use((req, res, next) => {
-        setTimeout(() => {
-            next();
-        }, 1000)
-    }) // AUTH CHECK
+    .use(AuthHandlers.authFilter); // AUTH CHECK
 
 
 // LOGIN, LOGOUT AND REGISTER
@@ -50,6 +46,11 @@ server.del('/competition/:id', CompetitionHandlers.delete);
 // VOTE
 server.post('/vote', VotingHandlers.create);
 server.del('/vote/:drawingId', VotingHandlers.delete);
+
+
+// USER
+server.head('/user/:offset/:limit', UserHandlers.list);
+server.get('/user/:offset/:limit', UserHandlers.list);
 
 // INIT SERVER
 server.listen(8080, () => console.log('%s listening at %s', server.name, server.url));
