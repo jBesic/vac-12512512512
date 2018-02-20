@@ -132,7 +132,25 @@ async function deleteItem(req, res, next) {
     return next();
 }
 
+async function getCompetitions(req, res, next) {
+    let offset = req.params.offset;
+    let limit = req.params.limit;
+    const competitions = await Competition.findAll({include:[{model: Drawing}], limit, offset});
+    res.send({ code: "Success", data: competitions });
+    return next();
+}
+
+async function getCompetitionById(req, res, next) {
+    let competitionId = req.params.id;
+    const competition = await Competition.findAll({where: {id: competitionId}});
+    res.send({ code: "Success", data: competition[0] });
+    return next();
+}
+
+
 module.exports.list = list;
 module.exports.create = create;
 module.exports.update = update;
 module.exports.delete = deleteItem;
+module.exports.getCompetitions = getCompetitions;
+module.exports.getCompetitionById = getCompetitionById;
