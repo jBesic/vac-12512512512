@@ -1,13 +1,13 @@
 const Sequelize = require('sequelize');
 const dataPopulators = require('./mock-data');
 
-const FORCE_RECREATE_MODELS = false;
+const FORCE_RECREATE_MODELS = true;
 
 const database = new Sequelize('vector_art_champions', 'root', '', {
     host: 'localhost',
-    dialect: 'mysql',
-    // dialect: 'sqlite',
-    // storage: './server/database.sqlite',
+   /*  dialect: 'mysql', */
+    dialect: 'sqlite',
+    storage: './server/database.sqlite',
     pool: { max: 5, min: 0, acquire: 30000, idle: 10000 },
     operatorsAliases: false
 });
@@ -34,7 +34,7 @@ const Competition = database.define('competition', {
 
 const Drawing = database.define('drawing', {
     name: Sequelize.STRING,
-    //shapes: Sequelize.JSON,
+    shapes: Sequelize.JSON,
     userId: {
         type: Sequelize.INTEGER,
         references: { model: User, key: 'id' }
@@ -44,6 +44,11 @@ const Drawing = database.define('drawing', {
         references: { model: Competition, key: 'id' }
     }
 });
+
+Drawing.belongsTo(User, {foreignKey: 'userId', targetKey: 'id'});
+Drawing.belongsTo(Competition, {foreignKey: 'competitionId', targetKey: 'id', defaultValue: null})
+User.hasMany(Drawing);
+Competition.hasMany(Drawing);
 
 const Vote = database.define('vote', {
     drawingId: {
