@@ -144,9 +144,10 @@ const asyncCompetitionRequest = function () {
     }
 };
 
-const asyncCompetitionSuccess = function (competitions) {
+const asyncCompetitionSuccess = function (status, competitions) {
     return {
         type: actionTypes.ASYNC_COMPETITION_SUCCESS,
+        status: status,
         competitions: competitions
     }
 };
@@ -171,9 +172,7 @@ const AsyncCreateEditCompetition = function (competitonData) {
 
         vacApi.saveCompetition(competitonData)
             .then(response => {
-                const responseData = competitonData.hasOwnProperty('id') ? competitonData : response.data.data;
-
-                dispatch(asyncCompetitionSuccess({ ...responseData }));
+                dispatch(asyncCompetitionSuccess('own', [...response]));
                 dispatch(manageCompetitionModal());
             }).catch(error => {
                 dispatch(asyncCompetitionFailure(error.response.data.message));
@@ -181,13 +180,13 @@ const AsyncCreateEditCompetition = function (competitonData) {
     }
 }
 
-const AsyncLoadCompetitions = function () {
+const AsyncLoadCompetitions = function (status) {
     return dispatch => {
         dispatch(asyncCompetitionRequest());
 
-        vacApi.loadCompetitions()
+        vacApi.loadCompetitions(status)
             .then(response => {
-                dispatch(asyncCompetitionSuccess({ ...response.data.data }));
+                dispatch(asyncCompetitionSuccess(status, [...response]));
             }).catch(error => {
                 dispatch(asyncCompetitionFailure(error.response.data.message));
             });

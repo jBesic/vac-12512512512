@@ -1,4 +1,4 @@
-import * as actionTypes from '../actions/actionTypes'
+import * as actionTypes from '../actions/actionTypes';
 
 const INITIAL_STATE = {
     createCompetition: false,
@@ -6,6 +6,10 @@ const INITIAL_STATE = {
     startCompetition: false,
     isFetching: false,
     competitions: [],
+    draw: [],
+    vote: [],
+    joined: [],
+    own: [],
     started: {},
     manageCompetitionId: '',
     message: '',
@@ -32,25 +36,31 @@ function competitions(state = INITIAL_STATE, action) {
 
         case actionTypes.ASYNC_COMPETITION_SUCCESS:
             let newCompetitions = [];
+            let competitionStatuses = {};
 
-            if (action.competitions.hasOwnProperty('id')) {
-                newCompetitions = state.competitions.filter(competition => {
-                    return competition.id !== action.competitions.id
-                });
-
-                newCompetitions.push(action.competitions);
+            if (action.status === 'draw') {
+                competitionStatuses.draw = action.competitions.map(competition => Number.parseInt(competition.id, 10));
+            } else if (action.status === 'vote') {
+                competitionStatuses.vote = action.competitions.map(competition => Number.parseInt(competition.id, 10));
+            } else if (action.status === 'joined') {
+                competitionStatuses.joined = action.competitions.map(competition => Number.parseInt(competition.id, 10));
             } else {
-                Object.keys(action.competitions).reduce((accumulator, competitionKey) => {
-                    if (typeof action.competitions[competitionKey] === 'object') {
-                        newCompetitions.push(action.competitions[competitionKey]);
-                    }
-                    return newCompetitions;
-                }, newCompetitions);
+                competitionStatuses.own = [
+                    ...state.own,
+                    ...action.competitions.filter(competition => {
+                        const competitionId = Number.parseInt(competition.id, 10);
+                        return state.own.indexOf(competitionId) === -1;
+                    }).map(newCompetition => newCompetition.id)
+                ];
             }
 
-            if (newCompetitions.length === 0) {
-                newCompetitions = [...state.competitions];
-            }
+            newCompetitions = state.competitions.filter(competition => {
+                return action.competitions.findIndex(actionCompetition => {
+                    return actionCompetition.id === competition.id;
+                }) === -1;
+            });
+
+            newCompetitions = [...newCompetitions, ...action.competitions];
 
             return {
                 ...state,
@@ -58,7 +68,8 @@ function competitions(state = INITIAL_STATE, action) {
                 isFetching: false,
                 competitions: [...newCompetitions.sort((competitionA, competitionB) => {
                     return competitionA.id - competitionB.id
-                })]
+                })],
+                ...competitionStatuses
             };
 
         case actionTypes.ASYNC_COMPETITION_FAILURE:
@@ -71,7 +82,7 @@ function competitions(state = INITIAL_STATE, action) {
         case actionTypes.START_COMPETITION:
             const now = new Date();
             const startDate = new Date(action.competitionDetails.startDate);
-            if (now > startDate) {
+            if (now - startDate < action.competitionDetails.endDate * 60000) {
                 return {
                     ...state,
                     message: 'Sorry, the competition draw phase is end.'

@@ -30,7 +30,7 @@ class StartCompetition extends Component {
 
     componentDidMount() {
         if (this.props.competitions.length === 0) {
-            this.props.loadCompetitions();
+            this.props.loadCompetitions('draw');
         }
     }
 
@@ -56,6 +56,20 @@ class StartCompetition extends Component {
         return this.props.competitions.find(competition => {
             return competition.id === Number.parseInt(competitionId, 10);
         });
+    }
+
+    dateTimeLocal(dateTimeLocal) {
+        if (dateTimeLocal instanceof Date) {
+            let dateTime = dateTimeLocal.getFullYear() + '-';
+            dateTime += ('0' + (1 + dateTimeLocal.getMonth())).slice(-2) + '-';
+            dateTime += ('0' + dateTimeLocal.getDate()).slice(-2) + 'T';
+            dateTime += ('0' + dateTimeLocal.getHours()).slice(-2) + ':';
+            dateTime += ('0' + dateTimeLocal.getMinutes()).slice(-2);
+
+            return dateTime;
+        }
+
+        return dateTimeLocal;
     }
 
     competitionDetails(competitionId) {
@@ -119,7 +133,7 @@ class StartCompetition extends Component {
                                 className="form-control"
                                 id="startDate"
                                 readOnly={true}
-                                value={this.state.competitionDetails.startDate} />
+                                value={this.dateTimeLocal(this.state.competitionDetails.startDate)} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="endDate">Drawing duration</label>
@@ -165,10 +179,8 @@ class StartCompetition extends Component {
 
 function mapStateToProps(state) {
     const availableCompetitions = state.competitions.competitions.filter(competition => {
-        const now = new Date();
-        const startDate = new Date(competition.startDate);
-        const passedTime = now - startDate;
-        return competition.votingStartDate - passedTime > competition.endDate;
+        const isDrawStatus = state.competitions.draw.indexOf(competition.id);
+        return isDrawStatus > -1;
     });
 
     return {

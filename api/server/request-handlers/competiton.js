@@ -1,18 +1,98 @@
+const Sequelize = require('sequelize');
+const Op = require('sequelize').Op;
 const Competition = require('../database-setup').Competition;
+const User = require('../database-setup').User;
+const Drawing = require('../database-setup').Drawing;
+const database = require('../database-setup').database;
 const errs = require('restify-errors');
 
+function returnQuery(params) {
+    switch (params.status) {
+        case 'draw': {
+            return {
+                where: {
+                    userId: {
+                        [Op.ne]: params.userId
+                    },
+                    startDate: {
+                        [Op.lt]: new Date()
+                    },
+                    votingStartDate: {
+                        [Op.gt]: new Date()
+                    }
+                },
+                include: [{
+                    model: Drawing,
+                    required: false,
+                    where: {
+                        competitionId: {
+                            [Op.eq]: null
+                        }
+                    }
+                }]
+            };
+        }
+
+        case 'vote': {
+            return {
+                where: {
+                    userId: {
+                        [Op.ne]: params.userId
+                    },
+                    votingStartDate: {
+                        [Op.lt]: new Date()
+                    },
+                    votingEndDate: {
+                        [Op.gt]: new Date()
+                    }
+                }
+            };
+        }
+
+        case 'joined': {
+            return {
+                where: {
+                    userId: {
+                        [Op.ne]: params.userId
+                    },
+                    votingStartDate: {
+                        [Op.lt]: new Date()
+                    },
+                    id: {
+                        [Op.eq]: Sequelize.col('drawings.competitionId')
+                    }
+                },
+                include: [{
+                    model: Drawing,
+                    required: false,
+                    where: {
+                        competitionId: {
+                            [Op.ne]: null
+                        }
+                    }
+                }]
+            };
+        }
+
+        case 'own': {
+            return {
+                where: {
+                    userId: {
+                        [Op.eq]: params.userId
+                    }
+                }
+            };
+        }
+
+        default:
+            return {};
+    }
+}
 
 async function list(req, res, next) {
-    const userId = req.params.userId;
-    const filter = {};
-
-    if (userId) {
-        filter.where = {
-            userId: userId
-        }
-    }
-
-    const competitions = await Competition.findAll();
+    const filter = returnQuery({ ...req.params, userId: req.get('userId') });
+    const competitions = await Competition.findAll(filter);
+    console.log(competitions.length)
     res.send({ code: "Success", data: competitions });
     return next();
 }

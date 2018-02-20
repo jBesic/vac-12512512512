@@ -38,11 +38,29 @@ class CreateEditCompetition extends Component {
         });
     }
 
+    dateTimeLocal(dateTimeLocal) {
+        if (dateTimeLocal instanceof Date) {
+            let dateTime = dateTimeLocal.getFullYear() + '-';
+            dateTime += ('0' + (1 + dateTimeLocal.getMonth())).slice(-2) + '-';
+            dateTime += ('0' + dateTimeLocal.getDate()).slice(-2) + 'T';
+            dateTime += ('0' + dateTimeLocal.getHours()).slice(-2) + ':';
+            dateTime += ('0' + dateTimeLocal.getMinutes()).slice(-2);
+
+            return dateTime;
+        }
+
+        return dateTimeLocal;
+    }
+
     setPropertyByName(propertyKey, value) {
         let drawingVotingPhase = {};
         if (propertyKey === 'endDate') {
             drawingVotingPhase.votingStartDate = 2 * Number.parseInt(value, 10);
             drawingVotingPhase.votingEndDate = 2 * Number.parseInt(value, 10);
+        }
+
+        if (propertyKey === 'startDate') {
+            value = new Date(value);
         }
 
         this.setState({
@@ -88,7 +106,7 @@ class CreateEditCompetition extends Component {
                         className="form-control"
                         id="startDate"
                         onChange={ev => this.setPropertyByName('startDate', ev.target.value)}
-                        value={this.state.startDate} />
+                        value={this.dateTimeLocal(this.state.startDate)} />
                 </div>
                 <div className="form-group">
                     <label htmlFor="endDate">Drawing duration</label>
