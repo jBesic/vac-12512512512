@@ -1,13 +1,13 @@
 const Sequelize = require('sequelize');
 const dataPopulators = require('./mock-data');
 
-const FORCE_RECREATE_MODELS = true;
+const FORCE_RECREATE_MODELS = false;
 
 const database = new Sequelize('vector_art_champions', 'root', '', {
     host: 'localhost',
-    // dialect: 'mysql',
-    dialect: 'sqlite',
-    storage: './server/database.sqlite',
+    dialect: 'mysql',
+    // dialect: 'sqlite',
+    // storage: './server/database.sqlite',
     pool: { max: 5, min: 0, acquire: 30000, idle: 10000 },
     operatorsAliases: false
 });
@@ -22,10 +22,10 @@ const User = database.define('user', {
 const Competition = database.define('competition', {
     name: Sequelize.STRING,
     topic: Sequelize.STRING,
-    startDate: Sequelize.STRING,
+    startDate: Sequelize.DATE,
     endDate: Sequelize.STRING,
-    votingStartDate: Sequelize.STRING,
-    votingEndDate: Sequelize.STRING,
+    votingStartDate: Sequelize.DATE,
+    votingEndDate: Sequelize.DATE,
     userId: {
         type: Sequelize.INTEGER,
         references: { model: User, key: 'id' }
@@ -34,7 +34,7 @@ const Competition = database.define('competition', {
 
 const Drawing = database.define('drawing', {
     name: Sequelize.STRING,
-    shapes: Sequelize.JSON,
+    //shapes: Sequelize.JSON,
     userId: {
         type: Sequelize.INTEGER,
         references: { model: User, key: 'id' }
@@ -56,6 +56,9 @@ const Vote = database.define('vote', {
     },
     value: Sequelize.TINYINT
 });
+
+User.hasMany(Competition, {foreignKey: 'userId'});
+Competition.hasMany(Drawing, {foreignKey: 'competitionId'});
 
 // INIT DB ENTITY MODELS
 (async function () {

@@ -20,6 +20,7 @@ const server = restify.createServer({ name: 'vac-api' })
     .pre(restify.plugins.pre.context())
     .use(cors.actual)
     .use(restify.plugins.bodyParser({ mapParams: true }))
+    .use(restify.plugins.queryParser({ mapParams: true }))
     .use(restify.plugins.gzipResponse())
     .use(AuthHandlers.authFilter); // AUTH CHECK
 
@@ -37,8 +38,8 @@ server.put('/drawing/:id', DrawingHandlers.update);
 server.del('/drawing/:id', DrawingHandlers.delete);
 
 // COMPETITION
-server.head('/competition', CompetitionHandlers.list);
-server.get('/competition', CompetitionHandlers.list);
+server.head('/competition/:status', CompetitionHandlers.list);
+server.get('/competition/:status', CompetitionHandlers.list);
 server.post('/competition', CompetitionHandlers.create);
 server.put('/competition/:id', CompetitionHandlers.update);
 server.del('/competition/:id', CompetitionHandlers.delete);
