@@ -1,0 +1,25 @@
+{
+  "name": "api-test-restify",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "bcrypt": "^1.0.3",
+    "jsonwebtoken": "^8.1.1",
+    "mysql2": "^1.5.1",
+    "nodemon": "^1.15.0",
+    "restify": "^6.3.4",
+    "restify-cors-middleware": "^1.1.0",
+    "restify-errors": "^5.0.0",
+    "sequelize": "^4.32.3",
+    "sqlite3": "^3.1.13"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "nodemon ./server/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

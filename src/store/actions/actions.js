@@ -1,6 +1,6 @@
 import * as actionTypes from './actionTypes';
 import * as vacApi from '../../vacApi';
-import {toastr} from 'react-redux-toastr';
+import { toastr } from 'react-redux-toastr';
 
 // Register
 const registerRequest = function () {
@@ -129,11 +129,12 @@ const AuthenticationModal = function (component, show, message = null, payload =
 };
 
 // Create/Edit competition
-const createEditCompetitionModal = function (component, show) {
+const manageCompetitionModal = function (component, show, competitionId) {
     return {
-        type: actionTypes.CREATE_EDIT_COMPETITION_MODAL,
+        type: actionTypes.COMPETITION_MODAL,
         component: component,
-        show: show
+        show: show,
+        competitionId: competitionId
     }
 };
 
@@ -143,9 +144,10 @@ const asyncCompetitionRequest = function () {
     }
 };
 
-const asyncCompetitionSuccess = function (competitions) {
+const asyncCompetitionSuccess = function (status, competitions) {
     return {
         type: actionTypes.ASYNC_COMPETITION_SUCCESS,
+        status: status,
         competitions: competitions
     }
 };
@@ -157,27 +159,34 @@ const asyncCompetitionFailure = function (message) {
     }
 };
 
+const startCompetition = function (competitionDetails) {
+    return {
+        type: actionTypes.START_COMPETITION,
+        competitionDetails: competitionDetails
+    }
+}
+
 const AsyncCreateEditCompetition = function (competitonData) {
     return dispatch => {
         dispatch(asyncCompetitionRequest());
 
         vacApi.saveCompetition(competitonData)
             .then(response => {
-                dispatch(asyncCompetitionSuccess({ ...response.data.data }));
-                dispatch(createEditCompetitionModal());
+                dispatch(asyncCompetitionSuccess('own', [...response]));
+                dispatch(manageCompetitionModal());
             }).catch(error => {
                 dispatch(asyncCompetitionFailure(error.response.data.message));
             });
     }
 }
 
-const AsyncLoadCompetitions = function () {
+const AsyncLoadCompetitions = function (status) {
     return dispatch => {
         dispatch(asyncCompetitionRequest());
 
-        vacApi.loadCompetitions()
+        vacApi.loadCompetitions(status)
             .then(response => {
-                dispatch(asyncCompetitionSuccess({ ...response.data.data }));
+                dispatch(asyncCompetitionSuccess(status, [...response]));
             }).catch(error => {
                 dispatch(asyncCompetitionFailure(error.response.data.message));
             });
@@ -332,7 +341,8 @@ export {
     redo,
     AsyncCreateEditCompetition,
     AsyncLoadCompetitions,
-    createEditCompetitionModal,
+    manageCompetitionModal,
     AsyncSaveDrawing,
-    updateResetCanvasLocalStateField
+    updateResetCanvasLocalStateField,
+    startCompetition
 };

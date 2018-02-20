@@ -1,9 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { manageCompetitionModal } from '../../store/actions/actions';
+
 const DrawTabContent = function (props) {
     return props.competitions.length > 0 ? (
-        <table className="table table-hover m-0">
+        <table className="table table-hover m-0 vac-table">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -21,14 +23,15 @@ const DrawTabContent = function (props) {
                         <tr key={competition.id}>
                             <td>{competition.name}</td>
                             <td>{competition.topic}</td>
-                            <td>{competition.startDate.replace('T', ' ')}</td>
-                            <td>{competition.endDate}</td>
-                            <td>{competition.votingStartDate}</td>
-                            <td>{competition.votingEndDate}</td>
+                            <td>{competition.startDate.toLocaleDateString()
+                                + ' ' + competition.startDate.toLocaleTimeString()}</td>
+                            <td>{competition.endDate} minutes</td>
+                            <td>{competition.votingStartDate} minutes</td>
+                            <td>{competition.votingEndDate} minutes</td>
                             <td><button
                                 type='button'
                                 className='btn vac-btn-primary w-100'
-                                onClick={() => console.log('action')}>Join</button></td>
+                                onClick={() => props.manageCompetitionModal('start', true, competition.id)}>Join</button></td>
                         </tr>
                     );
                 })}
@@ -38,9 +41,24 @@ const DrawTabContent = function (props) {
 };
 
 const mapStateToProps = function (state) {
+    const availableCompetitions = state.competitions.competitions.filter(competition => {
+        const isDrawStatus = state.competitions.draw.indexOf(competition.id);
+        return isDrawStatus > -1;
+        // const now = new Date();
+        // const startDate = new Date(competition.startDate);
+        // const passedTime = parseInt((now - startDate) / 60000, 10);
+        // return passedTime > 0 && competition.votingStartDate - passedTime > competition.endDate;
+    });
+    
     return {
-        competitions: [...state.competitions.competitions]
+        competitions: availableCompetitions
     };
 };
 
-export default connect(mapStateToProps)(DrawTabContent);
+const mapDispatchToProps = function (dispatch) {
+    return {
+        manageCompetitionModal: (component, show, competitionId) => dispatch(manageCompetitionModal(component, show, competitionId))
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DrawTabContent);

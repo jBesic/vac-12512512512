@@ -145,6 +145,12 @@ body {
     }
 }
 
+.vac-table {
+    td {
+        vertical-align: middle;
+    }
+}
+
 .vac-btn-primary {
     background-color: $color5;
     border: $color5;

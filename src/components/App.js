@@ -11,6 +11,7 @@ import Canvas from '../containers/Canvas/Canvas';
 import CompetitionsPage from './CompetitionsPage';
 import Spinner from './Spinner/Spinner';
 import CreateEditCompetition from '../containers/CreateEditCompetition';
+import StartCompetition from '../containers/StartCompetition';
 
 class App extends Component {
   render() {
@@ -24,6 +25,9 @@ class App extends Component {
           </Modal>
           <Modal show={this.props.competitions.createCompetition || this.props.competitions.editCompetition}>
             <CreateEditCompetition />
+          </Modal>
+          <Modal show={this.props.competitions.startCompetition}>
+            <StartCompetition />
           </Modal>
           <Switch>
             <Route exact path='/' component={Landing} />
