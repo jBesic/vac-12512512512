@@ -15,17 +15,17 @@ class CompetitionGallery extends Component {
         nextPage: 1,
         currentPage: 1,
         limit: 1,
-        isFetching: true
+        isFetching: true,
+        isFirstLoad: true
     };
 
     componentDidMount = () => {
         let competitionId = this.props.match.params.competitionId;
         this.setState({ competitionId });
         this.props.getDrawingsByCompetitionId(competitionId, 0, this.state.limit + 1);
-        //this.props.getDrawings();
         axios({
             method: 'get',
-            url: 'http://localhost:8080/competition/' + competitionId,
+            url: 'http://localhost:8080/getCompetitionById/' + competitionId,
             headers: {
                 'X-Auth-Token': localStorage.getItem('token')
             }
@@ -37,6 +37,7 @@ class CompetitionGallery extends Component {
         }).catch(error => {
             console.log(error.response.data);
         });
+        this.setState({isFirstLoad: false})
     };
 
     componentWillReceiveProps = (nextProps) => {
@@ -72,6 +73,7 @@ class CompetitionGallery extends Component {
 
 
     render() {
+        //this.state.isFirstLoad === true ? this.componentDidMount() : '';
         return (
             <React.Fragment>
                 <div className='container'>

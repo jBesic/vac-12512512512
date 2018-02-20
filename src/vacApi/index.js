@@ -132,7 +132,7 @@ const getAllDrawings = function () {
 const getCompetitions = function (offset, limit) {
     return axios({
         method: 'get',
-        url: API_ENDPOINT + '/competition/' + offset + '/' + limit,
+        url: API_ENDPOINT + '/getCompetitions/' + offset + '/' + limit,
         headers: {
             'X-Auth-Token': localStorage.getItem('token')
         }

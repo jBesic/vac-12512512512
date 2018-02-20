@@ -13,7 +13,7 @@ class Gallery extends Component {
         currentUsersPage: 1,
         nextCompetitionsPage: 1,
         currentCompetitionsPage: 1,
-        limit: 2,
+        limit: 1,
         isFetching: true,
         isFirstCompetitionsLoading: true
     };
@@ -114,7 +114,7 @@ class Gallery extends Component {
                                                         if (this.state.currentUsersPage !== this.state.nextUsersPage && index === this.props.users.length - 1) return [];
                                                         let shapes = item.drawings && item.drawings.length ? item.drawings[item.drawings.length - 1].shapes : null;
                                                         return <div key={index} className='col-md-3'>
-                                                            <GalleryCard name={item.username} shapes={shapes} link={("/gallery/user/" + item.id)} />
+                                                            <GalleryCard name={item.username} shapes={shapes} link={("/gallery/user/" + item.id)} action='VIEW' />
                                                         </div>
                                                     })}
                                                 </div>
@@ -138,8 +138,10 @@ class Gallery extends Component {
                                                     {this.props.competitions.map((item, index) => {
                                                         if (this.state.currentCompetitionsPage !== this.state.nextCompetitionsPage && index === this.props.competitions.length - 1) return [];
                                                         let shapes = item.drawings && item.drawings.length ? item.drawings[item.drawings.length - 1].shapes : null;
+                                                        let action = item.votingEndDate > new Date() ? 'VOTE' : 'VIEW';
+                                                        //console.log('action', action);
                                                         return <div key={item.id} className='col-md-3' >
-                                                            <GalleryCard name={item.name} shapes={shapes} link={("/gallery/competition/" + item.id)} />
+                                                            <GalleryCard name={item.name} shapes={shapes} link={("/gallery/competition/" + item.id)} action={action} />
                                                         </div>
                                                     })}
                                                 </div>

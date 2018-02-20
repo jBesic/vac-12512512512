@@ -39,29 +39,33 @@ function competitions(state = INITIAL_STATE, action) {
             let newCompetitions = [];
             let competitionStatuses = {};
 
-            if (action.status === 'draw') {
-                competitionStatuses.draw = action.competitions.map(competition => Number.parseInt(competition.id, 10));
-            } else if (action.status === 'vote') {
-                competitionStatuses.vote = action.competitions.map(competition => Number.parseInt(competition.id, 10));
-            } else if (action.status === 'joined') {
-                competitionStatuses.joined = action.competitions.map(competition => Number.parseInt(competition.id, 10));
+            if (action.status !== null) {
+                if (action.status === 'draw') {
+                    competitionStatuses.draw = action.competitions.map(competition => Number.parseInt(competition.id, 10));
+                } else if (action.status === 'vote') {
+                    competitionStatuses.vote = action.competitions.map(competition => Number.parseInt(competition.id, 10));
+                } else if (action.status === 'joined') {
+                    competitionStatuses.joined = action.competitions.map(competition => Number.parseInt(competition.id, 10));
+                } else {
+                    competitionStatuses.own = [
+                        ...state.own,
+                        ...action.competitions.filter(competition => {
+                            const competitionId = Number.parseInt(competition.id, 10);
+                            return state.own.indexOf(competitionId) === -1;
+                        }).map(newCompetition => newCompetition.id)
+                    ];
+                }
+    
+                newCompetitions = state.competitions.filter(competition => {
+                    return action.competitions.findIndex(actionCompetition => {
+                        return actionCompetition.id === competition.id;
+                    }) === -1;
+                });
+    
+                newCompetitions = [...newCompetitions, ...action.competitions];
             } else {
-                competitionStatuses.own = [
-                    ...state.own,
-                    ...action.competitions.filter(competition => {
-                        const competitionId = Number.parseInt(competition.id, 10);
-                        return state.own.indexOf(competitionId) === -1;
-                    }).map(newCompetition => newCompetition.id)
-                ];
+                newCompetitions = action.competitions;
             }
-
-            newCompetitions = state.competitions.filter(competition => {
-                return action.competitions.findIndex(actionCompetition => {
-                    return actionCompetition.id === competition.id;
-                }) === -1;
-            });
-
-            newCompetitions = [...newCompetitions, ...action.competitions];
 
             return {
                 ...state,

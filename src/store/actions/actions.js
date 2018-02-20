@@ -359,7 +359,7 @@ const AsyncGetCompetitions = function (offset, limit) {
         dispatch(asyncCompetitionRequest());
         vacApi.getCompetitions(offset, limit)
             .then(response => {
-                dispatch(asyncCompetitionSuccess(null, [...response]));
+                dispatch(asyncCompetitionSuccess(null, [...response.data.data]));
             }).catch(error => {
                 dispatch(asyncCompetitionFailure(error.response.data.message));
             });
