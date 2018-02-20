@@ -392,9 +392,10 @@ class Canvas extends Component {
     saveDrawingHandler = () => {
         let drawing = {
             name: this.state.drawingName,
-            shapes: this.props.shapes
+            shapes: this.props.shapes,
+            competitionId: null
         };
-        console.log('drawing', drawing);
+
         if (this.props.isLoged === true) {
             return this.props.saveDrawing(drawing);
         }
@@ -407,7 +408,9 @@ class Canvas extends Component {
             <div className='container'>
                 {/* *** Canvas Title *** */}
                 <div className='row canvas__title'>
-                    <div className='col-md-12' >Draw for competiton: Competition Name</div>
+                    <div className='col-md-12' >
+                        {this.props.competition.id ? 'Competition: ' + this.props.competition.name : 'Draw for fun'}
+                    </div>
                 </div>
                 {/* *** Canvas Content Header *** */}
                 <div className='row d-flex align-items-center'>

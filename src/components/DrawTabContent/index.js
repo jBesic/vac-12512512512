@@ -37,17 +37,13 @@ const DrawTabContent = function (props) {
                 })}
             </tbody>
         </table>
-    ) : <p className='m-0'>Sorry, we can not find a competition to draw.</p>;
+    ) : <div className="alert alert-secondary m-0" role="alert">Sorry, we can not find a competition to draw.</div>;
 };
 
 const mapStateToProps = function (state) {
     const availableCompetitions = state.competitions.competitions.filter(competition => {
         const isDrawStatus = state.competitions.draw.indexOf(competition.id);
         return isDrawStatus > -1;
-        // const now = new Date();
-        // const startDate = new Date(competition.startDate);
-        // const passedTime = parseInt((now - startDate) / 60000, 10);
-        // return passedTime > 0 && competition.votingStartDate - passedTime > competition.endDate;
     });
     
     return {

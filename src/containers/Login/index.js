@@ -38,7 +38,7 @@ class Login extends Component {
             <form className='d-block w-100' onSubmit={this.submitHandler}>
                 {this.state.showMessage && this.props.auth.message ? <div className="alert alert-danger">{this.props.auth.message}</div> : null}
                 <div className="form-group">
-                    <label htmlFor="username">Email address</label>
+                    <label htmlFor="username">Username</label>
                     <input
                         type="text"
                         className="form-control"

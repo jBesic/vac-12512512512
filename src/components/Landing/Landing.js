@@ -12,7 +12,7 @@ const Landing = function (props) {
         <div className="container jumbotron jumbotron-fluid align-self-center text-center landing">
             <div className="container-fluid">
                 <h1 className="display-1">Vector Art Champions</h1>
-                <p className="lead">Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pro</p>
+                <p className="lead w-75 mx-auto mb-4">Do you want to beat your best friend and become a legend? Join to an active competition and start making your art, or register and create your own competition with your topic.</p>
                 <div>
                     <Link className="btn vac-btn-primary btn-lg m-1" to='/canvas'>Draw for fun</Link>
                     <button
@@ -21,8 +21,8 @@ const Landing = function (props) {
                         onClick={() => {
                             props.manageCompetitionModal('start', true)
                         }}>Join to competition</button>
-                    <Link className="btn vac-btn-primary btn-lg m-1" to='/galleries'>Browse galleries</Link>
-                    {props.auth.isLoged ? <Link className="btn vac-btn-primary btn-lg m-1" to='/galleries'>Vote for arts</Link> : null}
+                    <Link className="btn vac-btn-primary btn-lg m-1" to='/gallery'>Browse galleries</Link>
+                    {props.auth.isLoged ? <Link className="btn vac-btn-primary btn-lg m-1" to='/gallery/'>Vote for arts</Link> : null}
                 </div>
             </div>
         </div>

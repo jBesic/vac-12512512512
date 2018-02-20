@@ -1,8 +1,9 @@
 import * as actionTypes from '../actions/actionTypes'
 
 const INITIAL_STATE = {
+    drawings: [],
     isFetching: false,
-    message: '',
+    message: ''
 };
 
 function drawings(state = INITIAL_STATE, action) {
@@ -15,10 +16,12 @@ function drawings(state = INITIAL_STATE, action) {
             };
 
         case actionTypes.DRAWING_REQUEST_SUCCESS:
+            let drawings = action.drawings ? action.drawings : [];
             return {
                 ...state,
                 message: '',
-                isFetching: false
+                isFetching: false,
+                drawings: drawings
             };
 
         case actionTypes.DRAWING_REQUEST_FAILURE:
