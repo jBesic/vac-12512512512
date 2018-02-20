@@ -1,30 +1,31 @@
 import * as actionTypes from '../actions/actionTypes'
 
 const INITIAL_STATE = {
-    drawings: [],
+    users: [],
     isFetching: false,
-    message: ''
+    message: '',
+    modifiedDate: null
 };
 
-function drawings(state = INITIAL_STATE, action) {
+function users(state = INITIAL_STATE, action) {
     switch (action.type) {
-        case actionTypes.SET_DRAWING_REQUEST:
+        case actionTypes.SET_USER_REQUEST:
             return {
                 ...state,
                 message: '',
                 isFetching: true
             };
 
-        case actionTypes.DRAWING_REQUEST_SUCCESS:
-            let drawings = action.drawings ? action.drawings : [];
+        case actionTypes.USER_REQUEST_SUCCESS:
             return {
                 ...state,
                 message: '',
                 isFetching: false,
-                drawings: drawings
+                users: action.users,
+                modifiedDate: new Date()
             };
 
-        case actionTypes.DRAWING_REQUEST_FAILURE:
+        case actionTypes.USER_REQUEST_FAILURE:
             return {
                 ...state,
                 isFetching: false,
@@ -36,4 +37,4 @@ function drawings(state = INITIAL_STATE, action) {
     }
 }
 
-export default drawings;
+export default users;

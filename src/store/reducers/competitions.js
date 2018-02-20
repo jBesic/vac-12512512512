@@ -13,6 +13,7 @@ const INITIAL_STATE = {
     started: {},
     manageCompetitionId: '',
     message: '',
+    modifiedDate: null
 };
 
 function competitions(state = INITIAL_STATE, action) {
@@ -69,7 +70,8 @@ function competitions(state = INITIAL_STATE, action) {
                 competitions: [...newCompetitions.sort((competitionA, competitionB) => {
                     return competitionA.id - competitionB.id
                 })],
-                ...competitionStatuses
+                ...competitionStatuses, 
+                modifiedDate: new Date()
             };
 
         case actionTypes.ASYNC_COMPETITION_FAILURE:

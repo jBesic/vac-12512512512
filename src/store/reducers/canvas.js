@@ -101,7 +101,7 @@ function redo() {
 }
 
 function resetCanvasGlobalState() {
-    let state = initState;
+    let state = {...initState};
     state.resetCanvasLocalState = true;
     history = [initState];
     historyIndex = 0;

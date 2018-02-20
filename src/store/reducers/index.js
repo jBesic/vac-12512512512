@@ -4,6 +4,7 @@ import groupsReducer from './groups';
 import auth from './auth';
 import competitionsReducer from './competitions';
 import drawingsReducer from './drawings';
+import usersReducer from './users';
 import {reducer as toastrReducer} from 'react-redux-toastr'
 
 export default combineReducers({
@@ -12,5 +13,6 @@ export default combineReducers({
     groupsSettings: groupsReducer,
     competitions: competitionsReducer,
     drawings: drawingsReducer,
+    users: usersReducer,
     toastr: toastrReducer
 });

@@ -392,9 +392,10 @@ class Canvas extends Component {
     saveDrawingHandler = () => {
         let drawing = {
             name: this.state.drawingName,
-            shapes: this.props.shapes
+            shapes: this.props.shapes,
+            competitionId: null
         };
-        console.log('drawing', drawing);
+
         if (this.props.isLoged === true) {
             return this.props.saveDrawing(drawing);
         }
