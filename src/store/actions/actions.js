@@ -281,10 +281,10 @@ const setDrawingRequest = function () {
     }
 };
 
-const drawingRequestSuccess = function (token) {
+const drawingRequestSuccess = function (drawings = null) {
     return {
         type: actionTypes.DRAWING_REQUEST_SUCCESS,
-        token: token
+        drawings: drawings
     }
 };
 
@@ -322,6 +322,86 @@ const updateResetCanvasLocalStateField = (val) => {
     };
 }
 
+const setUserRequest = function () {
+    return {
+        type: actionTypes.SET_USER_REQUEST
+    }
+};
+
+const userRequestSuccess = function (users) {
+    return {
+        type: actionTypes.USER_REQUEST_SUCCESS,
+        users: users
+    }
+};
+
+const userRequestFailure = function (message) {
+    return {
+        type: actionTypes.USER_REQUEST_FAILURE,
+        message: message
+    }
+};
+
+const AsyncGetUsers = function (offset, limit) {
+    return dispatch => {
+        dispatch(setUserRequest());
+        vacApi.getUsers(offset, limit)
+            .then(response => {
+                dispatch(userRequestSuccess([...response.data.data]));
+            }).catch(error => {
+                dispatch(userRequestFailure(error.response.data.message));
+            });
+    }
+}
+
+const AsyncGetCompetitions = function (offset, limit) {
+    return dispatch => {
+        dispatch(asyncCompetitionRequest());
+        vacApi.getCompetitions(offset, limit)
+            .then(response => {
+                dispatch(asyncCompetitionSuccess(null, [...response]));
+            }).catch(error => {
+                dispatch(asyncCompetitionFailure(error.response.data.message));
+            });
+    }
+}
+
+const AsyncGetDrawingsByUserId = function (userId, offset, limit) {
+    return dispatch => {
+        dispatch(setDrawingRequest());
+        vacApi.getDrawingsByUserId(userId, offset, limit)
+            .then(response => {
+                dispatch(drawingRequestSuccess([ ...response.data.data ]));
+            }).catch(error => {
+                dispatch(drawingRequestFailure(error.response.data.message));
+            });
+    }
+}
+
+const AsyncGetAllDrawings = function () {
+    return dispatch => {
+        dispatch(setDrawingRequest());
+        vacApi.getAllDrawings()
+            .then(response => {
+                dispatch(drawingRequestSuccess([ ...response.data.data ]));
+            }).catch(error => {
+                dispatch(drawingRequestFailure(error.response.data.message));
+            });
+    }
+}
+
+const AsyncGetDrawingsByCompetitionId = function (competitionId, offset, limit) {
+    return dispatch => {
+        dispatch(setDrawingRequest());
+        vacApi.getDrawingsByCompetitionId(competitionId, offset, limit)
+            .then(response => {
+                dispatch(drawingRequestSuccess([ ...response.data.data ]));
+            }).catch(error => {
+                dispatch(drawingRequestFailure(error.response.data.message));
+            });
+    }
+}
+
 export {
     AsyncRegisterUser,
     AsyncLogoutUser,
@@ -344,5 +424,10 @@ export {
     manageCompetitionModal,
     AsyncSaveDrawing,
     updateResetCanvasLocalStateField,
-    startCompetition
+    startCompetition,
+    AsyncGetUsers,
+    AsyncGetCompetitions,
+    AsyncGetDrawingsByUserId,
+    AsyncGetAllDrawings,
+    AsyncGetDrawingsByCompetitionId
 };

@@ -12,6 +12,9 @@ import CompetitionsPage from './CompetitionsPage';
 import Spinner from './Spinner/Spinner';
 import CreateEditCompetition from '../containers/CreateEditCompetition';
 import StartCompetition from '../containers/StartCompetition';
+import Gallery from '../containers/Gallery/Gallery';
+import UserGallery from '../components/UserGallery/UserGallery';
+import CompetitionGallery from '../components/CompetitionGallery/CompetitionGallery';
 
 class App extends Component {
   render() {
@@ -19,7 +22,7 @@ class App extends Component {
       <React.Fragment>
         <Navigation />
         <Main>
-          <Spinner show={this.props.auth.isFetching || this.props.competitions.isFetching} />
+          <Spinner show={this.props.auth.isFetching || this.props.drawings.isFetching || this.props.competitions.isFetching || this.props.users.isFetching} />
           <Modal show={this.props.auth.loginActive || this.props.auth.registerActive}>
             <Authentication />
           </Modal>
@@ -33,6 +36,9 @@ class App extends Component {
             <Route exact path='/' component={Landing} />
             <Route exact path='/canvas' component={Canvas} />
             <Route exact path='/competitions' component={CompetitionsPage} />
+            <Route exact path='/gallery' component={Gallery} />
+            <Route exact path='/gallery/user/:userId' component={UserGallery} />
+            <Route exact path='/gallery/competition/:competitionId' component={CompetitionGallery} />
             <Redirect to='/' />
           </Switch>
         </Main>
@@ -44,7 +50,9 @@ class App extends Component {
 function mapStateToProps(state) {
   return {
     auth: state.auth,
-    competitions: state.competitions
+    competitions: state.competitions,
+    drawings: state.drawings,
+    users: state.users
   };
 }
 
