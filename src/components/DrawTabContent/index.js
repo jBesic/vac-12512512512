@@ -23,7 +23,8 @@ const DrawTabContent = function (props) {
                         <tr key={competition.id}>
                             <td>{competition.name}</td>
                             <td>{competition.topic}</td>
-                            <td>{competition.startDate.replace('T', ' ')}</td>
+                            <td>{competition.startDate.toLocaleDateString()
+                                + ' ' + competition.startDate.toLocaleTimeString()}</td>
                             <td>{competition.endDate} minutes</td>
                             <td>{competition.votingStartDate} minutes</td>
                             <td>{competition.votingEndDate} minutes</td>
@@ -41,10 +42,12 @@ const DrawTabContent = function (props) {
 
 const mapStateToProps = function (state) {
     const availableCompetitions = state.competitions.competitions.filter(competition => {
-        const now = new Date();
-        const startDate = new Date(competition.startDate);
-        const passedTime = parseInt((now - startDate) / 60000, 10);
-        return passedTime > 0 && competition.votingStartDate - passedTime > competition.endDate;
+        const isDrawStatus = state.competitions.draw.indexOf(competition.id);
+        return isDrawStatus > -1;
+        // const now = new Date();
+        // const startDate = new Date(competition.startDate);
+        // const passedTime = parseInt((now - startDate) / 60000, 10);
+        // return passedTime > 0 && competition.votingStartDate - passedTime > competition.endDate;
     });
     
     return {

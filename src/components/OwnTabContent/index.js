@@ -20,17 +20,17 @@ const OwnTabContent = function (props) {
             <tbody>
                 {props.competitions.map(competition => {
                     const now = new Date();
-                    const startDate = new Date(competition.startDate);
 
                     return (
                         <tr key={competition.id}>
                             <td>{competition.name}</td>
                             <td>{competition.topic}</td>
-                            <td>{competition.startDate.replace('T', ' ')}</td>
+                            <td>{competition.startDate.toLocaleDateString()
+                                + ' ' + competition.startDate.toLocaleTimeString()}</td>
                             <td>{competition.endDate} minutes</td>
                             <td>{competition.votingStartDate} minutes</td>
                             <td>{competition.votingEndDate} minutes</td>
-                            <td>{now < startDate ? <button
+                            <td>{now < competition.startDate ? <button
                                 type='button'
                                 className='btn vac-btn-primary w-100'
                                 onClick={() => props.manageCompetitionModal('edit', true, competition.id)}>Edit</button> : <button
@@ -46,8 +46,17 @@ const OwnTabContent = function (props) {
 };
 
 const mapStateToProps = function (state) {
+    const availableCompetitions = state.competitions.competitions.filter(competition => {
+        const isOwnStatus = state.competitions.own.indexOf(competition.id);
+        return isOwnStatus > -1;
+        // const now = new Date();
+        // const startDate = new Date(competition.startDate);
+        // const passedTime = parseInt((now - startDate) / 60000, 10) - competition.votingStartDate;
+        // return passedTime > 0 && passedTime < competition.votingEndDate;
+    });
+
     return {
-        competitions: state.competitions.competitions
+        competitions: availableCompetitions
     };
 };
 
