@@ -56,7 +56,7 @@ async function login(req, res, next) {
         return next(err);
     }
 
-    const authToken = jwt.sign({ userId: user.id }, apiSecret);
+    const authToken = jwt.sign({ userId: user.id, iat: 5000 }, apiSecret);
     await User.update({ authToken }, { where: { id: user.id } });
     res.send({ code: "Success", data: authToken });
     return next();

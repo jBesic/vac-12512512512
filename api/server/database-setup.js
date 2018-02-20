@@ -14,7 +14,10 @@ const database = new Sequelize('vector_art_champions', 'root', '', {
 
 // Model definition
 const User = database.define('user', {
-    username: Sequelize.STRING,
+    username: {
+        type: Sequelize.STRING,
+        unique: true
+    },
     password: Sequelize.STRING,
     authToken: Sequelize.STRING
 });
@@ -34,7 +37,7 @@ const Competition = database.define('competition', {
 
 const Drawing = database.define('drawing', {
     name: Sequelize.STRING,
-    //shapes: Sequelize.JSON,
+    // shapes: Sequelize.STRING,
     userId: {
         type: Sequelize.INTEGER,
         references: { model: User, key: 'id' }
@@ -57,8 +60,11 @@ const Vote = database.define('vote', {
     value: Sequelize.TINYINT
 });
 
-User.hasMany(Competition, {foreignKey: 'userId'});
-Competition.hasMany(Drawing, {foreignKey: 'competitionId'});
+User.hasMany(Drawing);
+User.hasMany(Competition, { foreignKey: 'userId' });
+Drawing.belongsTo(User, { foreignKey: 'userId', targetKey: 'id' });
+Drawing.belongsTo(Competition, { foreignKey: 'competitionId', targetKey: 'id', defaultValue: null });
+Competition.hasMany(Drawing, { foreignKey: 'competitionId' });
 
 // INIT DB ENTITY MODELS
 (async function () {

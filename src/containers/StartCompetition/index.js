@@ -96,7 +96,8 @@ class StartCompetition extends Component {
             <form className='d-block w-100' onSubmit={this.submitHandler}>
                 {this.state.message ? <div className="alert alert-danger">{this.state.message}</div> : null}
                 <h4 className="mb-4">Join to the competition</h4>
-                <p>Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pro</p>
+                <p>Welcome. This is the short guideline that will help you better understand the competition rules. Generally speaking, the meaning of rules are same for any competition you chose.</p>
+                <p>When you start drawing, you should make an art related to a <strong>competition topic</strong>. Also,pay attention to the <strong>Drawing duration</strong> which is the time you have to finish your awesome art.</p>
                 <div className="form-group">
                     <label htmlFor="name">Name</label>
                     <select
@@ -195,7 +196,7 @@ function mapDispatchToProps(dispatch) {
     return {
         startCompetitionDispatch: competitionDetails => dispatch(startCompetition(competitionDetails)),
         manageCompetitionModal: () => dispatch(manageCompetitionModal()),
-        loadCompetitions: () => dispatch(AsyncLoadCompetitions())
+        loadCompetitions: (status) => dispatch(AsyncLoadCompetitions(status))
     }
 }
 

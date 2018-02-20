@@ -35,17 +35,13 @@ const VoteTabContent = function (props) {
                 })}
             </tbody>
         </table>
-    ) : <p className='m-0'>Sorry, we can not find a competition to vote.</p>;
+    ) : <div className="alert alert-secondary m-0" role="alert">Sorry, we can not find a competition to vote.</div>;
 };
 
 const mapStateToProps = function (state) {
     const availableCompetitions = state.competitions.competitions.filter(competition => {
         const isVoteStatus = state.competitions.vote.indexOf(competition.id);
         return isVoteStatus > -1;
-        // const now = new Date();
-        // const startDate = new Date(competition.startDate);
-        // const passedTime = parseInt((now - startDate) / 60000, 10) - competition.votingStartDate;
-        // return passedTime > 0 && passedTime < competition.votingEndDate;
     });
 
     return {

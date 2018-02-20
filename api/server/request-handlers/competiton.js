@@ -14,6 +14,14 @@ function returnQuery(params) {
                     userId: {
                         [Op.ne]: params.userId
                     },
+                    [Op.or]: {
+                        '$drawings.id$': {
+                            [Op.eq]: null
+                        },
+                        '$drawings.userId$': {
+                            [Op.ne]: params.userId
+                        }
+                    },
                     startDate: {
                         [Op.lt]: new Date()
                     },
@@ -24,11 +32,7 @@ function returnQuery(params) {
                 include: [{
                     model: Drawing,
                     required: false,
-                    where: {
-                        competitionId: {
-                            [Op.eq]: null
-                        }
-                    }
+                    where: {}
                 }]
             };
         }
@@ -58,18 +62,14 @@ function returnQuery(params) {
                     votingStartDate: {
                         [Op.lt]: new Date()
                     },
-                    id: {
-                        [Op.eq]: Sequelize.col('drawings.competitionId')
+                    '$drawings.userId$': {
+                        [Op.eq]: params.userId
                     }
                 },
                 include: [{
                     model: Drawing,
-                    required: false,
-                    where: {
-                        competitionId: {
-                            [Op.ne]: null
-                        }
-                    }
+                    required: true,
+                    where: {}
                 }]
             };
         }
@@ -132,7 +132,25 @@ async function deleteItem(req, res, next) {
     return next();
 }
 
+async function getCompetitions(req, res, next) {
+    let offset = req.params.offset;
+    let limit = req.params.limit;
+    const competitions = await Competition.findAll({ include: [{ model: Drawing }], limit, offset });
+    res.send({ code: "Success", data: competitions });
+    return next();
+}
+
+async function getCompetitionById(req, res, next) {
+    let competitionId = req.params.id;
+    const competition = await Competition.findAll({ where: { id: competitionId } });
+    res.send({ code: "Success", data: competition[0] });
+    return next();
+}
+
+
 module.exports.list = list;
 module.exports.create = create;
 module.exports.update = update;
 module.exports.delete = deleteItem;
+module.exports.getCompetitions = getCompetitions;
+module.exports.getCompetitionById = getCompetitionById;
