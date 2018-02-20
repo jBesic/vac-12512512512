@@ -42,7 +42,7 @@ const OwnTabContent = function (props) {
                 })}
             </tbody>
         </table>
-    ) : <p className='m-0'>Sorry, we can not find a competition to draw.</p>;
+    ) : <div className="alert alert-secondary m-0" role="alert">Sorry, we can not find a competition to draw.</div>;
 };
 
 const mapStateToProps = function (state) {

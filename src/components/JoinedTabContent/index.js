@@ -35,17 +35,13 @@ const JoinedTabContent = function (props) {
                 })}
             </tbody>
         </table>
-    ) : <p className='m-0'>Sorry, you need to join to one of competitions.</p>;
+    ) : <div className="alert alert-secondary m-0" role="alert">Sorry, you need to join to one of competitions.</div>;
 };
 
 const mapStateToProps = function (state) {
     const availableCompetitions = state.competitions.competitions.filter(competition => {
         const isJoinedStatus = state.competitions.joined.indexOf(competition.id);
         return isJoinedStatus > -1;
-        // const now = new Date();
-        // const startDate = new Date(competition.startDate);
-        // const passedTime = parseInt((now - startDate) / 60000, 10) - competition.votingStartDate;
-        // return passedTime > 0 && passedTime < competition.votingEndDate;
     });
 
     return {

@@ -109,6 +109,12 @@ body,
     }
 }
 
+.nav-item {
+    .vac-btn-primary {
+        padding: 0.5rem 1rem;
+    }
+}
+
 .form-control {
     outline: 0;
 
@@ -119,13 +125,6 @@ body,
     }
 }
 
-.vac-card-header {
-    background-color: #e2e3e5;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    text-align: center;
-}
-
 /* Vac styles */
 body {
     overflow-y: scroll;
@@ -134,8 +133,12 @@ body {
 .main {
     background-color: #F8F8F8;
     height: 100%;
-    padding-top: 7%;
+    padding-top: 110px;
     position: relative;
+
+    @media (min-width: 992px) {
+        padding-top: 150px;
+    }
 
     &.landing {
         background-image: url('../images/art.jpg');
@@ -151,15 +154,35 @@ body {
     }
 }
 
+.vac-card-header {
+    background-color: #e2e3e5;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+}
+
+
+.portlet {
+    .portlet-title {
+        .caption {
+            font-size: 2rem;
+
+            .caption-subject {
+                font-size: inherit !important;
+            }
+        }
+    }
+}
+
 .vac-btn-primary {
     background-color: $color5;
-    border: $color5;
+    border: 1px solid $color5;
     color: $color10;
     outline: $color5;
 
     &:disabled {
         background-color: $color4;
-        border: $color4;
+        border: 1px solid $color4;
         cursor: not-allowed;
         color: $color10;
         outline: $color4;
@@ -167,7 +190,7 @@ body {
 
     &:hover {
         background-color: $color4;
-        border: $color4;
+        border: 1px solid $color4;
         color: $color10;
         outline: $color4;
     }

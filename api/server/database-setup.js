@@ -1,20 +1,23 @@
 const Sequelize = require('sequelize');
 const dataPopulators = require('./mock-data');
 
-const FORCE_RECREATE_MODELS = true;
+const FORCE_RECREATE_MODELS = false;
 
 const database = new Sequelize('vector_art_champions', 'root', '', {
     host: 'localhost',
-   /*  dialect: 'mysql', */
-    dialect: 'sqlite',
-    storage: './server/database.sqlite',
+    dialect: 'mysql',
+    // dialect: 'sqlite',
+    // storage: './server/database.sqlite',
     pool: { max: 5, min: 0, acquire: 30000, idle: 10000 },
     operatorsAliases: false
 });
 
 // Model definition
 const User = database.define('user', {
-    username: Sequelize.STRING,
+    username: {
+        type: Sequelize.STRING,
+        unique: true
+    },
     password: Sequelize.STRING,
     authToken: Sequelize.STRING
 });
@@ -34,7 +37,7 @@ const Competition = database.define('competition', {
 
 const Drawing = database.define('drawing', {
     name: Sequelize.STRING,
-    shapes: Sequelize.JSON,
+    // shapes: Sequelize.STRING,
     userId: {
         type: Sequelize.INTEGER,
         references: { model: User, key: 'id' }
@@ -44,11 +47,6 @@ const Drawing = database.define('drawing', {
         references: { model: Competition, key: 'id' }
     }
 });
-
-Drawing.belongsTo(User, {foreignKey: 'userId', targetKey: 'id'});
-Drawing.belongsTo(Competition, {foreignKey: 'competitionId', targetKey: 'id', defaultValue: null})
-User.hasMany(Drawing);
-Competition.hasMany(Drawing);
 
 const Vote = database.define('vote', {
     drawingId: {
@@ -62,8 +60,11 @@ const Vote = database.define('vote', {
     value: Sequelize.TINYINT
 });
 
-User.hasMany(Competition, {foreignKey: 'userId'});
-Competition.hasMany(Drawing, {foreignKey: 'competitionId'});
+User.hasMany(Drawing);
+User.hasMany(Competition, { foreignKey: 'userId' });
+Drawing.belongsTo(User, { foreignKey: 'userId', targetKey: 'id' });
+Drawing.belongsTo(Competition, { foreignKey: 'competitionId', targetKey: 'id', defaultValue: null });
+Competition.hasMany(Drawing, { foreignKey: 'competitionId' });
 
 // INIT DB ENTITY MODELS
 (async function () {
