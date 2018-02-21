@@ -10,19 +10,15 @@ function returnQuery(params) {
     switch (params.status) {
         case 'draw': {
             let filter = {};
+
             if (params.userId) {
                 filter = {
                     where: {
                         userId: {
                             [Op.ne]: params.userId
                         },
-                        [Op.or]: {
-                            '$drawings.id$': {
-                                [Op.eq]: null
-                            },
-                            '$drawings.userId$': {
-                                [Op.ne]: params.userId
-                            }
+                        id: {
+                            [Op.notIn]: Sequelize.literal('(SELECT `drawing`.`competitionId` FROM `drawings` AS `drawing` WHERE `drawing`.`userId` = ' + params.userId + ')')
                         },
                         startDate: {
                             [Op.lt]: new Date()
@@ -30,12 +26,7 @@ function returnQuery(params) {
                         votingStartDate: {
                             [Op.gt]: new Date()
                         }
-                    },
-                    include: [{
-                        model: Drawing,
-                        required: false,
-                        where: {}
-                    }]
+                    }
                 };
             } else {
                 filter = {
@@ -78,15 +69,10 @@ function returnQuery(params) {
                     votingStartDate: {
                         [Op.lt]: new Date()
                     },
-                    '$drawings.userId$': {
-                        [Op.eq]: params.userId
-                    }
-                },
-                include: [{
-                    model: Drawing,
-                    required: true,
-                    where: {}
-                }]
+                    id: {
+                        [Op.in]: Sequelize.literal('(SELECT `drawing`.`competitionId` FROM `drawings` AS `drawing` WHERE `drawing`.`userId` = ' + params.userId + ')')
+                    },
+                }
             };
         }
 

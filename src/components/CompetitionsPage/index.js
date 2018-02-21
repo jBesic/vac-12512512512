@@ -20,8 +20,12 @@ class CompetitionsPage extends Component {
         }
     }
 
+    loadCompetitions(status) {
+        this.props.loadCompetitions(status);
+    }
+
     componentDidMount() {
-        this.props.loadCompetitions('draw');
+        this.loadCompetitions('draw');
     }
 
     render() {
@@ -42,7 +46,7 @@ class CompetitionsPage extends Component {
                                                     className={"nav-link" + (this.state.activeTab === 'draw-tab' ? ' active' : '')} role="tab"
                                                     onClick={() => {
                                                         this.setState({ activeTab: 'draw-tab' });
-                                                        this.props.loadCompetitions('draw');
+                                                        this.loadCompetitions('draw');
                                                     }}>Draw</button>
                                             </li>
                                             <li className="nav-item">
@@ -50,7 +54,7 @@ class CompetitionsPage extends Component {
                                                     className={"nav-link" + (this.state.activeTab === 'vote-tab' ? ' active' : '')} role="tab"
                                                     onClick={() => {
                                                         this.setState({ activeTab: 'vote-tab' });
-                                                        this.props.loadCompetitions('vote');
+                                                        this.loadCompetitions('vote');
                                                     }}>Vote</button>
                                             </li>
                                             <li className="nav-item">
@@ -58,7 +62,7 @@ class CompetitionsPage extends Component {
                                                     className={"nav-link" + (this.state.activeTab === 'joined-tab' ? ' active' : '')} role="tab"
                                                     onClick={() => {
                                                         this.setState({ activeTab: 'joined-tab' });
-                                                        this.props.loadCompetitions('joined');
+                                                        this.loadCompetitions('joined');
                                                     }}>Joined</button>
                                             </li>
                                             <li className="nav-item">
@@ -66,7 +70,7 @@ class CompetitionsPage extends Component {
                                                     className={"nav-link" + (this.state.activeTab === 'own-tab' ? ' active' : '')} role="tab"
                                                     onClick={() => {
                                                         this.setState({ activeTab: 'own-tab' });
-                                                        this.props.loadCompetitions('own');
+                                                        this.loadCompetitions('own');
                                                     }}>Own</button>
                                             </li>
                                             <li className="nav-item ml-auto">
@@ -113,7 +117,8 @@ class CompetitionsPage extends Component {
 
 const mapStateToProps = function (state) {
     return {
-        competitions: [...state.competitions.competitions]
+        competitions: [...state.competitions.competitions],
+        modifiedDate: state.competitions.modifiedDate
     };
 };
 

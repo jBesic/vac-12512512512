@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 const VoteTabContent = function (props) {
     return props.competitions.length > 0 ? (
@@ -26,10 +27,9 @@ const VoteTabContent = function (props) {
                             <td>{competition.endDate} minutes</td>
                             <td>{competition.votingStartDate} minutes</td>
                             <td>{competition.votingEndDate} minutes</td>
-                            <td><button
-                                type='button'
+                            <td><Link
                                 className='btn vac-btn-primary w-100'
-                                onClick={() => console.log('Vote')}>Vote</button></td>
+                                to={'/gallery/competition/' + competition.id}>View</Link></td>
                         </tr>
                     );
                 })}
