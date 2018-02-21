@@ -77,6 +77,8 @@ class Canvas extends Component {
                 remainingTime: null,
                 intervalId: null
             });
+
+            this.props.history.push('/');
             this.props.updateResetCanvasLocalStateField(false);
         }
 
@@ -393,7 +395,7 @@ class Canvas extends Component {
         let drawing = {
             name: this.state.drawingName,
             shapes: this.props.shapes,
-            competitionId: null
+            competitionId: this.props.competition ? Number.parseInt(this.props.competition.id, 10) : null
         };
 
         if (this.props.isLoged === true) {

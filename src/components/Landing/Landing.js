@@ -22,7 +22,7 @@ const Landing = function (props) {
                             props.manageCompetitionModal('start', true)
                         }}>Join to competition</button>
                     <Link className="btn vac-btn-primary btn-lg m-1" to='/gallery'>Browse galleries</Link>
-                    {props.auth.isLoged ? <Link className="btn vac-btn-primary btn-lg m-1" to='/gallery/'>Vote for arts</Link> : null}
+                    {props.auth.isLoged ? <Link className="btn vac-btn-primary btn-lg m-1" to='/vote'>Vote for arts</Link> : null}
                 </div>
             </div>
         </div>

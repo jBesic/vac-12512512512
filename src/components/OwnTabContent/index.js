@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import { manageCompetitionModal } from '../../store/actions/actions';
 
@@ -33,10 +34,9 @@ const OwnTabContent = function (props) {
                             <td>{now < competition.startDate ? <button
                                 type='button'
                                 className='btn vac-btn-primary w-100'
-                                onClick={() => props.manageCompetitionModal('edit', true, competition.id)}>Edit</button> : <button
-                                    type='button'
+                                onClick={() => props.manageCompetitionModal('edit', true, competition.id)}>Edit</button> : <Link
                                     className='btn vac-btn-primary w-100'
-                                    onClick={() => console.log('View')}>View</button>}</td>
+                                    to={'/gallery/competition/' + competition.id}>View</Link>}</td>
                         </tr>
                     );
                 })}
