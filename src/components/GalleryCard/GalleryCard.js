@@ -8,12 +8,12 @@ const GalleryCard = (props) => {
         <div className='card-body text-secondary gallery__card'>
             {props.shapes &&
                 <svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet">
-                    {props.shapes.map((shape, index) => {
+                    {props.action === 'VIEW' && props.shapes.map((shape, index) => {
                         return <Shape type={shape.type} key={index} text={shape.text} points={shape.points} style={shape.attributes} />
                     })}
                 </svg> }
-            {!props.shapes && <img className="card-img-top mt-0" src={placeholder} alt="Card cap" />}
-            {false && <div className='col-md-12 text-center bold' style={{margin: 'auto', marginTop: '12%', color: 'red'}}><h1 className='bold'>VOTING TIME</h1></div>}
+            {props.action === 'VIEW' && !props.shapes && <img className="card-img-top mt-0" src={placeholder} alt="Card cap" />}
+            {props.action === 'VOTE' && <div className='col-md-12 text-center bold' style={{margin: 'auto', marginTop: '12%', color: 'red'}}><h1 className='bold'>VOTING TIME</h1></div>}
         </div>
         <div className="card-footer text-muted">
             <div className='row'>

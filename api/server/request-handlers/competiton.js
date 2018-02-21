@@ -9,32 +9,48 @@ const errs = require('restify-errors');
 function returnQuery(params) {
     switch (params.status) {
         case 'draw': {
-            return {
-                where: {
-                    userId: {
-                        [Op.ne]: params.userId
-                    },
-                    [Op.or]: {
-                        '$drawings.id$': {
-                            [Op.eq]: null
-                        },
-                        '$drawings.userId$': {
+            let filter = {};
+            if (params.userId) {
+                filter = {
+                    where: {
+                        userId: {
                             [Op.ne]: params.userId
+                        },
+                        [Op.or]: {
+                            '$drawings.id$': {
+                                [Op.eq]: null
+                            },
+                            '$drawings.userId$': {
+                                [Op.ne]: params.userId
+                            }
+                        },
+                        startDate: {
+                            [Op.lt]: new Date()
+                        },
+                        votingStartDate: {
+                            [Op.gt]: new Date()
                         }
                     },
-                    startDate: {
-                        [Op.lt]: new Date()
-                    },
-                    votingStartDate: {
-                        [Op.gt]: new Date()
+                    include: [{
+                        model: Drawing,
+                        required: false,
+                        where: {}
+                    }]
+                };
+            } else {
+                filter = {
+                    where: {
+                        startDate: {
+                            [Op.lt]: new Date()
+                        },
+                        votingStartDate: {
+                            [Op.gt]: new Date()
+                        }
                     }
-                },
-                include: [{
-                    model: Drawing,
-                    required: false,
-                    where: {}
-                }]
-            };
+                };
+            }
+
+            return filter;
         }
 
         case 'vote': {
@@ -92,7 +108,6 @@ function returnQuery(params) {
 async function list(req, res, next) {
     const filter = returnQuery({ ...req.params, userId: req.get('userId') });
     const competitions = await Competition.findAll(filter);
-    console.log(competitions.length)
     res.send({ code: "Success", data: competitions });
     return next();
 }
@@ -133,8 +148,8 @@ async function deleteItem(req, res, next) {
 }
 
 async function getCompetitions(req, res, next) {
-    let offset = req.params.offset;
-    let limit = req.params.limit;
+    let offset = Number.parseInt(req.params.offset, 10);
+    let limit = Number.parseInt(req.params.limit, 10);
     const competitions = await Competition.findAll({ include: [{ model: Drawing }], limit, offset });
     res.send({ code: "Success", data: competitions });
     return next();

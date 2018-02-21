@@ -88,10 +88,9 @@ const logoutRequest = function () {
     }
 };
 
-const logoutSuccess = function (token) {
+const logoutSuccess = function () {
     return {
-        type: actionTypes.LOGOUT_SUCCESS,
-        token: token
+        type: actionTypes.LOGOUT_SUCCESS
     }
 };
 
@@ -102,14 +101,15 @@ const logoutFailure = function (message) {
     }
 };
 
-const AsyncLogoutUser = function (token) {
+const AsyncLogoutUser = function () {
     return dispatch => {
         dispatch(logoutRequest());
 
-        vacApi.logout(token)
+        vacApi.logout(localStorage.getItem('token'))
             .then(response => {
                 localStorage.removeItem('token');
-                dispatch(logoutSuccess(token));
+                dispatch(logoutSuccess());
+                dispatch(resetCanvasGlobalState());
                 dispatch(AuthenticationModal());
             }).catch(error => {
                 dispatch(logoutFailure(error.response.data.message));
@@ -359,7 +359,7 @@ const AsyncGetCompetitions = function (offset, limit) {
         dispatch(asyncCompetitionRequest());
         vacApi.getCompetitions(offset, limit)
             .then(response => {
-                dispatch(asyncCompetitionSuccess(null, [...response]));
+                dispatch(asyncCompetitionSuccess(null, [...response.data.data]));
             }).catch(error => {
                 dispatch(asyncCompetitionFailure(error.response.data.message));
             });
