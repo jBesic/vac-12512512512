@@ -180,8 +180,8 @@ class StartCompetition extends Component {
         ) : (
                 <div>
                     <h4 className="mb-4">Join to the competition</h4>
-                    <img alt="Not found" className='img-fluid d-block w-50 mx-auto mb-4' src={notFound} />
-                    <p>Sorry, we have not found any active competition. Please try again in few minutes.</p>
+                    <img alt="Not found" className='img-fluid d-block w-75 mx-auto mb-4' src={notFound} />
+                    <div className="alert alert-secondary text-center m-0" role="alert">Sorry, we have not found any active competition. Please try again in few minutes.</div>
                 </div>
             );
     }
