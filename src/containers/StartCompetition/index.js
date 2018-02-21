@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
+import notFound from '../../assets/images/not-found.png';
 import { startCompetition, manageCompetitionModal, AsyncLoadCompetitions } from '../../store/actions/actions';
 
 class StartCompetition extends Component {
@@ -92,89 +93,97 @@ class StartCompetition extends Component {
 
     render() {
         const isInvalid = this.state.competitionId === '';
-        return (
-            <form className='d-block w-100' onSubmit={this.submitHandler}>
-                {this.state.message ? <div className="alert alert-danger">{this.state.message}</div> : null}
+        return this.props.competitions.length > 0 ? (
+            <div>
                 <h4 className="mb-4">Join to the competition</h4>
                 <p>Welcome. This is the short guideline that will help you better understand the competition rules. Generally speaking, the meaning of rules are same for any competition you chose.</p>
                 <p>When you start drawing, you should make an art related to a <strong>competition topic</strong>. Also,pay attention to the <strong>Drawing duration</strong> which is the time you have to finish your awesome art.</p>
-                <div className="form-group">
-                    <label htmlFor="name">Name</label>
-                    <select
-                        className="form-control"
-                        id="name"
-                        value={this.state.competitionId}
-                        onChange={(ev) => this.competitionDetails(ev.target.value)}>
-                        {this.state.competitionId ? null : <option value='' disabled>Select competition ...</option>}
-                        {this.props.competitions.map(competition => {
-                            return (
-                                <option
-                                    key={competition.id}
-                                    value={competition.id}>{competition.name}</option>
-                            )
-                        })}
-                    </select>
-                </div>
-
-                {this.state.competitionId ? (
-                    <div>
-                        <div className="form-group mt-4">
-                            <label htmlFor="topic">Topic</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="topic"
-                                readOnly={true}
-                                value={this.state.competitionDetails.topic} />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="startDate">Start date &amp; time</label>
-                            <input
-                                type="datetime-local"
-                                className="form-control"
-                                id="startDate"
-                                readOnly={true}
-                                value={this.dateTimeLocal(this.state.competitionDetails.startDate)} />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="endDate">Drawing duration</label>
-                            <input
-                                type="number"
-                                min='5' max='30'
-                                className="form-control"
-                                id="endDate"
-                                readOnly={true}
-                                value={this.state.competitionDetails.endDate} />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="votingStartDate">Drawing phase duration</label>
-                            <input
-                                type="number"
-                                min={2 * Number.parseInt(this.state.competitionDetails.endDate, 10)}
-                                className="form-control"
-                                id="votingStartDate"
-                                readOnly={true}
-                                value={this.state.competitionDetails.votingStartDate} />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="votingEndDate">Voting phase duration</label>
-                            <input
-                                type="number"
-                                min={2 * Number.parseInt(this.state.competitionDetails.endDate, 10)}
-                                className="form-control"
-                                id="votingEndDate"
-                                readOnly={true}
-                                value={this.state.competitionDetails.votingEndDate} />
-                        </div>
+                <form className='d-block w-100' onSubmit={this.submitHandler}>
+                    {this.state.message ? <div className="alert alert-danger">{this.state.message}</div> : null}
+                    <div className="form-group">
+                        <label htmlFor="name">Name</label>
+                        <select
+                            className="form-control"
+                            id="name"
+                            value={this.state.competitionId}
+                            onChange={(ev) => this.competitionDetails(ev.target.value)}>
+                            {this.state.competitionId ? null : <option value='' disabled>Select competition ...</option>}
+                            {this.props.competitions.map(competition => {
+                                return (
+                                    <option
+                                        key={competition.id}
+                                        value={competition.id}>{competition.name}</option>
+                                )
+                            })}
+                        </select>
                     </div>
-                ) : null}
 
-                <button
-                    disabled={isInvalid}
-                    type="submit"
-                    className="btn btn-block btn-primary vac-btn-primary">Join</button>
-            </form>
-        );
+                    {this.state.competitionId ? (
+                        <div>
+                            <div className="form-group mt-4">
+                                <label htmlFor="topic">Topic</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    id="topic"
+                                    readOnly={true}
+                                    value={this.state.competitionDetails.topic} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="startDate">Start date &amp; time</label>
+                                <input
+                                    type="datetime-local"
+                                    className="form-control"
+                                    id="startDate"
+                                    readOnly={true}
+                                    value={this.dateTimeLocal(this.state.competitionDetails.startDate)} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="endDate">Drawing duration</label>
+                                <input
+                                    type="number"
+                                    min='5' max='30'
+                                    className="form-control"
+                                    id="endDate"
+                                    readOnly={true}
+                                    value={this.state.competitionDetails.endDate} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="votingStartDate">Drawing phase duration</label>
+                                <input
+                                    type="number"
+                                    min={2 * Number.parseInt(this.state.competitionDetails.endDate, 10)}
+                                    className="form-control"
+                                    id="votingStartDate"
+                                    readOnly={true}
+                                    value={this.state.competitionDetails.votingStartDate} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="votingEndDate">Voting phase duration</label>
+                                <input
+                                    type="number"
+                                    min={2 * Number.parseInt(this.state.competitionDetails.endDate, 10)}
+                                    className="form-control"
+                                    id="votingEndDate"
+                                    readOnly={true}
+                                    value={this.state.competitionDetails.votingEndDate} />
+                            </div>
+                        </div>
+                    ) : null}
+
+                    <button
+                        disabled={isInvalid}
+                        type="submit"
+                        className="btn btn-block btn-primary vac-btn-primary">Join</button>
+                </form>
+            </div>
+        ) : (
+                <div>
+                    <h4 className="mb-4">Join to the competition</h4>
+                    <img alt="Not found" className='img-fluid d-block w-50 mx-auto mb-4' src={notFound} />
+                    <p>Sorry, we have not found any active competition. Please try again in few minutes.</p>
+                </div>
+            );
     }
 }
 

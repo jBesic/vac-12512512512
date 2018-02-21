@@ -74,7 +74,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        logout: token => dispatch(AsyncLogoutUser(token)),
+        logout: () => dispatch(AsyncLogoutUser()),
         modal: (component, show) => dispatch(AuthenticationModal(component, show))
     }
 }
