@@ -27,6 +27,10 @@ class Gallery extends Component {
         }
     };
 
+    componentWillUnmount = () => {
+        this.props.resetGalleryState();
+    };
+
     nextPageHandler = (currentPage) => {
         let nextPage = currentPage + 1;
         let offset = (nextPage - 1) * this.state.limit;
@@ -103,6 +107,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         getCompetitionsInVotePhase: (offset, limit) => dispatch(actions.AsyncGetCompetitionsInVotePhase(offset, limit)),
+        resetGalleryState: () => dispatch(actions.resetGalleryState())
     };
 };
 

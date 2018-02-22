@@ -32,6 +32,9 @@ function users(state = INITIAL_STATE, action) {
                 message: action.message
             };
 
+        case actionTypes.RESET_USERS_STATE:
+            return { ...INITIAL_STATE };
+
         default:
             return state;
     }

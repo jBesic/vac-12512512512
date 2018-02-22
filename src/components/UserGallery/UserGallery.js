@@ -35,6 +35,10 @@ class UserGallery extends Component {
         }
     };
 
+    componentWillUnmount = () => {
+        this.props.resetGalleryState();
+    };
+
     showDrawingModalHandler = (drawing) => {
         let selectedDrawing = { ...drawing };
         this.setState({ selectedDrawing, showModal: true });
@@ -119,7 +123,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        getUserGallery: (data) => dispatch(actions.AsyncGetUserGallery(data))
+        getUserGallery: (data) => dispatch(actions.AsyncGetUserGallery(data)),
+        resetGalleryState: () => dispatch(actions.resetGalleryState())
+
     }
 };
 

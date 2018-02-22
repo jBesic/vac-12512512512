@@ -16,7 +16,8 @@ const INITIAL_STATE = {
     registerActive: false,
     isFetching: false,
     message: '',
-    isLoged: localStorage.getItem('token') ? true : false
+    isLoged: localStorage.getItem('token') ? true : false,
+    payload: null
 };
 
 function registerUser(state = INITIAL_STATE, action) {
@@ -24,8 +25,8 @@ function registerUser(state = INITIAL_STATE, action) {
         case AUTHENTICATION_MODAL:
             return {
                 ...state,
-                message: action.message ? action.message : '',
-                payload: action.payload ? action.payload : '',
+                message: action.message ? action.message : null,
+                payload: action.payload ? action.payload : null,
                 loginActive: action.component === 'login' ? action.show : false,
                 registerActive: action.component === 'register' ? action.show : false
             }
@@ -42,7 +43,8 @@ function registerUser(state = INITIAL_STATE, action) {
                 ...state,
                 message: '',
                 isFetching: false,
-                isLoged: true
+                isLoged: true,
+                payload: null
             };
 
         case REGISTER_FAILURE:
@@ -56,7 +58,7 @@ function registerUser(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 message: '',
-                isFetching: true
+                isFetching: true,
             };
 
         case LOGIN_SUCCESS:
@@ -64,7 +66,8 @@ function registerUser(state = INITIAL_STATE, action) {
                 ...state,
                 message: '',
                 isFetching: false,
-                isLoged: true
+                isLoged: true,
+                payload: null
             };
 
         case LOGIN_FAILURE:

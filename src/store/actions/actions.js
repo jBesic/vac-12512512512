@@ -25,7 +25,7 @@ const registerFailure = function (message) {
     }
 };
 
-const AsyncRegisterUser = function (userName, password) {
+const AsyncRegisterUser = function (userName, password, payload = null ) {
     return dispatch => {
         dispatch(registerRequest());
 
@@ -36,6 +36,9 @@ const AsyncRegisterUser = function (userName, password) {
                 dispatch(registerSuccess(token));
                 dispatch(AuthenticationModal());
                 toastr.info('Welcome, ', userName);
+                if (payload) {
+                    dispatch(AsyncSaveDrawing(payload));
+                }
             }).catch(error => {
                 dispatch(registerFailure(error.response.data.message));
             });
@@ -517,6 +520,24 @@ const AsyncGetCompetitionsInVotePhase = function (offset, limit) {
     }
 }
 
+const resetCompetitionsState = () => {
+    return {
+        type: actionTypes.RESET_COMPETITIONS_STATE
+    }
+};
+
+const resetUsersState = () => {
+    return {
+        type: actionTypes.RESET_USERS_STATE
+    }
+};
+
+const resetGalleryState = () => {
+    return {
+        type: actionTypes.RESET_GALLERY_STATE
+    }
+};
+
 export {
     AsyncRegisterUser,
     AsyncLogoutUser,
@@ -549,5 +570,8 @@ export {
     AsyncDeleteVote,
     resetCanvasGlobalState,
     checkJoinedCompetitions,
-    AsyncGetCompetitionsInVotePhase
+    AsyncGetCompetitionsInVotePhase,
+    resetCompetitionsState,
+    resetUsersState,
+    resetGalleryState
 };
