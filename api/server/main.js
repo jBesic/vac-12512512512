@@ -46,6 +46,7 @@ server.del('/competition/:id', CompetitionHandlers.delete);
 server.get('/getCompetitions/:offset/:limit', CompetitionHandlers.getCompetitions);
 server.get('/getCompetitionGallery/:id/:offset/:limit', CompetitionHandlers.getCompetitionGallery);
 server.get('/getCompetitionsInVotePhase/:offset/:limit', CompetitionHandlers.getCompetitionsInVotePhase);
+server.get('/check-competition-vote', CompetitionHandlers.checkVote);
 
 // VOTE
 server.post('/vote', VotingHandlers.create);

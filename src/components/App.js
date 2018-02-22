@@ -20,11 +20,13 @@ import CompetitionGallery from '../components/CompetitionGallery/CompetitionGall
 import VoteGallery from './VoteGallery/VoteGallery';
 
 class App extends Component {
-  render() {
+  componentDidMount() {
     if (this.props.auth.isLoged) {
       this.props.checkJoinedCompetitions();
     }
+  }
 
+  render() {
     return (
       <React.Fragment>
         <ReduxToastr

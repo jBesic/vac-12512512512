@@ -45,6 +45,7 @@ class Login extends Component {
                         id="username"
                         onChange={ev => this.setPropertyByName('username', ev.target.value)}
                         value={this.state.username}
+                        autoFocus
                         placeholder="Enter an username" />
                 </div>
                 <div className="form-group">
