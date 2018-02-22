@@ -7,34 +7,56 @@ const database = require('../database-setup').database;
 const errs = require('restify-errors');
 
 function returnQuery(params) {
+    let filter = {};
+
+    if (params.limit) {
+        filter.limit = Number.parseInt(params.limit, 10);
+    }
+
+    if (params.offset) {
+        filter.offset = Number.parseInt(params.offset, 10);
+    }
+
     switch (params.status) {
         case 'draw': {
-            return {
-                where: {
-                    userId: {
-                        [Op.ne]: params.userId
-                    },
-                    startDate: {
-                        [Op.lt]: new Date()
-                    },
-                    votingStartDate: {
-                        [Op.gt]: new Date()
-                    }
-                },
-                include: [{
-                    model: Drawing,
-                    required: false,
+            if (params.userId) {
+                filter = {
+                    ...filter,
                     where: {
-                        competitionId: {
-                            [Op.eq]: null
+                        userId: {
+                            [Op.ne]: params.userId
+                        },
+                        id: {
+                            [Op.notIn]: Sequelize.literal('(SELECT `drawing`.`competitionId` FROM `drawings` AS `drawing` WHERE `drawing`.`userId` = ' + params.userId + ')')
+                        },
+                        startDate: {
+                            [Op.lt]: new Date()
+                        },
+                        votingStartDate: {
+                            [Op.gt]: new Date()
                         }
                     }
-                }]
-            };
+                };
+            } else {
+                filter = {
+                    ...filter,
+                    where: {
+                        startDate: {
+                            [Op.lt]: new Date()
+                        },
+                        votingStartDate: {
+                            [Op.gt]: new Date()
+                        }
+                    }
+                };
+            }
+
+            return filter;
         }
 
         case 'vote': {
-            return {
+            filter = {
+                ...filter,
                 where: {
                     userId: {
                         [Op.ne]: params.userId
@@ -47,10 +69,13 @@ function returnQuery(params) {
                     }
                 }
             };
+
+            return filter;
         }
 
         case 'joined': {
-            return {
+            filter = {
+                ...filter,
                 where: {
                     userId: {
                         [Op.ne]: params.userId
@@ -59,29 +84,25 @@ function returnQuery(params) {
                         [Op.lt]: new Date()
                     },
                     id: {
-                        [Op.eq]: Sequelize.col('drawings.competitionId')
-                    }
-                },
-                include: [{
-                    model: Drawing,
-                    required: false,
-                    where: {
-                        competitionId: {
-                            [Op.ne]: null
-                        }
-                    }
-                }]
+                        [Op.in]: Sequelize.literal('(SELECT `drawing`.`competitionId` FROM `drawings` AS `drawing` WHERE `drawing`.`userId` = ' + params.userId + ')')
+                    },
+                }
             };
+
+            return filter;
         }
 
         case 'own': {
-            return {
+            filter = {
+                ...filter,
                 where: {
                     userId: {
                         [Op.eq]: params.userId
                     }
                 }
             };
+
+            return filter;
         }
 
         default:
@@ -90,9 +111,8 @@ function returnQuery(params) {
 }
 
 async function list(req, res, next) {
-    const filter = returnQuery({ ...req.params, userId: req.get('userId') });
+    const filter = returnQuery({ ...req.params, ...req.query, userId: req.get('userId') });
     const competitions = await Competition.findAll(filter);
-    console.log(competitions.length)
     res.send({ code: "Success", data: competitions });
     return next();
 }
@@ -133,16 +153,16 @@ async function deleteItem(req, res, next) {
 }
 
 async function getCompetitions(req, res, next) {
-    let offset = req.params.offset;
-    let limit = req.params.limit;
-    const competitions = await Competition.findAll({include:[{model: Drawing}], limit, offset});
+    let offset = Number.parseInt(req.params.offset, 10);
+    let limit = Number.parseInt(req.params.limit, 10);
+    const competitions = await Competition.findAll({ include: [{ model: Drawing }], limit, offset });
     res.send({ code: "Success", data: competitions });
     return next();
 }
 
 async function getCompetitionById(req, res, next) {
     let competitionId = req.params.id;
-    const competition = await Competition.findAll({where: {id: competitionId}});
+    const competition = await Competition.findAll({ where: { id: competitionId } });
     res.send({ code: "Success", data: competition[0] });
     return next();
 }

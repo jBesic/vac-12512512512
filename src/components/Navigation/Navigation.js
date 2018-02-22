@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
+import logo from '../../assets/images/logo2.png'
 
 import { AsyncLogoutUser, AuthenticationModal } from '../../store/actions/actions';
 import './Navigation.css';
@@ -8,7 +9,9 @@ import './Navigation.css';
 const Navigation = function (props) {
     return (
         <nav className="navbar fixed-top navbar-expand-lg navbar-light vac-navbar">
-            <NavLink className="navbar-brand" to="/">Vector Art Champions</NavLink>
+            <NavLink className="navbar-brand" to="/">
+            <img src={logo} alt='' />
+            </NavLink>
 
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="nav justify-content-end">
@@ -40,6 +43,7 @@ const Navigation = function (props) {
                         !props.auth.isLoged ? null :
                             <li className="nav-item">
                                 <NavLink className="nav-link" to="/gallery">Gallery</NavLink>
+                                
                             </li>
                     }
                     {
@@ -53,7 +57,7 @@ const Navigation = function (props) {
                                 <button
                                     type='button'
                                     className="btn btn-link nav-link"
-                                    onClick={() => props.logout(localStorage.getItem('token'))}>Logout</button>
+                                    onClick={() => props.logout()}>Logout</button>
                             </li>
                     }
                 </ul>
@@ -70,7 +74,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        logout: token => dispatch(AsyncLogoutUser(token)),
+        logout: () => dispatch(AsyncLogoutUser()),
         modal: (component, show) => dispatch(AuthenticationModal(component, show))
     }
 }

@@ -69,10 +69,15 @@ const saveCompetition = function (data) {
     });
 };
 
-const loadCompetitions = function (status = '') {
+const loadCompetitions = function (params = {}) {
+    const query = Object.keys(params).reduce((accumulator, current) => {
+        accumulator = accumulator === '' ? '?' : accumulator += '&';
+        return accumulator + current + '=' + params[current];
+    }, '');
+
     return axios({
         method: 'get',
-        url: API_ENDPOINT + '/competition/' + status,
+        url: API_ENDPOINT + '/competition' + query,
         headers: {
             'X-Auth-Token': localStorage.getItem('token')
         }
@@ -103,7 +108,58 @@ const saveDrawing = function (data) {
         },
         data: {
             name: data.name,
-            shapes: data.shapes
+            shapes: data.shapes,
+            competitionId: data.competitionId            
+        }
+    });
+};
+
+const getUsers = function (offset, limit) {
+    return axios({
+        method: 'get',
+        url: API_ENDPOINT + '/user/' + offset + '/' + limit,
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
+        }
+    });
+};
+
+const getAllDrawings = function () {
+    return axios({
+        method: 'get',
+        url: API_ENDPOINT + '/drawing',
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
+        }
+    });
+};
+
+const getCompetitions = function (offset, limit) {
+    return axios({
+        method: 'get',
+        url: API_ENDPOINT + '/getCompetitions/' + offset + '/' + limit,
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
+        }
+    });
+};
+
+const getDrawingsByUserId = function (userId, offset, limit) {
+    return axios({
+        method: 'get',
+        url: API_ENDPOINT + '/getDrawingsByUserId/' + userId + '/' + offset + '/' + limit,
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
+        }
+    });
+};
+
+const getDrawingsByCompetitionId = function (competitionId, offset, limit) {
+    return axios({
+        method: 'get',
+        url: API_ENDPOINT + '/getDrawingsByCompetitionId/' + competitionId + '/' + offset + '/' + limit,
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
         }
     });
 };
@@ -111,5 +167,13 @@ const saveDrawing = function (data) {
 export {
     register,
     login,
-    logout
+    logout,
+    saveCompetition,
+    loadCompetitions,
+    saveDrawing,
+    getUsers,
+    getAllDrawings,
+    getCompetitions,
+    getDrawingsByUserId,
+    getDrawingsByCompetitionId
 };

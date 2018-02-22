@@ -13,6 +13,11 @@ async function authFilter(req, res, next) {
     }
     // get auth token and bail instantly if it is not provided
     const authToken = req.headers['x-auth-token'];
+    const isCompetitionDraw = /(competition\/draw)/i.test(req.url);
+    if (isCompetitionDraw && (authToken === 'null' || authToken === null)) {
+        return next();
+    }
+
     if (!authToken) {
         return next(new errs.UnauthorizedError('Auth token is not provided.'));
     }

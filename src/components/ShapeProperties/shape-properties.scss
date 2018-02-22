@@ -1,0 +1,26 @@
+.shape-properties {
+    margin-top: 5px;
+}
+
+.shape-properties-wrapper {
+    text-align: left;
+
+    label {
+        display: block;
+        font-size: .8rem;
+        margin-bottom: 0;
+        width: 100%;
+    }
+
+    .form-control {
+        display: block;
+        height: 30px;
+        width: 100%;
+
+        &[type='color'] {
+            background-color: unset;
+            border: 0;
+            padding: 0;
+        }
+    }
+}
