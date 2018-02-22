@@ -6,9 +6,9 @@ const Sequelize = require('sequelize');
 const errs = require('restify-errors'); 
 
 async function list(req, res, next) {
-    let offset = req.params.offset;
-    let limit = req.params.limit;
-    const users = await User.findAll({attributes: ['id', 'username'], include:[{model: Drawing, include: [{model: Competition}]}], limit, offset});
+    let offset = (Number)(req.params.offset);
+    let limit = (Number)(req.params.limit);
+    const users = await User.findAll({limit, offset, attributes: ['id', 'username'], include:[{model: Drawing, include: [{model: Competition}]}]});
     res.send({ code: "Success", data: users });
     return next();
 }

@@ -22,7 +22,7 @@ class App extends Component {
       <React.Fragment>
         <Navigation />
         <Main>
-          <Spinner show={this.props.auth.isFetching || this.props.drawings.isFetching || this.props.competitions.isFetching || this.props.users.isFetching} />
+          <Spinner show={this.props.auth.isFetching || this.props.drawings.isFetching || this.props.competitions.isFetching || this.props.users.isFetching || this.props.gallery.isFetching} />
           <Modal show={this.props.auth.loginActive || this.props.auth.registerActive}>
             <Authentication />
           </Modal>
@@ -52,7 +52,8 @@ function mapStateToProps(state) {
     auth: state.auth,
     competitions: state.competitions,
     drawings: state.drawings,
-    users: state.users
+    users: state.users,
+    gallery: state.gallery
   };
 }
 
