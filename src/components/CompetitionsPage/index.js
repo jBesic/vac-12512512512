@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import {
-    manageCompetitionModal,
-    AsyncLoadCompetitions
-} from '../../store/actions/actions';
+import { manageCompetitionModal } from '../../store/actions/actions';
 import DrawTabContent from '../DrawTabContent';
 import VoteTabContent from '../VoteTabContent';
 import JoinedTabContent from '../JoinedTabContent';
@@ -18,10 +15,6 @@ class CompetitionsPage extends Component {
         this.state = {
             activeTab: 'draw-tab'
         }
-    }
-
-    componentDidMount() {
-        this.props.loadCompetitions('draw');
     }
 
     render() {
@@ -42,7 +35,6 @@ class CompetitionsPage extends Component {
                                                     className={"nav-link" + (this.state.activeTab === 'draw-tab' ? ' active' : '')} role="tab"
                                                     onClick={() => {
                                                         this.setState({ activeTab: 'draw-tab' });
-                                                        this.props.loadCompetitions('draw');
                                                     }}>Draw</button>
                                             </li>
                                             <li className="nav-item">
@@ -50,7 +42,6 @@ class CompetitionsPage extends Component {
                                                     className={"nav-link" + (this.state.activeTab === 'vote-tab' ? ' active' : '')} role="tab"
                                                     onClick={() => {
                                                         this.setState({ activeTab: 'vote-tab' });
-                                                        this.props.loadCompetitions('vote');
                                                     }}>Vote</button>
                                             </li>
                                             <li className="nav-item">
@@ -58,7 +49,6 @@ class CompetitionsPage extends Component {
                                                     className={"nav-link" + (this.state.activeTab === 'joined-tab' ? ' active' : '')} role="tab"
                                                     onClick={() => {
                                                         this.setState({ activeTab: 'joined-tab' });
-                                                        this.props.loadCompetitions('joined');
                                                     }}>Joined</button>
                                             </li>
                                             <li className="nav-item">
@@ -66,7 +56,6 @@ class CompetitionsPage extends Component {
                                                     className={"nav-link" + (this.state.activeTab === 'own-tab' ? ' active' : '')} role="tab"
                                                     onClick={() => {
                                                         this.setState({ activeTab: 'own-tab' });
-                                                        this.props.loadCompetitions('own');
                                                     }}>Own</button>
                                             </li>
                                             <li className="nav-item ml-auto">
@@ -113,14 +102,14 @@ class CompetitionsPage extends Component {
 
 const mapStateToProps = function (state) {
     return {
-        competitions: [...state.competitions.competitions]
+        competitions: [...state.competitions.competitions],
+        modifiedDate: state.competitions.modifiedDate
     };
 };
 
 const mapDispatchToProps = function (dispatch) {
     return {
-        manageCompetitionModal: (component, show) => dispatch(manageCompetitionModal(component, show)),
-        loadCompetitions: (status) => dispatch(AsyncLoadCompetitions(status))
+        manageCompetitionModal: (component, show) => dispatch(manageCompetitionModal(component, show))
     };
 };
 

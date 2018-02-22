@@ -40,8 +40,8 @@ server.get('/getDrawingsByUserId/:userId/:offset/:limit', DrawingHandlers.getDra
 server.get('/getDrawingsByCompetitionId/:competitionId/:offset/:limit', DrawingHandlers.getDrawingsByCompetitionId); 
 
 // COMPETITION
-server.head('/competition/:status', CompetitionHandlers.list);
-server.get('/competition/:status', CompetitionHandlers.list);
+server.head('/competition', CompetitionHandlers.list);
+server.get('/competition', CompetitionHandlers.list);
 server.post('/competition', CompetitionHandlers.create);
 server.put('/competition/:id', CompetitionHandlers.update);
 server.del('/competition/:id', CompetitionHandlers.delete);

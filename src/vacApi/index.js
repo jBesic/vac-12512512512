@@ -69,10 +69,15 @@ const saveCompetition = function (data) {
     });
 };
 
-const loadCompetitions = function (status = '') {
+const loadCompetitions = function (params = {}) {
+    const query = Object.keys(params).reduce((accumulator, current) => {
+        accumulator = accumulator === '' ? '?' : accumulator += '&';
+        return accumulator + current + '=' + params[current];
+    }, '');
+
     return axios({
         method: 'get',
-        url: API_ENDPOINT + '/competition/' + status,
+        url: API_ENDPOINT + '/competition' + query,
         headers: {
             'X-Auth-Token': localStorage.getItem('token')
         }
