@@ -148,6 +148,12 @@ body {
     }
 }
 
+.nav-tabs {
+    .nav-link {
+        border-radius: 0;
+    }
+}
+
 .vac-table {
     td {
         vertical-align: middle;
@@ -161,17 +167,13 @@ body {
     text-align: center;
 }
 
+.vac-page-title {
+    background-color: #fff;
+    font-size: 2rem;
+}
 
-.portlet {
-    .portlet-title {
-        .caption {
-            font-size: 2rem;
-
-            .caption-subject {
-                font-size: inherit !important;
-            }
-        }
-    }
+.vac-page-body {
+    min-height: 65vh;
 }
 
 .vac-btn-primary {

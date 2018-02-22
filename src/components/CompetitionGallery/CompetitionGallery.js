@@ -99,11 +99,11 @@ class CompetitionGallery extends Component {
                 <div className='container'>
                     <div className='row'>
                         <div className="card col-md-12">
-                            <div className="card-header text-secondary" style={{ backgroundColor: 'white', fontSize: '24px' }}>
+                            <div className="card-header text-secondary vac-page-title">
                                 Gallery
                                 {this.props.selectedCompetition && <span> | <span className='small'>Competition: {this.props.selectedCompetition.name}</span></span>}
                             </div>
-                            <div className="card-body">
+                            <div className="card-body vac-page-body">
                                 {this.props.selectedCompetition.action === 'VOTE' &&
                                     <div className='row mt-2 mb-2'>
                                         <div className='col-md-1'><h5 className='text-secondary'>Votes:</h5></div>

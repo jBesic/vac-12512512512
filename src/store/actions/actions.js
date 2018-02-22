@@ -1,5 +1,7 @@
 import * as actionTypes from './actionTypes';
 import * as vacApi from '../../vacApi';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { toastr } from 'react-redux-toastr';
 
 // Register
@@ -61,6 +63,28 @@ const loginFailure = function (message) {
     }
 };
 
+const checkJoinedCompetitions = function () {
+    return dispatch => {
+        const timeoutId = setTimeout(() => {
+            vacApi.checkJoinedCompetitions()
+                .then(response => {
+                    response.forEach(details => {
+                        toastr.info('The ' + details.competitionName + ' ends.', {
+                            timeOut: 0,
+                            removeOnHover: false,
+                            component: props => <Link onClick={props.remove} className='btn vac-btn-primary btn-sm mt-2' to='/gallery'>See Results</Link>
+                        });
+                    });
+                })
+                .catch(error => {
+                    return error;
+                });
+        }, 60000);
+
+        localStorage.setItem('checkJoinedCompetitions', timeoutId)
+    }
+}
+
 const AsyncLoginUser = function (userName, password, payload = null) {
     return dispatch => {
         dispatch(loginRequest());
@@ -101,15 +125,23 @@ const logoutFailure = function (message) {
     }
 };
 
+const resetAll = function () {
+    return {
+        type: actionTypes.RESET_ALL,
+    }
+};
+
 const AsyncLogoutUser = function () {
     return dispatch => {
         dispatch(logoutRequest());
 
         vacApi.logout(localStorage.getItem('token'))
             .then(response => {
+                clearTimeout(localStorage.getItem('checkJoinedCompetitions'));
+                localStorage.removeItem('checkJoinedCompetitions')
                 localStorage.removeItem('token');
                 dispatch(logoutSuccess());
-                dispatch(resetCanvasGlobalState());
+                dispatch(resetAll());
                 dispatch(AuthenticationModal());
             }).catch(error => {
                 dispatch(logoutFailure(error.response.data.message));
@@ -309,9 +341,10 @@ const AsyncSaveDrawing = function (drawing) {
     }
 }
 
-const resetCanvasGlobalState = () => {
+const resetCanvasGlobalState = (resetLocalCanvasState = true) => {
     return {
-        type: actionTypes.RESET_CANVAS_GLOBAL_STATE
+        type: actionTypes.RESET_CANVAS_GLOBAL_STATE,
+        resetLocalCanvasState: resetLocalCanvasState
     };
 }
 
@@ -371,7 +404,7 @@ const AsyncGetAllDrawings = function () {
         dispatch(setDrawingRequest());
         vacApi.getAllDrawings()
             .then(response => {
-                dispatch(drawingRequestSuccess([ ...response.data.data ]));
+                dispatch(drawingRequestSuccess([...response.data.data]));
             }).catch(error => {
                 dispatch(drawingRequestFailure(error.response.data.message));
             });
@@ -412,7 +445,7 @@ const AsyncGetUserGallery = function (data) {
         vacApi.getUserGallery(data)
             .then(response => {
                 let userData = response.data.data;
-                dispatch(asyncGallerySuccess( {...userData} , 'USER'));
+                dispatch(asyncGallerySuccess({ ...userData }, 'USER'));
             }).catch(error => {
                 dispatch(asyncGalleryFailure(error.response.data.message));
             });
@@ -428,7 +461,7 @@ const AsyncGetCompetitionGallery = function (data) {
                 if (competitionData.action === 'VOTE') {
                     dispatch(AsyncUserVotesForCompetition(competitionData.id));
                 }
-                dispatch(asyncGallerySuccess( { ...competitionData }, 'COMPETITION'));
+                dispatch(asyncGallerySuccess({ ...competitionData }, 'COMPETITION'));
             }).catch(error => {
                 dispatch(asyncGalleryFailure(error.response.data.message));
             });
@@ -440,7 +473,7 @@ const AsyncUserVotesForCompetition = function (competitionId) {
         dispatch(asyncGalleryRequest());
         vacApi.getUserVotesForCompetition(competitionId)
             .then(response => {
-                dispatch(asyncVoteRequestSuccess([...response.data.data ]));
+                dispatch(asyncVoteRequestSuccess([...response.data.data]));
             }).catch(error => {
                 dispatch(asyncGalleryFailure(error.response.data.message));
             });
@@ -501,5 +534,7 @@ export {
     AsyncGetUserGallery,
     AsyncGetCompetitionGallery,
     AsyncSaveVote,
-    AsyncDeleteVote
+    AsyncDeleteVote,
+    resetCanvasGlobalState,
+    checkJoinedCompetitions
 };

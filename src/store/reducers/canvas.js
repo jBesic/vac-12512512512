@@ -15,7 +15,7 @@ const canvas = (state = initState, action) => {
         case actionTypes.UNDO: return undo(state);
         case actionTypes.REDO: return redo(state);
         case actionTypes.UPDATE_HISTORY: return updateHistory(state);
-        case actionTypes.RESET_CANVAS_GLOBAL_STATE: return resetCanvasGlobalState();
+        case actionTypes.RESET_CANVAS_GLOBAL_STATE: return resetCanvasGlobalState(action.resetLocalCanvasState);
         case actionTypes.UPDATE_RESET_CANVAS_LOCAL_STATE_FIELD: return {...state, resetCanvasLocalState: action.value};
 
         default:
@@ -100,9 +100,9 @@ function redo() {
     return state;
 }
 
-function resetCanvasGlobalState() {
+function resetCanvasGlobalState(resetCanvasLocalState = true) {
     let state = {...initState};
-    state.resetCanvasLocalState = true;
+    state.resetCanvasLocalState = resetCanvasLocalState;
     history = [initState];
     historyIndex = 0;
 

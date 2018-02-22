@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import Modal from './Modal';
+import ReduxToastr from 'react-redux-toastr';
 
+import Modal from './Modal';
+import { checkJoinedCompetitions } from '../store/actions/actions'
 import Navigation from './Navigation/Navigation';
 import Authentication from './Authentication';
 import Main from './Main/Main';
@@ -18,8 +20,21 @@ import CompetitionGallery from '../components/CompetitionGallery/CompetitionGall
 
 class App extends Component {
   render() {
+    if (this.props.auth.isLoged) {
+      this.props.checkJoinedCompetitions();
+    }
+
     return (
       <React.Fragment>
+        <ReduxToastr
+          timeOut={1500}
+          newestOnTop={false}
+          preventDuplicates
+          position="top-right"
+          transitionIn="fadeIn"
+          transitionOut="fadeOut"
+          progressBar />
+
         <Navigation />
         <Main>
           <Spinner show={this.props.auth.isFetching || this.props.drawings.isFetching || this.props.competitions.isFetching || this.props.users.isFetching || this.props.gallery.isFetching} />
@@ -57,4 +72,10 @@ function mapStateToProps(state) {
   };
 }
 
-export default withRouter(connect(mapStateToProps)(App));
+function mapDispatchToProps(dispatch) {
+  return {
+    checkJoinedCompetitions: () => dispatch(checkJoinedCompetitions())
+  }
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
