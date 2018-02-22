@@ -13,18 +13,25 @@ class Gallery extends Component {
         currentUsersPage: 1,
         nextCompetitionsPage: 1,
         currentCompetitionsPage: 1,
-        limit: 1,
+        limit: 4,
         isFetching: true,
-        isFirstCompetitionsLoading: true
+        isFirstCompetitionsLoading: true,
+        currentDate: new Date()
     };
 
     componentDidMount = () => {
         this.props.getUsers(0, this.state.limit + 1);
+        //let currentDate = convertDateToUTC(new Date());
+        let currentDate = new Date();
+        this.setState({ currentDate });
     };
 
     componentWillReceiveProps = (nextProps) => {
         if (!nextProps.users.length && !nextProps.competitions.length) return;
         if (this.state.isFetching === true) {
+            //let currentDate = convertDateToUTC(new Date());
+            let currentDate = new Date();
+            this.setState({ currentDate });
             if (this.state.activeTab === 'users') {
                 let nextUsersPage = nextProps.users.length < (this.state.limit + 1) ? this.state.nextUsersPage : (this.state.nextUsersPage + 1);
                 this.setState({ nextUsersPage, isFetching: false });
@@ -89,15 +96,12 @@ class Gallery extends Component {
         return (
             <div className='container'>
                 <div className='row'>
-                    <div className="col-md-12">
-                        <div className="portlet light">
-                            <div className="portlet-title mb-4">
-                                <div className="caption">    
-                                    <span className="caption-subject" style={{fontSize: '24px'}}> Gallery</span>     
-                                </div>        
-                            </div>
-                            <div className="portlet-body">
-                                <div className='row'>
+                    <div className="card col-md-12">
+                        <div className="card-header text-secondary" style={{backgroundColor: 'white', fontSize:'24px'}}>
+                            Gallery
+                        </div>
+                        <div className="card-body">
+                        <div className='row'>
                                     <div className='col-md-12'>
                                         <ul className="nav nav-tabs" role="tablist">
                                             <li className="nav-item">
@@ -138,8 +142,8 @@ class Gallery extends Component {
                                                     {this.props.competitions.map((item, index) => {
                                                         if (this.state.currentCompetitionsPage !== this.state.nextCompetitionsPage && index === this.props.competitions.length - 1) return [];
                                                         let shapes = item.drawings && item.drawings.length ? item.drawings[item.drawings.length - 1].shapes : null;
-                                                        let action = item.votingEndDate > new Date() ? 'VOTE' : 'VIEW';
-                                                        //console.log('action', action);
+                                                        let votingEndDate = new Date(item.votingEndDate);
+                                                        let action = votingEndDate > this.state.currentDate ? 'VOTE' : 'VIEW';
                                                         return <div key={item.id} className='col-md-3' >
                                                             <GalleryCard name={item.name} shapes={shapes} link={("/gallery/competition/" + item.id)} action={action} />
                                                         </div>
@@ -163,14 +167,17 @@ class Gallery extends Component {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         </div>
-                    </div>
+                    </div>   
                 </div>
             </div>
         );
     };
 };
+
+/* function convertDateToUTC(date) {
+    return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+} */
 
 const mapStateToProps = state => {
     return {

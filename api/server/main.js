@@ -45,12 +45,13 @@ server.get('/competition', CompetitionHandlers.list);
 server.post('/competition', CompetitionHandlers.create);
 server.put('/competition/:id', CompetitionHandlers.update);
 server.del('/competition/:id', CompetitionHandlers.delete);
-server.get('/competition/:offset/:limit', CompetitionHandlers.getCompetitions);
-server.get('/competition/:id', CompetitionHandlers.getCompetitionById);
+server.get('/getCompetitions/:offset/:limit', CompetitionHandlers.getCompetitions);
+server.get('/getCompetitionById/:id', CompetitionHandlers.getCompetitionById);
 
 // VOTE
 server.post('/vote', VotingHandlers.create);
 server.del('/vote/:drawingId', VotingHandlers.delete);
+server.get('/getUserVotesForCompetition/:competitionId', VotingHandlers.getUserVotesForCompetition);
 
 
 // USER

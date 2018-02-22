@@ -49,8 +49,8 @@ async function deleteItem(req, res, next) {
 }
 
 async function getDrawingsByUserId(req, res, next) {
-    let offset = req.params.offset;
-    let limit = req.params.limit;
+    let offset = (Number)(req.params.offset);
+    let limit = (Number)(req.params.limit);
     let userId = req.params.userId;
     const drawings = await Drawing.findAll({where: {userId}, include: [{model: Competition}], limit, offset});
     res.send({ code: "Success", data: drawings });
@@ -58,8 +58,8 @@ async function getDrawingsByUserId(req, res, next) {
 }
 
 async function getDrawingsByCompetitionId(req, res, next) {
-    let offset = req.params.offset;
-    let limit = req.params.limit;
+    let offset = (Number)(req.params.offset);
+    let limit = (Number)(req.params.limit);
     let competitionId = req.params.competitionId;
     const drawings = await Drawing.findAll({where: {competitionId}, include: [{model: Competition}], limit, offset});
     res.send({ code: "Success", data: drawings });

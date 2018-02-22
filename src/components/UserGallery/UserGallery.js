@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import axios from 'axios';
 import DrawingModal from '../DrawingModal/DrawingModal';
 import Drawing from '../Drawing/Drawing';
 import Pagination from '../Pagination/Pagination';
@@ -12,43 +11,30 @@ class UserGallery extends Component {
     state = {
         showModal: false,
         selectedDrawing: null,
-        userId: null,
-        user: { username: null },
         nextPage: 1,
         currentPage: 1,
         limit: 1,
-        isFetching: true
+        isFetching: true,
+        userId: null,
+        user: {}
     };
 
     componentDidMount = () => {
         let userId = this.props.match.params.userId;
-        this.setState({ userId });
-        this.props.getDrawingsByUserId(userId, 0, this.state.limit + 1);
-        axios({
-            method: 'get',
-            url: 'http://localhost:8080/user/' + userId,
-            headers: {
-                'X-Auth-Token': localStorage.getItem('token')
-            }
-        }).then(response => {
-            let user = response.data.data;
-            if (user) {
-                this.setState({ user });
-            }
-        }).catch(error => {
-            console.log(error.response.data);
-        });
+        let data = { userId, offset: 0, limit: this.state.limit + 1 };
+        this.props.getUserGallery(data);
+        this.setState({ userId, user: this.props.selectedUser });
     };
 
     componentWillReceiveProps = (nextProps) => {
-        if (!nextProps.drawings.length) return;
-        if (this.state.isFetching === true) {
-            let nextPage = nextProps.drawings.length < (this.state.limit + 1) ? this.state.nextPage : (this.state.nextPage + 1);
-            this.setState({ nextPage, isFetching: false });
+        if (!nextProps.selectedUser.drawings) return;
+        if (this.state.user !== nextProps.selectedUser) {
+            let nextPage = nextProps.selectedUser.drawings.length < (this.state.limit + 1) ? this.state.nextPage : (this.state.nextPage + 1);
+            this.setState({ nextPage, user: nextProps.selectedUser });
         }
     };
 
-    showDrawingHandler = (drawing) => {
+    showDrawingModalHandler = (drawing) => {
         let selectedDrawing = { ...drawing };
         this.setState({ selectedDrawing, showModal: true });
     }
@@ -60,15 +46,17 @@ class UserGallery extends Component {
     nextPageHandler = (currentPage) => {
         let nextPage = currentPage + 1;
         let offset = (nextPage - 1) * this.state.limit;
-        this.props.getDrawingsByUserId(this.state.userId, offset, this.state.limit + 1);
-        this.setState({ currentPage: nextPage, isFetching: true });
+        let data = { userId: this.state.userId, limit: this.state.limit + 1, offset };
+        this.props.getUserGallery(data);
+        this.setState({ currentPage: nextPage });
     };
 
     previousPageHandler = (currentPage) => {
         let nextPage = currentPage - 1;
         let offset = (nextPage - 1) * this.state.limit;
-        this.props.getDrawingsByUserId(this.state.userId, offset, this.state.limit + 1);
-        this.setState({ currentPage: nextPage, nextPage: nextPage, isFetching: true });
+        let data = { userId: this.state.userId, limit: this.state.limit + 1, offset }
+        this.props.getUserGallery(data);
+        this.setState({ currentPage: nextPage, nextPage: nextPage });
     };
 
     render() {
@@ -76,47 +64,42 @@ class UserGallery extends Component {
             <React.Fragment>
                 <div className='container'>
                     <div className='row'>
-                        <div className="col-md-12">
-                            <div className="portlet light">
-                                <div className="portlet-title mb-4">
-                                    <div className="caption">
-                                        <span className="caption-subject mr-1" style={{ fontSize: '24px' }}> Gallery</span>
-                                        {this.state.user.username && <span className="caption-helper bold">Username: {this.state.user.username}</span>}
-                                    </div>
+                        <div className="card col-md-12">
+                            <div className="card-header text-secondary" style={{ backgroundColor: 'white', fontSize: '24px' }}>
+                                Gallery
+                                {this.props.selectedUser && <span> | <span className='small'>Username: {this.props.selectedUser.username}</span></span>}
+                            </div>
+                            <div className="card-body">
+                                <div className='row'>
+                                    {this.props.selectedUser.drawings && this.props.selectedUser.drawings.map((drawing, index) => {
+                                        if (this.state.currentPage !== this.state.nextPage && index === this.props.selectedUser.drawings.length - 1) return [];
+                                        return <Drawing key={drawing.id} name={drawing.name} shapes={drawing.shapes} onDrawingClick={() => this.showDrawingModalHandler(drawing)} />;
+                                    })}
                                 </div>
-                                <div className="portlet-body">
+                                {this.props.selectedUser.drawings && !!this.props.selectedUser.drawings.length &&
+                                    <Pagination
+                                        currentPage={this.state.currentPage}
+                                        nextPage={this.state.nextPage}
+                                        nextPageHandler={this.nextPageHandler}
+                                        previousPageHandler={this.previousPageHandler} />}
 
+                                {!this.props.selectedUser &&
                                     <div className='row'>
-                                        {this.props.drawings.map((drawing, index) => {
-                                            if (this.state.currentPage !== this.state.nextPage && index === this.props.drawings.length - 1) return [];
-                                            return <Drawing key={drawing.id} name={drawing.name} shapes={drawing.shapes} onDrawingClick={() => this.showDrawingHandler(drawing)} />;
-                                        })}
-                                    </div>
-                                    {!!this.props.drawings.length &&
-                                        <Pagination
-                                            currentPage={this.state.currentPage}
-                                            nextPage={this.state.nextPage}
-                                            nextPageHandler={this.nextPageHandler}
-                                            previousPageHandler={this.previousPageHandler} />}
-
-                                    {!this.state.user.username &&
-                                        <div className='row'>
-                                            <div className='col-md-12'>
-                                                <div className="alert alert-secondary" role="alert">
-                                                    There is no user with ID {this.state.userId}.
+                                        <div className='col-md-12'>
+                                            <div className="alert alert-secondary" role="alert">
+                                                There is no user with ID {this.state.userId}.
                                                 </div>
-                                            </div>
-                                        </div>}
+                                        </div>
+                                    </div>}
 
-                                    {this.state.user.username && !this.props.drawings.length &&
-                                        <div className='row'>
-                                            <div className='col-md-12'>
-                                                <div className="alert alert-secondary" role="alert">
-                                                    No images.
+                                {this.props.selectedUser.drawings && !this.props.selectedUser.drawings.length &&
+                                    <div className='row'>
+                                        <div className='col-md-12'>
+                                            <div className="alert alert-secondary" role="alert">
+                                                No images.
                                                 </div>
-                                            </div>
-                                        </div>}
-                                </div>
+                                        </div>
+                                    </div>}
                             </div>
                         </div>
                     </div>
@@ -129,14 +112,13 @@ class UserGallery extends Component {
 
 const mapStateToProps = state => {
     return {
-        drawings: state.drawings.drawings
+        selectedUser: state.gallery.selectedUser
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        getDrawingsByUserId: (userId, offset, limit) => dispatch(actions.AsyncGetDrawingsByUserId(userId, offset, limit)),
-        getDrawings: () => dispatch(actions.AsyncGetAllDrawings())
+        getUserGallery: (data) => dispatch(actions.AsyncGetUserGallery(data))
     }
 };
 

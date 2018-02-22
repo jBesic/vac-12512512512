@@ -153,9 +153,14 @@ async function deleteItem(req, res, next) {
 }
 
 async function getCompetitions(req, res, next) {
-    let offset = Number.parseInt(req.params.offset, 10);
-    let limit = Number.parseInt(req.params.limit, 10);
-    const competitions = await Competition.findAll({ include: [{ model: Drawing }], limit, offset });
+    let offset = (Number)(req.params.offset);
+    let limit = (Number)(req.params.limit);
+    const competitions = await Competition.findAll({limit, offset,
+        where: {
+            votingStartDate: {
+                [Op.lt]: new Date()
+            }
+        }, include: [{ model: Drawing }]});
     res.send({ code: "Success", data: competitions });
     return next();
 }
