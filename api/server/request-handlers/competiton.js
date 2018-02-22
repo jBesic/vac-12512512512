@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const Op = require('sequelize').Op;
 const Competition = require('../database-setup').Competition;
 const User = require('../database-setup').User;
+const Vote = require('../database-setup').Vote;
 const Drawing = require('../database-setup').Drawing;
 const database = require('../database-setup').database;
 const errs = require('restify-errors');
@@ -153,17 +154,37 @@ async function deleteItem(req, res, next) {
 }
 
 async function getCompetitions(req, res, next) {
-    let offset = Number.parseInt(req.params.offset, 10);
-    let limit = Number.parseInt(req.params.limit, 10);
-    const competitions = await Competition.findAll({ include: [{ model: Drawing }], limit, offset });
+    let offset = (Number)(req.params.offset);
+    let limit = (Number)(req.params.limit);
+    const competitions = await Competition.findAll({
+        limit, offset,
+        where: {
+            votingStartDate: {
+                [Op.lt]: new Date()
+            }
+        }, include: [{ model: Drawing }]
+    });
     res.send({ code: "Success", data: competitions });
     return next();
 }
 
-async function getCompetitionById(req, res, next) {
+async function getCompetitionGallery(req, res, next) {
     let competitionId = req.params.id;
-    const competition = await Competition.findAll({ where: { id: competitionId } });
-    res.send({ code: "Success", data: competition[0] });
+    let offset = (Number)(req.params.offset);
+    let limit = (Number)(req.params.limit);
+    const competitionData = await Competition.findAll({
+        where: { id: competitionId }, include: [{ model: Drawing, limit, offset, include: [{model: User, attributes: ['id', 'username']}, {model: Vote}] }]
+    });
+    let competition = competitionData[0];
+    let currentDate = new Date();
+    let votingStartDate = new Date(competition.votingStartDate);
+    let votingEndDate = new Date(competition.votingEndDate);
+    if (currentDate >= votingStartDate && currentDate < votingEndDate) {
+        competition.dataValues.action = 'VOTE';
+    } else {
+        competition.dataValues.action = 'VIEW';
+    }
+    res.send({ code: "Success", data: competition });
     return next();
 }
 
@@ -173,4 +194,4 @@ module.exports.create = create;
 module.exports.update = update;
 module.exports.delete = deleteItem;
 module.exports.getCompetitions = getCompetitions;
-module.exports.getCompetitionById = getCompetitionById;
+module.exports.getCompetitionGallery = getCompetitionGallery;

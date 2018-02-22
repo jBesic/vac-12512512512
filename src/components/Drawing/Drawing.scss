@@ -7,3 +7,7 @@
 .drawing__medal {
     cursor: pointer;
 }
+
+.drawing__medal_disabled {
+    cursor: not-allowed;
+}

@@ -144,20 +144,55 @@ const getCompetitions = function (offset, limit) {
     });
 };
 
-const getDrawingsByUserId = function (userId, offset, limit) {
+const getUserGallery = function (data) {
     return axios({
         method: 'get',
-        url: API_ENDPOINT + '/getDrawingsByUserId/' + userId + '/' + offset + '/' + limit,
+        url: API_ENDPOINT + '/getUserGallery/' + data.userId + '/' + data.offset + '/' + data.limit,
         headers: {
             'X-Auth-Token': localStorage.getItem('token')
         }
     });
 };
 
-const getDrawingsByCompetitionId = function (competitionId, offset, limit) {
+const getCompetitionGallery = function (data) {
     return axios({
         method: 'get',
-        url: API_ENDPOINT + '/getDrawingsByCompetitionId/' + competitionId + '/' + offset + '/' + limit,
+        url: API_ENDPOINT + '/getCompetitionGallery/' + data.competitionId + '/' + data.offset + '/' + data.limit,
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
+        }
+    });
+};
+
+const getUserVotesForCompetition = function (competitionId) {
+    return axios({
+        method: 'get',
+        url: 'http://localhost:8080/getUserVotesForCompetition/' + competitionId,
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
+        }
+    });
+};
+
+const saveVote = function (data) {
+    return axios({
+        method: 'post',
+        url: 'http://localhost:8080/vote',
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
+        },
+        data: {
+            drawingId: data.drawingId,
+            value: data.value,
+            competitionId: data.competitionId
+        }
+    });
+};
+
+const deleteVote = function (data) {
+    return axios({
+        method: 'get',
+        url: 'http://localhost:8080/vote/' + data.drawingId + '/' + data.competitionId,
         headers: {
             'X-Auth-Token': localStorage.getItem('token')
         }
@@ -174,6 +209,10 @@ export {
     getUsers,
     getAllDrawings,
     getCompetitions,
-    getDrawingsByUserId,
-    getDrawingsByCompetitionId
+    getUserGallery,
+    getCompetitionGallery,
+    getUserVotesForCompetition,
+    saveVote,
+    deleteVote
+
 };
