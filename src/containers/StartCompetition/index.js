@@ -107,6 +107,7 @@ class StartCompetition extends Component {
                         <select
                             className="form-control"
                             id="name"
+                            disabled={this.props.manageCompetitionId !== '' ? true : false}
                             value={this.state.competitionId}
                             onChange={(ev) => this.competitionDetails(ev.target.value)}>
                             {this.state.competitionId ? null : <option value='' disabled>Select competition ...</option>}
@@ -122,7 +123,7 @@ class StartCompetition extends Component {
 
                     {this.state.competitionId ? (
                         <div>
-                            <div className="form-group mt-4">
+                            <div className="form-group">
                                 <label htmlFor="topic">Topic</label>
                                 <input
                                     type="text"
