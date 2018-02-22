@@ -505,6 +505,18 @@ const AsyncDeleteVote = function (data) {
     }
 }
 
+const AsyncGetCompetitionsInVotePhase = function (offset, limit) {
+    return dispatch => {
+        dispatch(asyncCompetitionRequest());
+        vacApi.getCompetitionsInVotePhase(offset, limit)
+            .then(response => {
+                dispatch(asyncCompetitionSuccess(null, [...response.data.data]));
+            }).catch(error => {
+                dispatch(asyncCompetitionFailure(error.response.data.message));
+            });
+    }
+}
+
 export {
     AsyncRegisterUser,
     AsyncLogoutUser,
@@ -536,5 +548,6 @@ export {
     AsyncSaveVote,
     AsyncDeleteVote,
     resetCanvasGlobalState,
-    checkJoinedCompetitions
+    checkJoinedCompetitions,
+    AsyncGetCompetitionsInVotePhase
 };

@@ -7,7 +7,7 @@ const GalleryCard = (props) => {
     return (<div className="card border-secondary mt-4 mb-3">
         <div className='card-body text-secondary gallery__card'>
             {props.action === 'VIEW' && props.shapes &&
-                <svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet">
+                <svg viewBox="0 0 730 550" preserveAspectRatio="xMidYMid meet">
                     {props.shapes.map((shape, index) => {
                         return <Shape type={shape.type} key={index} text={shape.text} points={shape.points} style={shape.attributes} />
                     })}

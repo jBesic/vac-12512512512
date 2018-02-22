@@ -5,6 +5,7 @@ import Drawing from '../Drawing/Drawing';
 import Pagination from '../Pagination/Pagination';
 import * as actions from '../../store/actions/actions';
 import '../../containers/Gallery/Gallery.css';
+import requireAuthentication from '../../hoc/requireAuthentication';
 
 
 class UserGallery extends Component {
@@ -13,7 +14,7 @@ class UserGallery extends Component {
         selectedDrawing: null,
         nextPage: 1,
         currentPage: 1,
-        limit: 1,
+        limit: 8,
         isFetching: true,
         userId: null,
         user: {}
@@ -122,4 +123,4 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserGallery);
+export default requireAuthentication(connect(mapStateToProps, mapDispatchToProps)(UserGallery));

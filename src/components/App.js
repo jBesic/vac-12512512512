@@ -17,6 +17,7 @@ import StartCompetition from '../containers/StartCompetition';
 import Gallery from '../containers/Gallery/Gallery';
 import UserGallery from '../components/UserGallery/UserGallery';
 import CompetitionGallery from '../components/CompetitionGallery/CompetitionGallery';
+import VoteGallery from './VoteGallery/VoteGallery';
 
 class App extends Component {
   render() {
@@ -51,6 +52,7 @@ class App extends Component {
             <Route exact path='/' component={Landing} />
             <Route exact path='/canvas' component={Canvas} />
             <Route exact path='/competitions' component={CompetitionsPage} />
+            <Route exact path='/vote' component={VoteGallery} />
             <Route exact path='/gallery' component={Gallery} />
             <Route exact path='/gallery/user/:userId' component={UserGallery} />
             <Route exact path='/gallery/competition/:competitionId' component={CompetitionGallery} />
