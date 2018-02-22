@@ -10,11 +10,12 @@ import medalDisabled1 from '../../assets/images/medal1_2.png';
 import './Drawing.css';
 
 const Drawing = (props) => {
+    let disableAllMedalsForDrawing = props.loggedUserId && props.loggedUserId === props.drawing.userId ? true : false;
     return (<div className='col-md-3 mt-4 mb-4' >
         <div className="card border-secondary mb-3">
             <div className="card-header vac-card-header">{props.name}</div>
             <div className='card-body'>
-                <svg className='drawing__svg' viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" onClick={props.onDrawingClick} >
+                <svg className='drawing__svg' viewBox="0 0 730 550" preserveAspectRatio="xMidYMid meet" onClick={props.onDrawingClick} >
                     {props.shapes && props.shapes.map((item, index) => {
                         return <Shape type={item.type} key={item.id} text={item.text} points={item.points} style={item.attributes} />
                     })}
@@ -34,8 +35,8 @@ const Drawing = (props) => {
 
                         {!(props.drawingIdWith3Points === props.drawing.id) &&
                             <img
-                                onClick={props.drawingIdWith3Points != null || props.drawingIdWith2Points === props.drawing.id || props.drawingIdWith1Point === props.drawing.id ? () => {} : () => props.addVote(props.drawing.id, 3)}
-                                className={'drawing__medal' + (props.drawingIdWith3Points != null || props.drawingIdWith2Points === props.drawing.id || props.drawingIdWith1Point === props.drawing.id ? ' drawing__medal_disabled' : '')}
+                                onClick={disableAllMedalsForDrawing || props.drawingIdWith3Points != null || props.drawingIdWith2Points === props.drawing.id || props.drawingIdWith1Point === props.drawing.id ? () => {} : () => props.addVote(props.drawing.id, 3)}
+                                className={'drawing__medal' + (disableAllMedalsForDrawing || props.drawingIdWith3Points != null || props.drawingIdWith2Points === props.drawing.id || props.drawingIdWith1Point === props.drawing.id ? ' drawing__medal_disabled' : '')}
                                 src={medalDisabled3} alt='Add vote' />}
 
                         { /* Medal 2 - Images */}
@@ -44,8 +45,8 @@ const Drawing = (props) => {
 
                         {!(props.drawingIdWith2Points === props.drawing.id) &&
                             <img
-                            onClick={props.drawingIdWith2Points != null || props.drawingIdWith3Points === props.drawing.id || props.drawingIdWith1Point === props.drawing.id ? () => {} : () => props.addVote(props.drawing.id, 2)}
-                            className={'drawing__medal' + (props.drawingIdWith2Points != null || props.drawingIdWith3Points === props.drawing.id || props.drawingIdWith1Point === props.drawing.id ? ' drawing__medal_disabled' : '')}
+                            onClick={disableAllMedalsForDrawing || props.drawingIdWith2Points != null || props.drawingIdWith3Points === props.drawing.id || props.drawingIdWith1Point === props.drawing.id ? () => {} : () => props.addVote(props.drawing.id, 2)}
+                            className={'drawing__medal' + (disableAllMedalsForDrawing || props.drawingIdWith2Points != null || props.drawingIdWith3Points === props.drawing.id || props.drawingIdWith1Point === props.drawing.id ? ' drawing__medal_disabled' : '')}
                             src={medalDisabled2} alt='Add vote' />}
 
                         { /* Medal 1 - Images */}
@@ -54,8 +55,8 @@ const Drawing = (props) => {
 
                         {!(props.drawingIdWith1Point === props.drawing.id) &&
                             <img
-                            onClick={props.drawingIdWith1Point != null || props.drawingIdWith3Points === props.drawing.id || props.drawingIdWith2Points === props.drawing.id ? () => {} : () => props.addVote(props.drawing.id, 1)}
-                            className={'drawing__medal' + (props.drawingIdWith1Point != null || props.drawingIdWith3Points === props.drawing.id || props.drawingIdWith2Points === props.drawing.id ? ' drawing__medal_disabled' : '')}
+                            onClick={disableAllMedalsForDrawing || props.drawingIdWith1Point != null || props.drawingIdWith3Points === props.drawing.id || props.drawingIdWith2Points === props.drawing.id ? () => {} : () => props.addVote(props.drawing.id, 1)}
+                            className={'drawing__medal' + (disableAllMedalsForDrawing || props.drawingIdWith1Point != null || props.drawingIdWith3Points === props.drawing.id || props.drawingIdWith2Points === props.drawing.id ? ' drawing__medal_disabled' : '')}
                             src={medalDisabled1} alt='Add vote' />}
                     </div>
                 </div>}
