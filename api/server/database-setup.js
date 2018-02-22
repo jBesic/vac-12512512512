@@ -6,8 +6,8 @@ const FORCE_RECREATE_MODELS = false;
 const database = new Sequelize('vector_art_champions', 'root', '', {
     host: 'localhost',
     dialect: 'mysql',
-    // dialect: 'sqlite',
-    // storage: './server/database.sqlite',
+    //dialect: 'sqlite', 
+    //storage: './server/database.sqlite',
     pool: { max: 5, min: 0, acquire: 30000, idle: 10000 },
     operatorsAliases: false
 });
@@ -37,7 +37,7 @@ const Competition = database.define('competition', {
 
 const Drawing = database.define('drawing', {
     name: Sequelize.STRING,
-    // shapes: Sequelize.STRING,
+    shapes: Sequelize.JSON,
     userId: {
         type: Sequelize.INTEGER,
         references: { model: User, key: 'id' }
@@ -65,27 +65,30 @@ User.hasMany(Competition, { foreignKey: 'userId' });
 Drawing.belongsTo(User, { foreignKey: 'userId', targetKey: 'id' });
 Drawing.belongsTo(Competition, { foreignKey: 'competitionId', targetKey: 'id', defaultValue: null });
 Competition.hasMany(Drawing, { foreignKey: 'competitionId' });
+User.hasMany(Vote, {foreignKey: 'userId'});
+Drawing.hasMany(Vote, {foreignKey: 'drawingId'});
+Vote.belongsTo(Drawing, {foreignKey: 'drawingId', targetKey: 'id'});
 
 // INIT DB ENTITY MODELS
 (async function () {
     // Drop tables in order to avoid foregin key constrint issues
-    if (FORCE_RECREATE_MODELS) {
+   /*  if (FORCE_RECREATE_MODELS) {
         await Vote.drop();
         await Drawing.drop();
         await Competition.drop();
         await User.drop();
-    }
+    } */
     // Sync models
-    await User.sync({ force: FORCE_RECREATE_MODELS });
-    await Competition.sync({ force: FORCE_RECREATE_MODELS });
-    await Drawing.sync({ force: FORCE_RECREATE_MODELS });
-    await Vote.sync({ force: FORCE_RECREATE_MODELS });
+    await User.sync();
+    await Competition.sync();
+    await Drawing.sync();
+    await Vote.sync();
     // repopulate the db with predefiend data
     if (FORCE_RECREATE_MODELS) {
-        dataPopulators.mockUserData(User);
-        dataPopulators.mockCompetitionData(Competition);
-        dataPopulators.mockDrawingData(Drawing);
-        dataPopulators.mockVoteData(Vote);
+        //dataPopulators.mockUserData(User);
+        //dataPopulators.mockCompetitionData(Competition);
+        //dataPopulators.mockDrawingData(Drawing);
+        //dataPopulators.mockVoteData(Vote);
     }
 })();
 

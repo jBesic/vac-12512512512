@@ -36,8 +36,6 @@ server.get('/drawing', DrawingHandlers.list);
 server.post('/drawing', DrawingHandlers.create);
 server.put('/drawing/:id', DrawingHandlers.update);
 server.del('/drawing/:id', DrawingHandlers.delete);
-server.get('/getDrawingsByUserId/:userId/:offset/:limit', DrawingHandlers.getDrawingsByUserId);
-server.get('/getDrawingsByCompetitionId/:competitionId/:offset/:limit', DrawingHandlers.getDrawingsByCompetitionId); 
 
 // COMPETITION
 server.head('/competition', CompetitionHandlers.list);
@@ -45,16 +43,18 @@ server.get('/competition', CompetitionHandlers.list);
 server.post('/competition', CompetitionHandlers.create);
 server.put('/competition/:id', CompetitionHandlers.update);
 server.del('/competition/:id', CompetitionHandlers.delete);
-server.get('/competition/:offset/:limit', CompetitionHandlers.getCompetitions);
-server.get('/competition/:id', CompetitionHandlers.getCompetitionById);
+server.get('/getCompetitions/:offset/:limit', CompetitionHandlers.getCompetitions);
+server.get('/getCompetitionGallery/:id/:offset/:limit', CompetitionHandlers.getCompetitionGallery);
 
 // VOTE
 server.post('/vote', VotingHandlers.create);
-server.del('/vote/:drawingId', VotingHandlers.delete);
+server.get('/vote/:drawingId/:competitionId', VotingHandlers.delete);
+server.get('/getUserVotesForCompetition/:competitionId', VotingHandlers.getUserVotesForCompetition);
 
 
 // USER
 server.get('/user/:id', UserHandlers.getUserById);
+server.get('/getUserGallery/:id/:offset/:limit', UserHandlers.getUserGallery);
 server.head('/user/:offset/:limit', UserHandlers.list);
 server.get('/user/:offset/:limit', UserHandlers.list);
 

@@ -1,6 +1,7 @@
 const Drawing = require('../database-setup').Drawing;
 const Competition = require('../database-setup').Competition;
 const User = require('../database-setup').User;
+const Vote = require('../database-setup').Vote;
 const database = require('../database-setup').database;
 const Sequelize = require('sequelize');
 const errs = require('restify-errors');
@@ -49,8 +50,8 @@ async function deleteItem(req, res, next) {
 }
 
 async function getDrawingsByUserId(req, res, next) {
-    let offset = req.params.offset;
-    let limit = req.params.limit;
+    let offset = (Number)(req.params.offset);
+    let limit = (Number)(req.params.limit);
     let userId = req.params.userId;
     const drawings = await Drawing.findAll({where: {userId}, include: [{model: Competition}], limit, offset});
     res.send({ code: "Success", data: drawings });
@@ -58,10 +59,10 @@ async function getDrawingsByUserId(req, res, next) {
 }
 
 async function getDrawingsByCompetitionId(req, res, next) {
-    let offset = req.params.offset;
-    let limit = req.params.limit;
+    let offset = (Number)(req.params.offset);
+    let limit = (Number)(req.params.limit);
     let competitionId = req.params.competitionId;
-    const drawings = await Drawing.findAll({where: {competitionId}, include: [{model: Competition}], limit, offset});
+    const drawings = await Drawing.findAll({where: {competitionId}, include:[{model: Vote}, {model: User, attributes: ['id', 'username']}], limit, offset});
     res.send({ code: "Success", data: drawings });
     return next();
 }
