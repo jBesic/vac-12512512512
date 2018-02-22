@@ -16,20 +16,41 @@ class Gallery extends Component {
         limit: 4,
         isFetching: true,
         isFirstCompetitionsLoading: true,
-        currentDate: new Date()
+        currentDate: new Date(),
+        isLoged: undefined
     };
 
     componentDidMount = () => {
-        this.props.getUsers(0, this.state.limit + 1);
-        //let currentDate = convertDateToUTC(new Date());
+        this.props.getCompetitions(0, this.state.limit + 1);
         let currentDate = new Date();
         this.setState({ currentDate });
     };
 
     componentWillReceiveProps = (nextProps) => {
+        if (nextProps.isLoged !== this.state.isLoged) {
+            let activeTab = 'users';
+            if (nextProps.isLoged === true) {
+                this.props.getUsers(0, this.state.limit + 1);
+            } else {
+                this.props.getCompetitions(0, this.state.limit + 1);
+                activeTab = 'competitions'
+            }
+            return this.setState({
+                activeTab: activeTab,
+                nextUsersPage: 1,
+                currentUsersPage: 1,
+                nextCompetitionsPage: 1,
+                currentCompetitionsPage: 1,
+                limit: 8,
+                isFetching: true,
+                isFirstCompetitionsLoading: true,
+                currentDate: new Date(),
+                isLoged: nextProps.isLoged
+            });
+        }
+
         if (!nextProps.users.length && !nextProps.competitions.length) return;
         if (this.state.isFetching === true) {
-            //let currentDate = convertDateToUTC(new Date());
             let currentDate = new Date();
             this.setState({ currentDate });
             if (this.state.activeTab === 'users') {
@@ -104,9 +125,10 @@ class Gallery extends Component {
                             <div className='row'>
                                 <div className='col-md-12'>
                                     <ul className="nav nav-tabs" role="tablist">
-                                        <li className="nav-item">
-                                            <button onClick={() => this.activeTabHandler('users')} className={"nav-link" + (this.state.activeTab === 'users' ? ' active' : '')} role="tab">Users</button>
-                                        </li>
+                                        {this.state.isLoged &&
+                                            <li className="nav-item">
+                                                <button onClick={() => this.activeTabHandler('users')} className={"nav-link" + (this.state.activeTab === 'users' ? ' active' : '')} role="tab">Users</button>
+                                            </li>}
                                         <li className="nav-item">
                                             <button onClick={() => this.activeTabHandler('competitions')} className={"nav-link" + (this.state.activeTab === 'competitions' ? ' active' : '')} role="tab">Competitions</button>
                                         </li>
@@ -144,6 +166,7 @@ class Gallery extends Component {
                                                     let shapes = item.drawings && item.drawings.length ? item.drawings[item.drawings.length - 1].shapes : null;
                                                     let votingEndDate = new Date(item.votingEndDate);
                                                     let action = votingEndDate > this.state.currentDate ? 'VOTE' : 'VIEW';
+                                                    if (!this.state.isLoged && action === 'VOTE') return [];
                                                     return <div key={item.id} className='col-md-3' >
                                                         <GalleryCard name={item.name} shapes={shapes} link={("/gallery/competition/" + item.id)} action={action} />
                                                     </div>
@@ -175,17 +198,14 @@ class Gallery extends Component {
     };
 };
 
-/* function convertDateToUTC(date) {
-    return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
-} */
-
 const mapStateToProps = state => {
     return {
         users: state.users.users,
         competitions: state.competitions.competitions,
         drawings: state.drawings.drawings,
         usersModifiedDate: state.users.modifiedDate,
-        competitionsModifiedDate: state.competitions.modifiedDate
+        competitionsModifiedDate: state.competitions.modifiedDate,
+        isLoged: state.auth.isLoged
     };
 };
 

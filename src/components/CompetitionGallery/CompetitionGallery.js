@@ -4,6 +4,7 @@ import DrawingModal from '../DrawingModal/DrawingModal';
 import Drawing from '../Drawing/Drawing';
 import Pagination from '../Pagination/Pagination';
 import * as actions from '../../store/actions/actions';
+import { withRouter } from 'react-router-dom';
 
 class CompetitionGallery extends Component {
     state = {
@@ -12,12 +13,13 @@ class CompetitionGallery extends Component {
         competitionId: null,
         nextPage: 1,
         currentPage: 1,
-        limit: 1,
+        limit: 8,
         competition: {},
         drawingIdWith3Points: null,
         drawingIdWith2Points: null,
         drawingIdWith1Point: null,
-        votes: []
+        votes: [],
+        loggedUserId: null
     };
 
     componentDidMount = () => {
@@ -45,6 +47,13 @@ class CompetitionGallery extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
+        if (nextProps.selectedCompetition.loggedUserId !== this.state.loggedUserId) {
+            this.setState({ loggedUserId: nextProps.selectedCompetition.loggedUserId });
+        }
+
+        if (nextProps.selectedCompetition.action === 'VOTE' && nextProps.isLogged === false) {
+            nextProps.history.push('/');
+        }
         if (this.state.votes !== nextProps.votes) {
             this.updateStateFieldsForVoting(nextProps.votes);
             this.setState({ votes: nextProps.votes, votesChanged: false });
@@ -104,7 +113,7 @@ class CompetitionGallery extends Component {
                                 {this.props.selectedCompetition && <span> | <span className='small'>Competition: {this.props.selectedCompetition.name}</span></span>}
                             </div>
                             <div className="card-body vac-page-body">
-                                {this.props.selectedCompetition.action === 'VOTE' &&
+                                {this.props.selectedCompetition.action === 'VOTE' && this.props.selectedCompetition.drawings && !!this.props.selectedCompetition.drawings.length &&
                                     <div className='row mt-2 mb-2'>
                                         <div className='col-md-1'><h5 className='text-secondary'>Votes:</h5></div>
                                         <div className='col-md-8'>
@@ -134,7 +143,8 @@ class CompetitionGallery extends Component {
                                             drawingIdWith1Point={this.state.drawingIdWith1Point}
                                             addVote={this.addVoteHandler}
                                             deleteVote={this.deleteVoteHandler}
-                                            numberOfPoints={numberOfPoints} />;
+                                            numberOfPoints={numberOfPoints}
+                                            loggedUserId={this.state.loggedUserId} />;
                                     })}
                                 </div>
 
@@ -175,7 +185,8 @@ class CompetitionGallery extends Component {
 const mapStateToProps = state => {
     return {
         selectedCompetition: state.gallery.selectedCompetition,
-        votes: state.gallery.votes
+        votes: state.gallery.votes,
+        isLogged: state.auth.isLoged
     };
 };
 
@@ -187,4 +198,4 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CompetitionGallery);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CompetitionGallery));

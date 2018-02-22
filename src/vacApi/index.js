@@ -228,6 +228,16 @@ const deleteVote = function (data) {
     });
 };
 
+const getCompetitionsInVotePhase = function (offset, limit) {
+    return axios({
+        method: 'get',
+        url: API_ENDPOINT + '/getCompetitionsInVotePhase/' + offset + '/' + limit,
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
+        }
+    });
+};
+
 export {
     register,
     login,
@@ -243,5 +253,7 @@ export {
     getUserVotesForCompetition,
     saveVote,
     deleteVote,
-    checkJoinedCompetitions
+    checkJoinedCompetitions,
+    getCompetitionsInVotePhase
+
 };

@@ -27,7 +27,7 @@ const DrawingModal = (props) => {
                 }
             }}>
             <div>
-                {props.drawing && <svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" width='100%' height='100%' >
+                {props.drawing && <svg viewBox="0 0 730 550" preserveAspectRatio="xMidYMid meet" width='100%' height='100%' >
                     {shapes && shapes.map((item, index) => {
                         return <Shape type={item.type} key={item.id} text={item.text} points={item.points} style={item.attributes} />
                     })}
