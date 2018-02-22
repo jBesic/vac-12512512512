@@ -64,6 +64,11 @@ class Gallery extends Component {
         }
     };
 
+    componentWillUnmount = () => {
+        this.props.resetCompetitionsState();
+        this.props.resetUsersState();
+    };
+
     activeTabHandler = (tab) => {
         this.setState({ activeTab: tab });
         if (tab === 'users') {
@@ -212,7 +217,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         getCompetitions: (offset, limit) => dispatch(actions.AsyncGetCompetitions(offset, limit)),
-        getUsers: (offset, limit) => dispatch(actions.AsyncGetUsers(offset, limit))
+        getUsers: (offset, limit) => dispatch(actions.AsyncGetUsers(offset, limit)),
+        resetCompetitionsState: () => dispatch(actions.resetCompetitionsState()),
+        resetUsersState: () => dispatch(actions.resetUsersState())
     };
 };
 

@@ -29,7 +29,7 @@ const Groups = function (props) {
             </div>
             <div className="card-body">
                 <div className='mb-3 text-right'>
-                    <span
+                    <span style={props.activeMode === mode.DRAW_MODE ? {cursor: 'not-allowed'} : {}}
                         onClick={() => {
                             if (props.activeMode === mode.DRAW_MODE) {
                                 return true;
@@ -41,7 +41,7 @@ const Groups = function (props) {
                         className='btn group-controll'>
                         <img alt='Controll button' title='Add new Group' className="img-fluid" src={newFile} />
                     </span>
-                    <span
+                    <span style={props.activeMode === mode.DRAW_MODE ? {cursor: 'not-allowed'} : {}}
                         onClick={() => {
                             if (props.activeMode === mode.DRAW_MODE) {
                                 return true;
@@ -66,7 +66,7 @@ const Groups = function (props) {
                             const isActive = props.groupsSettings.selectedGroupId === group.id;
 
                             return (
-                                <li
+                                <li style={props.activeMode === mode.DRAW_MODE ? {cursor: 'not-allowed'} : {}}
                                     key={group.id}
                                     onClick={() => {
                                         if (props.activeMode === mode.DRAW_MODE) {
@@ -84,7 +84,7 @@ const Groups = function (props) {
                     </ul>
                 </div>
                 <div className='text-right'>
-                    <span
+                    <span style={props.activeMode === mode.DRAW_MODE ? {cursor: 'not-allowed'} : {}}
                         onClick={() => {
                             if (props.activeMode === mode.DRAW_MODE) {
                                 return true;
@@ -96,7 +96,7 @@ const Groups = function (props) {
                         className='btn group-controll'>
                         <img alt='Controll button' title='Bring to front one level' className="img-fluid" src={moveUp} />
                     </span>
-                    <span
+                    <span style={props.activeMode === mode.DRAW_MODE ? {cursor: 'not-allowed'} : {}}
                         onClick={() => {
                             if (props.activeMode === mode.DRAW_MODE) {
                                 return true;
@@ -108,7 +108,7 @@ const Groups = function (props) {
                         className='btn group-controll'>
                         <img alt='Controll button' title='Send to back one level' className="img-fluid" src={moveDown} />
                     </span>
-                    <span
+                    <span style={props.activeMode === mode.DRAW_MODE ? {cursor: 'not-allowed'} : {}}
                         onClick={() => {
                             if (props.activeMode === mode.DRAW_MODE) {
                                 return true;
@@ -120,7 +120,7 @@ const Groups = function (props) {
                         className='btn group-controll'>
                         <img alt='Controll button' title='Bring in front of all groups' className="img-fluid" src={bringForward} />
                     </span>
-                    <span
+                    <span style={props.activeMode === mode.DRAW_MODE ? {cursor: 'not-allowed'} : {}}
                         onClick={() => {
                             if (props.activeMode === mode.DRAW_MODE) {
                                 return true;

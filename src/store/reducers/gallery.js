@@ -14,6 +14,7 @@ function gallery(state = INITIAL_STATE, action) {
         case actionTypes.ASYNC_GALLERY_SUCCESS: return galleryRequestSuccess(state, action.data, action.galleryType);
         case actionTypes.ASYNC_VOTE_REQUEST_SUCCESS: return {...state, isFetching: false, votes: action.votes};
         case actionTypes.ASYNC_GALLERY_FAILURE: return {...state, isFetching: false, message: action.message};
+        case actionTypes.RESET_GALLERY_STATE: return { ...INITIAL_STATE };
         default:
             return state;
     }

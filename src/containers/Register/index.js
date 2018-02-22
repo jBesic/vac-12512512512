@@ -25,7 +25,7 @@ class Register extends Component {
 
     submitHandler(ev) {
         ev.preventDefault();
-        this.props.registerDispatch(this.state.username, this.state.password);
+        this.props.registerDispatch(this.state.username, this.state.password, this.props.auth.payload);
     }
 
     render() {
@@ -84,7 +84,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        registerDispatch: (username, password) => dispatch(AsyncRegisterUser(username, password))
+        registerDispatch: (username, password, payload = null) => dispatch(AsyncRegisterUser(username, password, payload))
     }
 }
 

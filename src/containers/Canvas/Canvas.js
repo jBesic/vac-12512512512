@@ -473,16 +473,29 @@ class Canvas extends Component {
                                 <div className=' canvas__draw-wrapper'>
                                     <div className='inner'>
                                         <svg style={{ border: '1px solid #ced4da' }} width='100%' height='100%' id='Canvas'>
-                                            {/* Show saved shapes, except shape which you currently draw or have selected */}
+                                            {/* Show saved shapes */}
                                             {this.props.shapes.map((item, index) => {
                                                 if (item.id === this.state.shape.id) {
-                                                    return [];
+                                                    return this.state.activeMode !== mode.DRAW_MODE && this.state.shape.id && 
+                                                    <Shape
+                                                        key={item.id}
+                                                        type={this.state.shape.type}
+                                                        points={this.state.movingShapeStarted ? this.state.pointsBeforeMoving : this.state.shape.points}
+                                                        onClickHandler={this.clickShapeHandler.bind(this, this.state.shape)}
+                                                        text={this.state.shape.text}
+                                                        class='canvas__shape-selected'
+                                                        style={this.state.shape.attributes}
+                                                        isDraggable={this.state.activeMode === mode.SELECT_MODE ? true : false}
+                                                        position={{ x: 0, y: 0 }}
+                                                        handleStart={this.handleMoveStart.bind(this)}
+                                                        handleDrag={this.handleMoveDrag.bind(this)}
+                                                        handleStop={this.handleMoveStop.bind(this)} />;
                                                 }
                                                 return <Shape type={item.type} key={item.id} onClickHandler={this.clickShapeHandler.bind(this, item)} text={item.text} points={item.points} style={item.attributes} />
                                             })}
 
                                             {/* Show shape you currently manage */}
-                                            {this.state.shape.id && <Shape
+                                            {this.state.activeMode === mode.DRAW_MODE && this.state.shape.id && <Shape
                                                 type={this.state.shape.type}
                                                 points={this.state.movingShapeStarted ? this.state.pointsBeforeMoving : this.state.shape.points}
                                                 onClickHandler={this.clickShapeHandler.bind(this, this.state.shape)}
@@ -493,7 +506,7 @@ class Canvas extends Component {
                                                 position={{ x: 0, y: 0 }}
                                                 handleStart={this.handleMoveStart.bind(this)}
                                                 handleDrag={this.handleMoveDrag.bind(this)}
-                                                handleStop={this.handleMoveStop.bind(this)} />}
+                                            handleStop={this.handleMoveStop.bind(this)} />}
 
                                             {/* Show circle on first point of polygon in DRAW_MODE */}
                                             {this.state.activeMode === mode.DRAW_MODE && this.state.shape.type === tools.POLYGON &&

@@ -29,6 +29,10 @@ class CompetitionGallery extends Component {
         this.props.getCompetitionGallery(data);
     };
 
+    componentWillUnmount = () => {
+        this.props.resetGalleryState();
+    };
+
     updateStateFieldsForVoting = (votes) => {
         let drawingIdWith3Points = null;
         let drawingIdWith2Points = null;
@@ -194,7 +198,8 @@ const mapDispatchToProps = dispatch => {
     return {
         getCompetitionGallery: (data) => dispatch(actions.AsyncGetCompetitionGallery(data)),
         saveVote: (data) => dispatch(actions.AsyncSaveVote(data)),
-        deleteVote: (data) => dispatch(actions.AsyncDeleteVote(data))
+        deleteVote: (data) => dispatch(actions.AsyncDeleteVote(data)),
+        resetGalleryState: () => dispatch(actions.resetGalleryState())
     }
 };
 

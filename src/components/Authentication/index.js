@@ -14,11 +14,11 @@ class Authentication extends Component {
                     <button
                         type="button"
                         className={"btn w-50 vac-btn-primary vac-btn-modal" + (this.props.auth.loginActive ? ' active' : '')}
-                        onClick={() => this.props.modal('login', true)}>Login</button>
+                        onClick={() => this.props.modal('login', true, '', this.props.auth.payload)}>Login</button>
                     <button
                         type="button"
                         className={"btn w-50 vac-btn-primary vac-btn-modal" + (this.props.auth.registerActive ? ' active' : '')}
-                        onClick={() => this.props.modal('register', true)}>Register</button>
+                        onClick={() => this.props.modal('register', true, '', this.props.auth.payload)}>Register</button>
                 </div>
                 {this.props.auth.registerActive ? <Register /> : null}
                 {this.props.auth.loginActive ? <Login /> : null}
@@ -35,7 +35,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        modal: (component, show) => dispatch(AuthenticationModal(component, show))
+        modal: (component, show, message, payload = null) => dispatch(AuthenticationModal(component, show, message, payload))
     }
 }
 
