@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import {
-    manageCompetitionModal,
-    AsyncLoadCompetitions
-} from '../../store/actions/actions';
+import { manageCompetitionModal } from '../../store/actions/actions';
 import DrawTabContent from '../DrawTabContent';
 import VoteTabContent from '../VoteTabContent';
 import JoinedTabContent from '../JoinedTabContent';
@@ -18,14 +15,6 @@ class CompetitionsPage extends Component {
         this.state = {
             activeTab: 'draw-tab'
         }
-    }
-
-    loadCompetitions(status) {
-        this.props.loadCompetitions(status);
-    }
-
-    componentDidMount() {
-        this.loadCompetitions('draw');
     }
 
     render() {
@@ -46,7 +35,6 @@ class CompetitionsPage extends Component {
                                                     className={"nav-link" + (this.state.activeTab === 'draw-tab' ? ' active' : '')} role="tab"
                                                     onClick={() => {
                                                         this.setState({ activeTab: 'draw-tab' });
-                                                        this.loadCompetitions('draw');
                                                     }}>Draw</button>
                                             </li>
                                             <li className="nav-item">
@@ -54,7 +42,6 @@ class CompetitionsPage extends Component {
                                                     className={"nav-link" + (this.state.activeTab === 'vote-tab' ? ' active' : '')} role="tab"
                                                     onClick={() => {
                                                         this.setState({ activeTab: 'vote-tab' });
-                                                        this.loadCompetitions('vote');
                                                     }}>Vote</button>
                                             </li>
                                             <li className="nav-item">
@@ -62,7 +49,6 @@ class CompetitionsPage extends Component {
                                                     className={"nav-link" + (this.state.activeTab === 'joined-tab' ? ' active' : '')} role="tab"
                                                     onClick={() => {
                                                         this.setState({ activeTab: 'joined-tab' });
-                                                        this.loadCompetitions('joined');
                                                     }}>Joined</button>
                                             </li>
                                             <li className="nav-item">
@@ -70,7 +56,6 @@ class CompetitionsPage extends Component {
                                                     className={"nav-link" + (this.state.activeTab === 'own-tab' ? ' active' : '')} role="tab"
                                                     onClick={() => {
                                                         this.setState({ activeTab: 'own-tab' });
-                                                        this.loadCompetitions('own');
                                                     }}>Own</button>
                                             </li>
                                             <li className="nav-item ml-auto">
@@ -124,8 +109,7 @@ const mapStateToProps = function (state) {
 
 const mapDispatchToProps = function (dispatch) {
     return {
-        manageCompetitionModal: (component, show) => dispatch(manageCompetitionModal(component, show)),
-        loadCompetitions: (status) => dispatch(AsyncLoadCompetitions(status))
+        manageCompetitionModal: (component, show) => dispatch(manageCompetitionModal(component, show))
     };
 };
 

@@ -180,13 +180,13 @@ const AsyncCreateEditCompetition = function (competitonData) {
     }
 }
 
-const AsyncLoadCompetitions = function (status) {
+const AsyncLoadCompetitions = function (query) {
     return dispatch => {
         dispatch(asyncCompetitionRequest());
 
-        vacApi.loadCompetitions(status)
+        vacApi.loadCompetitions(query)
             .then(response => {
-                dispatch(asyncCompetitionSuccess(status, [...response]));
+                dispatch(asyncCompetitionSuccess(query.status, [...response]));
             }).catch(error => {
                 dispatch(asyncCompetitionFailure(error.response.data.message));
             });

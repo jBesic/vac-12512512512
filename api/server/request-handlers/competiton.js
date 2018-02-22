@@ -7,12 +7,21 @@ const database = require('../database-setup').database;
 const errs = require('restify-errors');
 
 function returnQuery(params) {
+    let filter = {};
+
+    if (params.limit) {
+        filter.limit = Number.parseInt(params.limit, 10);
+    }
+
+    if (params.offset) {
+        filter.offset = Number.parseInt(params.offset, 10);
+    }
+
     switch (params.status) {
         case 'draw': {
-            let filter = {};
-
             if (params.userId) {
                 filter = {
+                    ...filter,
                     where: {
                         userId: {
                             [Op.ne]: params.userId
@@ -30,6 +39,7 @@ function returnQuery(params) {
                 };
             } else {
                 filter = {
+                    ...filter,
                     where: {
                         startDate: {
                             [Op.lt]: new Date()
@@ -45,7 +55,8 @@ function returnQuery(params) {
         }
 
         case 'vote': {
-            return {
+            filter = {
+                ...filter,
                 where: {
                     userId: {
                         [Op.ne]: params.userId
@@ -58,10 +69,13 @@ function returnQuery(params) {
                     }
                 }
             };
+
+            return filter;
         }
 
         case 'joined': {
-            return {
+            filter = {
+                ...filter,
                 where: {
                     userId: {
                         [Op.ne]: params.userId
@@ -74,16 +88,21 @@ function returnQuery(params) {
                     },
                 }
             };
+
+            return filter;
         }
 
         case 'own': {
-            return {
+            filter = {
+                ...filter,
                 where: {
                     userId: {
                         [Op.eq]: params.userId
                     }
                 }
             };
+
+            return filter;
         }
 
         default:
@@ -92,7 +111,7 @@ function returnQuery(params) {
 }
 
 async function list(req, res, next) {
-    const filter = returnQuery({ ...req.params, userId: req.get('userId') });
+    const filter = returnQuery({ ...req.params, ...req.query, userId: req.get('userId') });
     const competitions = await Competition.findAll(filter);
     res.send({ code: "Success", data: competitions });
     return next();

@@ -31,7 +31,9 @@ class StartCompetition extends Component {
 
     componentDidMount() {
         if (this.props.competitions.length === 0) {
-            this.props.loadCompetitions('draw');
+            this.props.loadCompetitions({
+                status: 'draw'
+            });
         }
     }
 
@@ -95,7 +97,7 @@ class StartCompetition extends Component {
         const isInvalid = this.state.competitionId === '';
         return this.props.competitions.length > 0 ? (
             <div>
-                <h4 className="mb-4">Join to the competition</h4>
+                <h4 className="mb-4">Join to a competition</h4>
                 <p>Welcome. This is the short guideline that will help you better understand the competition rules. Generally speaking, the meaning of rules are same for any competition you chose.</p>
                 <p>When you start drawing, you should make an art related to a <strong>competition topic</strong>. Also,pay attention to the <strong>Drawing duration</strong> which is the time you have to finish your awesome art.</p>
                 <form className='d-block w-100' onSubmit={this.submitHandler}>
@@ -179,7 +181,7 @@ class StartCompetition extends Component {
             </div>
         ) : (
                 <div>
-                    <h4 className="mb-4">Join to the competition</h4>
+                    <h4 className="mb-4">Join to a competition</h4>
                     <img alt="Not found" className='img-fluid d-block w-75 mx-auto mb-4' src={notFound} />
                     <div className="alert alert-secondary text-center m-0" role="alert">Sorry, we have not found any active competition. Please try again in few minutes.</div>
                 </div>
@@ -205,7 +207,7 @@ function mapDispatchToProps(dispatch) {
     return {
         startCompetitionDispatch: competitionDetails => dispatch(startCompetition(competitionDetails)),
         manageCompetitionModal: () => dispatch(manageCompetitionModal()),
-        loadCompetitions: (status) => dispatch(AsyncLoadCompetitions(status))
+        loadCompetitions: query => dispatch(AsyncLoadCompetitions(query))
     }
 }
 
