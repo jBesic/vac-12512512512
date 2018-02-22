@@ -65,11 +65,11 @@ class UserGallery extends Component {
                 <div className='container'>
                     <div className='row'>
                         <div className="card col-md-12">
-                            <div className="card-header text-secondary" style={{ backgroundColor: 'white', fontSize: '24px' }}>
+                            <div className="card-header text-secondary vac-page-title">
                                 Gallery
                                 {this.props.selectedUser && <span> | <span className='small'>Username: {this.props.selectedUser.username}</span></span>}
                             </div>
-                            <div className="card-body">
+                            <div className="card-body vac-page-body">
                                 <div className='row'>
                                     {this.props.selectedUser.drawings && this.props.selectedUser.drawings.map((drawing, index) => {
                                         if (this.state.currentPage !== this.state.nextPage && index === this.props.selectedUser.drawings.length - 1) return [];

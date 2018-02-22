@@ -56,7 +56,7 @@ class Canvas extends Component {
 
     componentWillUnmount() {
         clearInterval(this.state.intervalId);
-        this.props.updateResetCanvasLocalStateField(false);
+        this.props.resetCanvasGlobalState(false);
     }
 
     componentWillReceiveProps = (nextProps) => {
@@ -78,8 +78,8 @@ class Canvas extends Component {
                 intervalId: null
             });
 
-            this.props.history.push('/');
             this.props.updateResetCanvasLocalStateField(false);
+            this.props.history.push('/');
         }
 
         if ((this.state.activeMode === mode.UNDO_MODE || this.state.activeMode === mode.REDO_MODE) && nextProps.shapes.length) {
@@ -580,6 +580,7 @@ const mapDispatchToProps = dispatch => {
         modal: (component, show, message, payload = null) => dispatch(actions.AuthenticationModal(component, show, message, payload)),
         saveDrawing: (drawing) => dispatch(actions.AsyncSaveDrawing(drawing)),
         updateResetCanvasLocalStateField: (val) => dispatch(actions.updateResetCanvasLocalStateField(val)),
+        resetCanvasGlobalState: (resetLocalCanvasState) => dispatch(actions.resetCanvasGlobalState(resetLocalCanvasState))
     }
 }
 

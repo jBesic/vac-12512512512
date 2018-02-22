@@ -4,8 +4,6 @@ import { BrowserRouter } from 'react-router-dom';
 import reduxThunk from 'redux-thunk';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
-import ReduxToastr from 'react-redux-toastr'
-
 import freezeState from 'redux-freeze-state';
 
 import './assets/styles/main.css';
@@ -29,14 +27,6 @@ ReactDOM.render(
             <BrowserRouter>
                 <App />
             </BrowserRouter>
-            <ReduxToastr
-                timeOut={1500}
-                newestOnTop={false}
-                preventDuplicates
-                position="top-right"
-                transitionIn="fadeIn"
-                transitionOut="fadeOut"
-                progressBar />
         </React.Fragment>
     </Provider>
     , document.getElementById('root'));

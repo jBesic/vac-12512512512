@@ -55,13 +55,13 @@ function competitions(state = INITIAL_STATE, action) {
                         }).map(newCompetition => newCompetition.id)
                     ];
                 }
-    
+
                 newCompetitions = state.competitions.filter(competition => {
                     return action.competitions.findIndex(actionCompetition => {
                         return actionCompetition.id === competition.id;
                     }) === -1;
                 });
-    
+
                 newCompetitions = [...newCompetitions, ...action.competitions];
             } else {
                 newCompetitions = action.competitions;
@@ -74,7 +74,7 @@ function competitions(state = INITIAL_STATE, action) {
                 competitions: [...newCompetitions.sort((competitionA, competitionB) => {
                     return competitionA.id - competitionB.id
                 })],
-                ...competitionStatuses, 
+                ...competitionStatuses,
                 modifiedDate: new Date()
             };
 
@@ -99,12 +99,15 @@ function competitions(state = INITIAL_STATE, action) {
                 started: action.competitionDetails
             }
 
-        case actionTypes.UPDATE_RESET_CANVAS_LOCAL_STATE_FIELD:
+        case actionTypes.RESET_CANVAS_GLOBAL_STATE:
             return {
                 ...state,
                 started: {},
                 manageCompetitionId: ''
-            };
+            }
+
+        case actionTypes.RESET_ALL:
+            return { ...INITIAL_STATE };
 
         default:
             return state;

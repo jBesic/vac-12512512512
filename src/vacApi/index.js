@@ -99,6 +99,35 @@ const loadCompetitions = function (params = {}) {
     });
 };
 
+const checkJoinedCompetitions = function() {
+    return new Promise((resolve, reject) => {
+        // setTimeout(() => {
+        //     resolve([
+        //         {
+        //             competitionName: 'Competition Name 1',
+        //             competitionPlace: 15,
+        //             drawingName: 'Drawing name 1'
+        //         },
+        //         {
+        //             competitionName: 'Competition Name 2',
+        //             competitionPlace: 15,
+        //             drawingName: 'Drawing name 2'
+        //         },
+        //         {
+        //             competitionName: 'Competition Name 3',
+        //             competitionPlace: 15,
+        //             drawingName: 'Drawing name 3'
+        //         },
+        //         {
+        //             competitionName: 'Competition Name 4',
+        //             competitionPlace: 15,
+        //             drawingName: 'Drawing name 4'
+        //         }
+        //     ]);
+        // }, 1500)
+    });
+}
+
 const saveDrawing = function (data) {
     return axios({
         method: 'post',
@@ -213,6 +242,6 @@ export {
     getCompetitionGallery,
     getUserVotesForCompetition,
     saveVote,
-    deleteVote
-
+    deleteVote,
+    checkJoinedCompetitions
 };
