@@ -81,9 +81,6 @@ function returnQuery(params) {
                     userId: {
                         [Op.ne]: params.userId
                     },
-                    votingStartDate: {
-                        [Op.lt]: new Date()
-                    },
                     id: {
                         [Op.in]: Sequelize.literal('(SELECT `drawing`.`competitionId` FROM `drawings` AS `drawing` WHERE `drawing`.`userId` = ' + params.userId + ')')
                     },
@@ -114,6 +111,21 @@ function returnQuery(params) {
 async function list(req, res, next) {
     const filter = returnQuery({ ...req.params, ...req.query, userId: req.get('userId') });
     const competitions = await Competition.findAll(filter);
+    res.send({ code: "Success", data: competitions });
+    return next();
+}
+
+async function checkVote(req, res, next) {
+    const filter = returnQuery({ ...req.params, ...req.query, userId: req.get('userId') });
+    const competitions = await Competition.findAll({
+        attributes: ['id', 'name'],
+        where: {
+            votingEndDate: {
+                [Op.gt]: Date.now() - 60000,
+                [Op.lt]: Date.now()
+            }
+        }
+    });
     res.send({ code: "Success", data: competitions });
     return next();
 }
@@ -211,6 +223,7 @@ async function getCompetitionsInVotePhase(req, res, next) {
 
 
 module.exports.list = list;
+module.exports.checkVote = checkVote;
 module.exports.create = create;
 module.exports.update = update;
 module.exports.delete = deleteItem;
