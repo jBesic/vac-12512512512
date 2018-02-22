@@ -28,7 +28,7 @@ function returnQuery(params) {
                             [Op.ne]: params.userId
                         },
                         id: {
-                            [Op.notIn]: Sequelize.literal('(SELECT `drawing`.`competitionId` FROM `drawings` AS `drawing` WHERE `drawing`.`userId` = ' + params.userId + ')')
+                            [Op.notIn]: Sequelize.literal('(SELECT `drawing`.`competitionId` FROM `drawings` AS `drawing` WHERE `drawing`.`competitionId` IS NOT NULL AND `drawing`.`userId` = ' + params.userId + ')')
                         },
                         startDate: {
                             [Op.lt]: new Date()
@@ -172,8 +172,9 @@ async function getCompetitionGallery(req, res, next) {
     let competitionId = req.params.id;
     let offset = (Number)(req.params.offset);
     let limit = (Number)(req.params.limit);
+    const userId = req.get('userId');
     const competitionData = await Competition.findAll({
-        where: { id: competitionId }, include: [{ model: Drawing, limit, offset, include: [{model: User, attributes: ['id', 'username']}, {model: Vote}] }]
+        where: { id: competitionId }, include: [{ model: Drawing, limit, offset, include: [{ model: User, attributes: ['id', 'username'] }, { model: Vote }] }]
     });
     let competition = competitionData[0];
     let currentDate = new Date();
@@ -184,7 +185,27 @@ async function getCompetitionGallery(req, res, next) {
     } else {
         competition.dataValues.action = 'VIEW';
     }
+
+    competition.dataValues.loggedUserId = userId;
     res.send({ code: "Success", data: competition });
+    return next();
+}
+
+async function getCompetitionsInVotePhase(req, res, next) {
+    let offset = (Number)(req.params.offset);
+    let limit = (Number)(req.params.limit);
+    const competitions = await Competition.findAll({
+        limit, offset,
+        where: {
+            votingStartDate: {
+                [Op.lt]: new Date()
+            },
+            votingEndDate: {
+                [Op.gt]: new Date()
+            }
+        }, include: [{ model: Drawing }]
+    });
+    res.send({ code: "Success", data: competitions });
     return next();
 }
 
@@ -195,3 +216,5 @@ module.exports.update = update;
 module.exports.delete = deleteItem;
 module.exports.getCompetitions = getCompetitions;
 module.exports.getCompetitionGallery = getCompetitionGallery;
+module.exports.getCompetitionGallery = getCompetitionGallery;
+module.exports.getCompetitionsInVotePhase = getCompetitionsInVotePhase;
