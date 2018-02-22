@@ -28,6 +28,7 @@ async function create(req, res, next) {
 async function deleteItem(req, res, next) {
     const userId = req.get('userId');
     const drawingId = req.params.drawingId;
+    const competitionId = req.params.competitionId;
 
     const rowsDeleted = await Vote.destroy({
         where: { drawingId, userId }
@@ -37,9 +38,7 @@ async function deleteItem(req, res, next) {
     if (rowsDeleted === 0) {
         return next(new errs.NotFoundError('Cannot find a vote for this drawing for the active user'));
     }
-
-    res.send({ code: 'Success', data: rowsDeleted });
-    return next();
+    return getUserVotesForCompetition(req, res, next, competitionId)
 }
 
 async function getVotesFor(userId, drawingId) {

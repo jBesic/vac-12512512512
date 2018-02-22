@@ -63,10 +63,15 @@ const Vote = database.define('vote', {
 });
 
 User.hasMany(Competition, {foreignKey: 'userId'});
-User.hasMany(Vote, {foreignKey: 'userId'});
 Competition.hasMany(Drawing, {foreignKey: 'competitionId'});
-Vote.belongsTo(Drawing, {foreignKey: 'drawingId', targetKey: 'id'});
+User.hasMany(Drawing);
+User.hasMany(Competition, { foreignKey: 'userId' });
+Drawing.belongsTo(User, { foreignKey: 'userId', targetKey: 'id' });
+Drawing.belongsTo(Competition, { foreignKey: 'competitionId', targetKey: 'id', defaultValue: null });
+Competition.hasMany(Drawing, { foreignKey: 'competitionId' });
+User.hasMany(Vote, {foreignKey: 'userId'});
 Drawing.hasMany(Vote, {foreignKey: 'drawingId'});
+Vote.belongsTo(Drawing, {foreignKey: 'drawingId', targetKey: 'id'});
 
 // INIT DB ENTITY MODELS
 (async function () {
