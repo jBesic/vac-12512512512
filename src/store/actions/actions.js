@@ -366,18 +366,6 @@ const AsyncGetCompetitions = function (offset, limit) {
     }
 }
 
-const AsyncGetDrawingsByUserId = function (userId, offset, limit) {
-    return dispatch => {
-        dispatch(setDrawingRequest());
-        vacApi.getDrawingsByUserId(userId, offset, limit)
-            .then(response => {
-                dispatch(drawingRequestSuccess([ ...response.data.data ]));
-            }).catch(error => {
-                dispatch(drawingRequestFailure(error.response.data.message));
-            });
-    }
-}
-
 const AsyncGetAllDrawings = function () {
     return dispatch => {
         dispatch(setDrawingRequest());
@@ -390,14 +378,96 @@ const AsyncGetAllDrawings = function () {
     }
 }
 
-const AsyncGetDrawingsByCompetitionId = function (competitionId, offset, limit) {
+const asyncGalleryRequest = function () {
+    return {
+        type: actionTypes.ASYNC_GALLERY_REQUEST
+    }
+};
+
+const asyncGallerySuccess = function (data, galleryType) {
+    return {
+        type: actionTypes.ASYNC_GALLERY_SUCCESS,
+        galleryType: galleryType,
+        data: data
+    }
+};
+
+const asyncVoteRequestSuccess = function (votes) {
+    return {
+        type: actionTypes.ASYNC_VOTE_REQUEST_SUCCESS,
+        votes: votes
+    }
+};
+
+const asyncGalleryFailure = function (message) {
+    return {
+        type: actionTypes.ASYNC_GALLERY_FAILURE,
+        message: message
+    }
+};
+
+const AsyncGetUserGallery = function (data) {
     return dispatch => {
-        dispatch(setDrawingRequest());
-        vacApi.getDrawingsByCompetitionId(competitionId, offset, limit)
+        dispatch(asyncGalleryRequest());
+        vacApi.getUserGallery(data)
             .then(response => {
-                dispatch(drawingRequestSuccess([ ...response.data.data ]));
+                let userData = response.data.data;
+                dispatch(asyncGallerySuccess( {...userData} , 'USER'));
             }).catch(error => {
-                dispatch(drawingRequestFailure(error.response.data.message));
+                dispatch(asyncGalleryFailure(error.response.data.message));
+            });
+    }
+}
+
+const AsyncGetCompetitionGallery = function (data) {
+    return dispatch => {
+        dispatch(asyncGalleryRequest());
+        vacApi.getCompetitionGallery(data)
+            .then(response => {
+                let competitionData = response.data.data;
+                if (competitionData.action === 'VOTE') {
+                    dispatch(AsyncUserVotesForCompetition(competitionData.id));
+                }
+                dispatch(asyncGallerySuccess( { ...competitionData }, 'COMPETITION'));
+            }).catch(error => {
+                dispatch(asyncGalleryFailure(error.response.data.message));
+            });
+    }
+}
+
+const AsyncUserVotesForCompetition = function (competitionId) {
+    return dispatch => {
+        dispatch(asyncGalleryRequest());
+        vacApi.getUserVotesForCompetition(competitionId)
+            .then(response => {
+                dispatch(asyncVoteRequestSuccess([...response.data.data ]));
+            }).catch(error => {
+                dispatch(asyncGalleryFailure(error.response.data.message));
+            });
+    }
+}
+
+const AsyncSaveVote = function (data) {
+    return dispatch => {
+        dispatch(asyncGalleryRequest());
+        vacApi.saveVote(data)
+            .then(response => {
+                dispatch(asyncVoteRequestSuccess([...response.data.data]));
+                toastr.success('Thank you for voting.');
+            }).catch(error => {
+                dispatch(asyncGalleryFailure(error.response.data.message));
+            });
+    }
+}
+
+const AsyncDeleteVote = function (data) {
+    return dispatch => {
+        dispatch(asyncGalleryRequest());
+        vacApi.deleteVote(data)
+            .then(response => {
+                dispatch(asyncVoteRequestSuccess([...response.data.data]));
+            }).catch(error => {
+                dispatch(asyncGalleryFailure(error.response.data.message));
             });
     }
 }
@@ -427,7 +497,9 @@ export {
     startCompetition,
     AsyncGetUsers,
     AsyncGetCompetitions,
-    AsyncGetDrawingsByUserId,
     AsyncGetAllDrawings,
-    AsyncGetDrawingsByCompetitionId
+    AsyncGetUserGallery,
+    AsyncGetCompetitionGallery,
+    AsyncSaveVote,
+    AsyncDeleteVote
 };
