@@ -14,7 +14,9 @@ async function authFilter(req, res, next) {
     // get auth token and bail instantly if it is not provided
     const authToken = req.headers['x-auth-token'];
     const isCompetitionDraw = /(competition\?status=draw)/i.test(req.url);
-    if (isCompetitionDraw && (authToken === 'null' || authToken === null)) {
+    const isGetCompetitions = /(getCompetitions\/.*)/i.test(req.url);
+    const isGetCompetitionGallery = /(getCompetitionGallery\/.*)/i.test(req.url);
+    if ((isCompetitionDraw || isGetCompetitions || isGetCompetitionGallery) && (authToken === 'null' || authToken === null)) {
         return next();
     }
 
