@@ -150,6 +150,14 @@ const getUsers = function (offset, limit) {
         headers: {
             'X-Auth-Token': localStorage.getItem('token')
         }
+    }).then(response => {
+        const data = response.data.data;
+        const users = data.map(item => {
+            let user = {id: item.id, username: item.username, drawing: item.drawings[0]};
+            return user;
+        });
+
+        return users;
     });
 };
 
@@ -180,6 +188,11 @@ const getUserGallery = function (data) {
         headers: {
             'X-Auth-Token': localStorage.getItem('token')
         }
+    }).then(response => {
+        const data = response.data.data;
+        let competition = {...data};
+
+        return competition;
     });
 };
 
@@ -190,6 +203,27 @@ const getCompetitionGallery = function (data) {
         headers: {
             'X-Auth-Token': localStorage.getItem('token')
         }
+    }).then(response => {
+        const data = response.data.data;
+        let competition = {...data};
+        let drawings = competition.drawings.map(item => {
+            let drawing = {...item};
+            drawing.numberOfPoints = item.votes.length ? item.votes.reduce((accumulator, currentValue) => accumulator + currentValue.value, 0) : 0; 
+            return drawing;
+        });
+        competition.drawings = drawings;
+
+        if (competition.action === 'VOTE') {
+            competition.drawings.sort(function(a, b) {
+                return a.id - b.id;
+              });
+        } else {
+            competition.drawings.sort(function(a, b) {
+                return b.numberOfPoints - a.numberOfPoints;
+              });
+        }
+
+        return competition;
     });
 };
 

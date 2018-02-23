@@ -51,13 +51,18 @@ class CompetitionGallery extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if (nextProps.selectedCompetition.loggedUserId !== this.state.loggedUserId) {
-            this.setState({ loggedUserId: nextProps.selectedCompetition.loggedUserId });
+        if (nextProps.selectedCompetition.action === 'NOT-ALLOWED') {
+            nextProps.history.push('/');
         }
 
         if (nextProps.selectedCompetition.action === 'VOTE' && nextProps.isLogged === false) {
             nextProps.history.push('/');
         }
+
+        if (nextProps.selectedCompetition.loggedUserId !== this.state.loggedUserId) {
+            this.setState({ loggedUserId: nextProps.selectedCompetition.loggedUserId });
+        }
+
         if (this.state.votes !== nextProps.votes) {
             this.updateStateFieldsForVoting(nextProps.votes);
             this.setState({ votes: nextProps.votes, votesChanged: false });
@@ -135,7 +140,6 @@ class CompetitionGallery extends Component {
                                 <div className='row'>
                                     {this.props.selectedCompetition.drawings && this.props.selectedCompetition.drawings.map((drawing, index) => {
                                         if (this.state.currentPage !== this.state.nextPage && index === this.props.selectedCompetition.drawings.length - 1) return [];
-                                        let numberOfPoints = drawing.votes.length ? drawing.votes.reduce((accumulator, currentValue) => accumulator + currentValue.value, 0) : 0;
                                         return <Drawing
                                             action={this.props.selectedCompetition.action}
                                             key={drawing.id} name={drawing.name}
@@ -147,7 +151,6 @@ class CompetitionGallery extends Component {
                                             drawingIdWith1Point={this.state.drawingIdWith1Point}
                                             addVote={this.addVoteHandler}
                                             deleteVote={this.deleteVoteHandler}
-                                            numberOfPoints={numberOfPoints}
                                             loggedUserId={this.state.loggedUserId} />;
                                     })}
                                 </div>

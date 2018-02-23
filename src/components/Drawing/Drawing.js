@@ -11,6 +11,7 @@ import './Drawing.css';
 
 const Drawing = (props) => {
     let disableAllMedalsForDrawing = props.loggedUserId && props.loggedUserId === props.drawing.userId ? true : false;
+    let isUserDrawing = props.loggedUserId && props.loggedUserId === props.drawing.userId ? true : false;
     return (<div className='col-md-3 mt-4 mb-4' >
         <div className="card border-secondary mb-3">
             <div className="card-header vac-card-header">{props.name}</div>
@@ -24,10 +25,10 @@ const Drawing = (props) => {
             {props.action === 'VIEW' &&
                 <div className="card-footer text-muted">
                     <span><strong>{props.drawing.user.username}</strong></span>
-                    <span className='pull-right'>Points: <strong>{props.numberOfPoints}</strong></span>
+                    <span className='pull-right'>Points: <strong>{props.drawing.numberOfPoints}</strong></span>
                 </div>}
-            {props.action === 'VOTE' &&
-                <div className="card-footer text-muted">
+            {props.action === 'VOTE' && !isUserDrawing &&
+                <div className="card-footer text-muted" style={{minHeight: '58px'}}>
                     <div className='d-flex justify-content-around'>
                     { /* Medal 3 - Images */}
                         {props.drawingIdWith3Points === props.drawing.id &&
@@ -59,6 +60,11 @@ const Drawing = (props) => {
                             className={'drawing__medal' + (disableAllMedalsForDrawing || props.drawingIdWith1Point != null || props.drawingIdWith3Points === props.drawing.id || props.drawingIdWith2Points === props.drawing.id ? ' drawing__medal_disabled' : '')}
                             src={medalDisabled1} alt='Add vote' />}
                     </div>
+                </div>}
+
+                {props.action === 'VOTE' && isUserDrawing &&
+                <div className="card-footer text-muted text-center" style={{minHeight: '58px'}}>
+                    <span><strong>Your Drawing</strong></span>
                 </div>}
         </div>
     </div>);
