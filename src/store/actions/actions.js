@@ -79,7 +79,7 @@ const checkJoinedCompetitions = function () {
                 .catch(error => {
                     return error;
                 });
-        }, 60000);
+        }, 45000);
 
         localStorage.setItem('checkJoinedCompetitions', timeoutId)
     }

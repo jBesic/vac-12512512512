@@ -14,7 +14,10 @@ const database = new Sequelize('vector_art_champions', 'root', '', {
 
 // Model definition
 const User = database.define('user', {
-    username: Sequelize.STRING,
+    username: {
+        unique: true,
+        type: Sequelize.STRING
+    },
     password: Sequelize.STRING,
     authToken: Sequelize.STRING
 });
