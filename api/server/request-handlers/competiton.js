@@ -162,7 +162,7 @@ async function getCompetitions(req, res, next) {
             votingStartDate: {
                 [Op.lt]: new Date()
             }
-        }, include: [{ model: Drawing }]
+        }, include: [Drawing]
     });
     res.send({ code: "Success", data: competitions });
     return next();
@@ -180,10 +180,14 @@ async function getCompetitionGallery(req, res, next) {
     let currentDate = new Date();
     let votingStartDate = new Date(competition.votingStartDate);
     let votingEndDate = new Date(competition.votingEndDate);
-    if (currentDate >= votingStartDate && currentDate < votingEndDate) {
-        competition.dataValues.action = 'VOTE';
-    } else {
+    if (currentDate < votingStartDate && competition.userId === userId) {
         competition.dataValues.action = 'VIEW';
+    } else if (currentDate >= votingStartDate && currentDate < votingEndDate) {
+        competition.dataValues.action = 'VOTE';
+    } else if (currentDate > votingEndDate) {
+        competition.dataValues.action = 'VIEW';
+    } else {
+        competition.dataValues.action = 'NOT-ALLOWED';
     }
 
     competition.dataValues.loggedUserId = userId;
