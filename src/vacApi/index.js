@@ -99,32 +99,24 @@ const loadCompetitions = function (params = {}) {
     });
 };
 
-const checkJoinedCompetitions = function() {
-    return new Promise((resolve, reject) => {
-        // setTimeout(() => {
-        //     resolve([
-        //         {
-        //             competitionName: 'Competition Name 1',
-        //             competitionPlace: 15,
-        //             drawingName: 'Drawing name 1'
-        //         },
-        //         {
-        //             competitionName: 'Competition Name 2',
-        //             competitionPlace: 15,
-        //             drawingName: 'Drawing name 2'
-        //         },
-        //         {
-        //             competitionName: 'Competition Name 3',
-        //             competitionPlace: 15,
-        //             drawingName: 'Drawing name 3'
-        //         },
-        //         {
-        //             competitionName: 'Competition Name 4',
-        //             competitionPlace: 15,
-        //             drawingName: 'Drawing name 4'
-        //         }
-        //     ]);
-        // }, 1500)
+const checkJoinedCompetitions = function () {
+    return axios({
+        method: 'get',
+        url: API_ENDPOINT + '/check-competition-vote',
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
+        }
+    }).then(response => {
+        const data = response.data.data;
+        const competitions = Object.keys(data).map(objectKey => {
+            const competition = data[objectKey];
+            return {
+                id: Number.parseInt(competition.id, 10),
+                name: competition.name
+            };
+        });
+
+        return competitions;
     });
 }
 
@@ -138,7 +130,7 @@ const saveDrawing = function (data) {
         data: {
             name: data.name,
             shapes: data.shapes,
-            competitionId: data.competitionId            
+            competitionId: data.competitionId
         }
     });
 };

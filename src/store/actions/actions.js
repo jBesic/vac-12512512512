@@ -71,18 +71,18 @@ const checkJoinedCompetitions = function () {
         const timeoutId = setTimeout(() => {
             vacApi.checkJoinedCompetitions()
                 .then(response => {
-                    response.forEach(details => {
-                        toastr.info('The ' + details.competitionName + ' ends.', {
+                    response.forEach(competition => {
+                        toastr.info('The ' + competition.name + ' ends.', {
                             timeOut: 0,
                             removeOnHover: false,
-                            component: props => <Link onClick={props.remove} className='btn vac-btn-primary btn-sm mt-2' to='/gallery'>See Results</Link>
+                            component: props => <Link onClick={props.remove} className='btn vac-btn-primary btn-sm mt-2' to={'/gallery/competition/' + competition.id}>See Results</Link>
                         });
                     });
                 })
                 .catch(error => {
                     return error;
                 });
-        }, 60000);
+        }, 45000);
 
         localStorage.setItem('checkJoinedCompetitions', timeoutId)
     }
