@@ -89,8 +89,8 @@ class DrawTabContent extends Component {
                                     <td>{competition.startDate.toLocaleDateString()
                                         + ' ' + competition.startDate.toLocaleTimeString()}</td>
                                     <td>{competition.endDate} minutes</td>
-                                    <td>{competition.votingStartDate} minutes</td>
-                                    <td>{competition.votingEndDate} minutes</td>
+                                    <td>{('0' + Math.floor(competition.votingStartDate / 60)).slice(-2) + ':' + ('0' + competition.votingStartDate % 60).slice(-2)} hours</td>
+                                    <td>{('0' + Math.floor(competition.votingEndDate / 60)).slice(-2) + ':' + ('0' + competition.votingEndDate % 60).slice(-2)} hours</td>
                                     <td><button
                                         type='button'
                                         className='btn vac-btn-primary w-100'
