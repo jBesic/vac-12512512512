@@ -13,7 +13,7 @@ class Gallery extends Component {
         currentUsersPage: 1,
         nextCompetitionsPage: 1,
         currentCompetitionsPage: 1,
-        limit: 4,
+        limit: 8,
         isFetching: true,
         isFirstCompetitionsLoading: true,
         currentDate: new Date(),
@@ -102,7 +102,7 @@ class Gallery extends Component {
             this.setState({ currentUsersPage: nextPage, lastUsersPage: nextPage, isFetching: true });
         } else {
             this.props.getCompetitions(offset, this.state.limit + 1);
-            this.setState({ currentCompetitionsPage: nextPage, lastCompetitionsPage: nextPage, isFetching: true });
+            this.setState({ currentCompetitionsPage: nextPage, lastCompetitionsPage: nextPage, isFetching: true});
         }
     };
 
@@ -114,9 +114,13 @@ class Gallery extends Component {
             this.setState({ currentUsersPage: nextPage, nextUsersPage: nextPage, isFetching: true });
         } else {
             this.props.getCompetitions(offset, this.state.limit + 1);
-            this.setState({ currentCompetitionsPage: nextPage, nextCompetitionsPage: nextPage, isFetching: true });
+            this.setState({ currentCompetitionsPage: nextPage, nextCompetitionsPage: nextPage, isFetching: true});
         }
     };
+
+    updateFieldNoCompetitions = () => {
+        this.setState({noCompetitions: false});
+    }
 
     render() {
         return (
@@ -143,9 +147,9 @@ class Gallery extends Component {
                                             <div className="row">
                                                 {this.props.users.map((item, index) => {
                                                     if (this.state.currentUsersPage !== this.state.nextUsersPage && index === this.props.users.length - 1) return [];
-                                                    let shapes = item.drawings && item.drawings.length ? item.drawings[item.drawings.length - 1].shapes : null;
+                                                    //let shapes = item.drawing ? JSON.parse(item.drawing.shapes) : null;
                                                     return <div key={index} className='col-md-3'>
-                                                        <GalleryCard name={item.username} shapes={shapes} link={("/gallery/user/" + item.id)} action='VIEW' />
+                                                        <GalleryCard name={item.username} shapes={item.drawing.shapes} link={("/gallery/user/" + item.id)} action='VIEW' />
                                                     </div>
                                                 })}
                                             </div>
@@ -178,14 +182,14 @@ class Gallery extends Component {
                                                 })}
                                             </div>
                                             <div className='row'>
-                                                {!this.props.competitions.length &&
+                                                {(this.state.noCompetitions || !this.props.competitions.length) &&
                                                     <div className='col-md-12'>
                                                         <div className="alert alert-secondary" role="alert">
                                                             No competitions.
                                             </div>
                                                     </div>}
                                             </div>
-                                            {!!this.props.competitions.length &&
+                                            {!!this.props.competitions.length && !this.state.noCompetitions &&
                                                 <Pagination
                                                     currentPage={this.state.currentCompetitionsPage}
                                                     nextPage={this.state.nextCompetitionsPage}

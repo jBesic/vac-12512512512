@@ -383,7 +383,7 @@ const AsyncGetUsers = function (offset, limit) {
         dispatch(setUserRequest());
         vacApi.getUsers(offset, limit)
             .then(response => {
-                dispatch(userRequestSuccess([...response.data.data]));
+                dispatch(userRequestSuccess([...response]));
             }).catch(error => {
                 dispatch(userRequestFailure(error.response.data.message));
             });
@@ -447,7 +447,7 @@ const AsyncGetUserGallery = function (data) {
         dispatch(asyncGalleryRequest());
         vacApi.getUserGallery(data)
             .then(response => {
-                let userData = response.data.data;
+                let userData = response;
                 dispatch(asyncGallerySuccess({ ...userData }, 'USER'));
             }).catch(error => {
                 dispatch(asyncGalleryFailure(error.response.data.message));
@@ -460,7 +460,7 @@ const AsyncGetCompetitionGallery = function (data) {
         dispatch(asyncGalleryRequest());
         vacApi.getCompetitionGallery(data)
             .then(response => {
-                let competitionData = response.data.data;
+                let competitionData = response;
                 if (competitionData.action === 'VOTE') {
                     dispatch(AsyncUserVotesForCompetition(competitionData.id));
                 }

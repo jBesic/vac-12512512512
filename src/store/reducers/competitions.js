@@ -106,8 +106,8 @@ function competitions(state = INITIAL_STATE, action) {
                 manageCompetitionId: ''
             }
 
-        case actionTypes.RESET_ALL:
-            return { ...INITIAL_STATE };
+        /* case actionTypes.RESET_ALL:
+            return { ...INITIAL_STATE }; */
 
         case actionTypes.RESET_COMPETITIONS_STATE:
             return { ...INITIAL_STATE };
