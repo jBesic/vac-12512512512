@@ -110,7 +110,7 @@ function competitions(state = INITIAL_STATE, action) {
             return { ...INITIAL_STATE };
 
         case actionTypes.RESET_COMPETITIONS_STATE:
-            return { ...INITIAL_STATE };
+            return { ...INITIAL_STATE, started: {...state.started} };
 
         default:
             return state;
