@@ -156,7 +156,9 @@ const getUsers = function (offset, limit) {
             let drawing = null;
             if (item.drawings.length) {
                 drawing = item.drawings[0];
-                drawing.shapes = JSON.parse(drawing.shapes);
+                if (typeof (drawing.shapes) === 'string') {
+                    drawing.shapes = JSON.parse(drawing.shapes);
+                }
             }
             let user = { id: item.id, username: item.username, drawing: drawing };
             return user;
@@ -189,6 +191,9 @@ const getCompetitions = function (offset, limit) {
             let drawing = null;
             if (item.drawings.length) {
                 drawing = item.drawings[0];
+                if (typeof (drawing.shapes) === 'string') {
+                    drawing.shapes = JSON.parse(drawing.shapes);
+                }
             }
             let competition = { ...item, drawing: drawing };
             return competition;
