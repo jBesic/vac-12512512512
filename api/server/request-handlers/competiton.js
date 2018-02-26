@@ -24,9 +24,12 @@ function returnQuery(params) {
                 filter = {
                     ...filter,
                     where: {
-                        userId: {
-                            [Op.ne]: params.userId
-                        },
+                        // userId: {
+                        //     [Op.ne]: params.userId
+                        // },
+                        // id: {
+                        //     [Op.notIn]: Sequelize.literal('(SELECT `drawing`.`competitionId` FROM `drawings` AS `drawing` WHERE `drawing`.`competitionId` IS NOT NULL AND `drawing`.`userId` = ' + params.userId + ')')
+                        // },
                         id: {
                             [Op.notIn]: Sequelize.literal('(SELECT `drawing`.`competitionId` FROM `drawings` AS `drawing` WHERE `drawing`.`competitionId` IS NOT NULL AND `drawing`.`userId` = ' + params.userId + ')')
                         },
@@ -59,9 +62,9 @@ function returnQuery(params) {
             filter = {
                 ...filter,
                 where: {
-                    userId: {
-                        [Op.ne]: params.userId
-                    },
+                    // userId: {
+                    //     [Op.ne]: params.userId
+                    // },
                     votingStartDate: {
                         [Op.lt]: new Date()
                     },
@@ -78,9 +81,9 @@ function returnQuery(params) {
             filter = {
                 ...filter,
                 where: {
-                    userId: {
-                        [Op.ne]: params.userId
-                    },
+                    // userId: {
+                    //     [Op.ne]: params.userId
+                    // },
                     id: {
                         [Op.in]: Sequelize.literal('(SELECT `drawing`.`competitionId` FROM `drawings` AS `drawing` WHERE `drawing`.`userId` = ' + params.userId + ')')
                     },
