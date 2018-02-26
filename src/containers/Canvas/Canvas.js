@@ -569,9 +569,8 @@ const mapStateToProps = state => {
 
     const clonnedShapes = [...state.canvas.shapes];
     clonnedShapes.sort((shapeA, shapeB) => {
-        return sortedShapes.indexOf(shapeA.id) > sortedShapes.indexOf(shapeB.id);
+        return sortedShapes.indexOf(shapeA.id) - sortedShapes.indexOf(shapeB.id);
     });
-
     return {
         lastUsedId: state.canvas.lastUsedId,
         isLoged: state.auth.isLoged,

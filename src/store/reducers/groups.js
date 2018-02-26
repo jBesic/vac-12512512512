@@ -184,7 +184,7 @@ const groups = (state = initState, action) => {
             const indexInArray = newGroups.findIndex(group => {
                 return group.id === state.selectedGroupId;
             });
-
+            if (newGroups[indexInArray].shapeIds.indexOf(action.shape.id) !== -1) return state;
             newGroups[indexInArray] = {
                 ...newGroups[indexInArray],
                 shapeIds: [

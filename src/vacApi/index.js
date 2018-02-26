@@ -156,7 +156,6 @@ const getUsers = function (offset, limit) {
             let drawing = null;
             if (item.drawings.length) {
                 drawing = item.drawings[0];
-                drawing.shapes = JSON.parse(drawing.shapes);
             }
             let user = { id: item.id, username: item.username, drawing: drawing };
             return user;
