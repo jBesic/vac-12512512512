@@ -20,7 +20,7 @@ const Landing = function (props) {
                         className="btn vac-btn-primary btn-lg m-1"
                         onClick={() => {
                             props.manageCompetitionModal('start', true)
-                        }}>Join in competition</button>
+                        }}>Join competition</button>
                     <Link className="btn vac-btn-primary btn-lg m-1" to='/gallery'>Browse galleries</Link>
                     {props.auth.isLoged ? <Link className="btn vac-btn-primary btn-lg m-1" to='/vote'>Vote for arts</Link> : null}
                 </div>

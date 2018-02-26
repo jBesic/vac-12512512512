@@ -32,7 +32,9 @@ class Gallery extends Component {
             if (nextProps.isLoged === true) {
                 this.props.getUsers(0, this.state.limit + 1);
             } else {
-                this.props.getCompetitions(0, this.state.limit + 1);
+                setTimeout(() => {
+                    this.props.getCompetitions(0, this.state.limit + 1);
+                }, 10);
                 activeTab = 'competitions'
             }
             return this.setState({
@@ -149,7 +151,7 @@ class Gallery extends Component {
                                                     if (this.state.currentUsersPage !== this.state.nextUsersPage && index === this.props.users.length - 1) return [];
                                                     //let shapes = item.drawing ? JSON.parse(item.drawing.shapes) : null;
                                                     return <div key={index} className='col-md-3'>
-                                                        <GalleryCard name={item.username} shapes={item.drawing.shapes} link={("/gallery/user/" + item.id)} action='VIEW' />
+                                                        <GalleryCard name={item.username} shapes={this.props.shapes} link={("/gallery/user/" + item.id)} action='VIEW' />
                                                     </div>
                                                 })}
                                             </div>
