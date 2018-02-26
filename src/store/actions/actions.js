@@ -327,9 +327,18 @@ const AsyncSaveDrawing = function (drawing) {
         dispatch(setDrawingRequest());
         vacApi.saveDrawing(drawing)
             .then(response => {
+                let drawing = { ...response.data.data }
                 dispatch(drawingRequestSuccess());
                 dispatch(resetCanvasGlobalState());
-                toastr.success('Saved successfully.');
+                if (drawing.competitionId) {
+                    // drawing submited to competition
+                    toastr.success('Thank you for joining competition. You will receive a notification when a voting time starts.', {
+                        timeOut: 0,
+                        removeOnHover: false
+                    });
+                } else {
+                    toastr.success('Saved successfully.');
+                }
             }).catch(error => {
                 dispatch(drawingRequestFailure(error.response.data.message));
             });
