@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { manageCompetitionModal } from '../../store/actions/actions';
+import { manageCompetitionModal, resetCompetitionsState } from '../../store/actions/actions';
 import DrawTabContent from '../DrawTabContent';
 import VoteTabContent from '../VoteTabContent';
 import JoinedTabContent from '../JoinedTabContent';
@@ -16,6 +16,10 @@ class CompetitionsPage extends Component {
             activeTab: 'draw-tab'
         }
     }
+
+    componentWillUnmount = () => {
+        this.props.resetCompetitionsState();
+    };
 
     render() {
         return (
@@ -105,7 +109,8 @@ const mapStateToProps = function (state) {
 
 const mapDispatchToProps = function (dispatch) {
     return {
-        manageCompetitionModal: (component, show) => dispatch(manageCompetitionModal(component, show))
+        manageCompetitionModal: (component, show) => dispatch(manageCompetitionModal(component, show)),
+        resetCompetitionsState: () => dispatch(resetCompetitionsState())
     };
 };
 

@@ -7,6 +7,7 @@ const DrawingHandlers = require('./request-handlers/drawing');
 const CompetitionHandlers = require('./request-handlers/competiton');
 const UserHandlers = require('./request-handlers/user');
 const VotingHandlers = require('./request-handlers/vote');
+const NotificationHandlers = require('./request-handlers/notifications');
 
 // SERVER SETUP
 const cors = corsMiddleware({
@@ -59,6 +60,10 @@ server.get('/user/:id', UserHandlers.getUserById);
 server.get('/getUserGallery/:id/:offset/:limit', UserHandlers.getUserGallery);
 server.head('/user/:offset/:limit', UserHandlers.list);
 server.get('/user/:offset/:limit', UserHandlers.list);
+
+// NOTIFICATION
+server.post('/updateNotifications', NotificationHandlers.updateNotifications);
+server.get('/getUserNotifications', NotificationHandlers.getUserNotifications);
 
 // INIT SERVER
 server.listen(8080, () => console.log('%s listening at %s', server.name, server.url));

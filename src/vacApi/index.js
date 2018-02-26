@@ -100,23 +100,31 @@ const loadCompetitions = function (params = {}) {
 };
 
 const checkJoinedCompetitions = function () {
-    return axios({
-        method: 'get',
-        url: API_ENDPOINT + '/check-competition-vote',
-        headers: {
-            'X-Auth-Token': localStorage.getItem('token')
-        }
-    }).then(response => {
-        const data = response.data.data;
-        const competitions = Object.keys(data).map(objectKey => {
-            const competition = data[objectKey];
-            return {
-                id: Number.parseInt(competition.id, 10),
-                name: competition.name
-            };
-        });
-
-        return competitions;
+    return new Promise((resolve, reject) => {
+        // setTimeout(() => {
+        //     resolve([
+        //         {
+        //             competitionName: 'Competition Name 1',
+        //             competitionPlace: 15,
+        //             drawingName: 'Drawing name 1'
+        //         },
+        //         {
+        //             competitionName: 'Competition Name 2',
+        //             competitionPlace: 15,
+        //             drawingName: 'Drawing name 2'
+        //         },
+        //         {
+        //             competitionName: 'Competition Name 3',
+        //             competitionPlace: 15,
+        //             drawingName: 'Drawing name 3'
+        //         },
+        //         {
+        //             competitionName: 'Competition Name 4',
+        //             competitionPlace: 15,
+        //             drawingName: 'Drawing name 4'
+        //         }
+        //     ]);
+        // }, 1500)
     });
 }
 
@@ -145,7 +153,12 @@ const getUsers = function (offset, limit) {
     }).then(response => {
         const data = response.data.data;
         const users = data.map(item => {
-            let user = {id: item.id, username: item.username, drawing: item.drawings[0]};
+            let drawing = null;
+            if (item.drawings.length) {
+                drawing = item.drawings[0];
+                drawing.shapes = JSON.parse(drawing.shapes);
+            }
+            let user = { id: item.id, username: item.username, drawing: drawing };
             return user;
         });
 
@@ -170,6 +183,18 @@ const getCompetitions = function (offset, limit) {
         headers: {
             'X-Auth-Token': localStorage.getItem('token')
         }
+    }).then(response => {
+        const data = response.data.data;
+        const competitions = data.map(item => {
+            let drawing = null;
+            if (item.drawings.length) {
+                drawing = item.drawings[0];
+            }
+            let competition = { ...item, drawing: drawing };
+            return competition;
+        });
+    
+        return competitions;
     });
 };
 
@@ -264,6 +289,34 @@ const getCompetitionsInVotePhase = function (offset, limit) {
     });
 };
 
+const getUserNotifications = function () {
+    return axios({
+        method: 'get',
+        url: API_ENDPOINT + '/getUserNotifications',
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
+        }
+    }).then(response => {
+        const notifications = response.data.data;
+        let numberOfNewNotifications = getNumberOfNewNotifications(notifications);
+        return { notifications, numberOfNewNotifications };
+    });
+};
+
+const updateNotifications = function () {
+    return axios({
+        method: 'get',
+        url: 'http://localhost:8080/updateNotifications',
+        headers: {
+            'X-Auth-Token': localStorage.getItem('token')
+        }
+    }).then(response => {
+        const notifications = response.data.data;
+        let numberOfNewNotifications = getNumberOfNewNotifications(notifications);
+        return { notifications, numberOfNewNotifications };
+    });
+};
+
 export {
     register,
     login,
@@ -280,6 +333,19 @@ export {
     saveVote,
     deleteVote,
     checkJoinedCompetitions,
-    getCompetitionsInVotePhase
+    getCompetitionsInVotePhase,
+    getUserNotifications,
+    updateNotifications
 
+};
+
+function getNumberOfNewNotifications(notifications) {
+    let numberOfNewNotifications = notifications.length ? notifications.reduce((counter, item) => {
+        if (!item.isDisplayed) {
+            return ++counter;
+        }
+        return counter;
+    }, 0) : 0;
+
+    return numberOfNewNotifications;
 };

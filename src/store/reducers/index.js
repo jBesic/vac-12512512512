@@ -6,6 +6,7 @@ import competitionsReducer from './competitions';
 import drawingsReducer from './drawings';
 import usersReducer from './users';
 import galleryReducer from './gallery';
+import notificationsReducer from './notifications';
 import {reducer as toastrReducer} from 'react-redux-toastr'
 
 export default combineReducers({
@@ -16,5 +17,6 @@ export default combineReducers({
     drawings: drawingsReducer,
     users: usersReducer,
     toastr: toastrReducer,
-    gallery: galleryReducer
+    gallery: galleryReducer,
+    notifications: notificationsReducer
 });

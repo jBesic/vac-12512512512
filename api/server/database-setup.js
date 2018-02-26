@@ -48,6 +48,20 @@ const Drawing = database.define('drawing', {
     }
 });
 
+const Notification = database.define('notification', {
+    type: Sequelize.STRING,
+    notificationDate: Sequelize.STRING,
+    isDisplayed: {type: Sequelize.TINYINT, defaultValue: 0},
+    userId: {
+        type: Sequelize.INTEGER,
+        references: { model: User, key: 'id' }
+    },
+    competitionId: {
+        type: Sequelize.INTEGER,
+        references: { model: Competition, key: 'id' }
+    }
+});
+Notification.belongsTo(Competition, {foreignKey: 'competitionId', targetKey: 'id'});
 Drawing.belongsTo(User, {foreignKey: 'userId', targetKey: 'id'});
 Drawing.belongsTo(Competition, {foreignKey: 'competitionId', targetKey: 'id', defaultValue: null})
 User.hasMany(Drawing);
@@ -90,6 +104,7 @@ Vote.belongsTo(Drawing, {foreignKey: 'drawingId', targetKey: 'id'});
     await Competition.sync();
     await Drawing.sync();
     await Vote.sync();
+    await Notification.sync();
     // repopulate the db with predefiend data
     if (FORCE_RECREATE_MODELS) {
         //dataPopulators.mockUserData(User);
@@ -103,4 +118,5 @@ module.exports.User = User;
 module.exports.Drawing = Drawing;
 module.exports.Competition = Competition;
 module.exports.Vote = Vote;
+module.exports.Notification = Notification;
 module.exports.database = database;
