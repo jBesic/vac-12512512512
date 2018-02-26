@@ -88,10 +88,10 @@ function competitions(state = INITIAL_STATE, action) {
         case actionTypes.START_COMPETITION:
             const now = new Date();
             const startDate = new Date(action.competitionDetails.startDate);
-            if (now - startDate < action.competitionDetails.endDate * 60000) {
+            if (now - startDate < 60000) {
                 return {
                     ...state,
-                    message: 'Sorry, the competition draw phase is end.'
+                    message: 'Sorry, the competition draw phase is over.'
                 }
             }
             return {
@@ -106,8 +106,8 @@ function competitions(state = INITIAL_STATE, action) {
                 manageCompetitionId: ''
             }
 
-        /* case actionTypes.RESET_ALL:
-            return { ...INITIAL_STATE }; */
+        case actionTypes.RESET_ALL:
+            return { ...INITIAL_STATE };
 
         case actionTypes.RESET_COMPETITIONS_STATE:
             return { ...INITIAL_STATE };
