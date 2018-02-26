@@ -177,7 +177,7 @@ async function getCompetitions(req, res, next) {
             votingStartDate: {
                 [Op.lt]: new Date()
             }
-        }, include: [Drawing]
+        }, include: [{ model: Drawing, order: [['id', 'DESC']], limit: 1, offset: 0 }]
     });
     res.send({ code: "Success", data: competitions });
     return next();

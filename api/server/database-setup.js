@@ -50,7 +50,7 @@ const Drawing = database.define('drawing', {
 
 const Notification = database.define('notification', {
     type: Sequelize.STRING,
-    notificationDate: Sequelize.STRING,
+    notificationDate: Sequelize.DATE,
     isDisplayed: {type: Sequelize.TINYINT, defaultValue: 0},
     userId: {
         type: Sequelize.INTEGER,

@@ -23,15 +23,16 @@ async function getUserNotifications(req, res, next) {
 
 async function updateNotifications(req, res, next) {
     const userId = req.get('userId');
-    let notifications = req.body.notifications;
-
-   /* notifications.forEach(element => {
-        //let notification = {id: element.id, type: element.type, notificationDate: element.notificationDate, userId: element.userId, competitionId: element.competitionId, isDisplayed: true};
-        let notification = { ...element, isDisplayed: true, userId };
-        await Notification.update(notification, {
-            where: { id: element.id, userId }
+    await Notification.update(
+        { isDisplayed: true },
+        {
+            where: {
+                isDisplayed: false,
+                notificationDate: {
+                    [Op.lt]: new Date()
+                }
+            }
         });
-    }); */
 
     return getUserNotifications(req, res, next);
 }

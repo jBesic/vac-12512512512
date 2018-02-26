@@ -62,7 +62,7 @@ server.head('/user/:offset/:limit', UserHandlers.list);
 server.get('/user/:offset/:limit', UserHandlers.list);
 
 // NOTIFICATION
-server.post('/updateNotifications', NotificationHandlers.updateNotifications);
+server.get('/updateNotifications', NotificationHandlers.updateNotifications);
 server.get('/getUserNotifications', NotificationHandlers.getUserNotifications);
 
 // INIT SERVER

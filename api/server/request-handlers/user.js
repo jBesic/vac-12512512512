@@ -9,25 +9,11 @@ const Op = require('sequelize').Op;
 async function list(req, res, next) {
     let offset = (Number)(req.params.offset);
     let limit = (Number)(req.params.limit);
-    const users = await User.findAll({limit, offset, attributes: ['id', 'username'], include: [{ model: Drawing, where: {competitionId: null}, order: [['id', 'DESC']], limit: 1, offset: 0 }], order: [['id', 'DESC']] });
+    // should be excluded drawings which are submited to competitions if competitions are not finished
+    const users = await User.findAll({ limit, offset, attributes: ['id', 'username'], include: [{ model: Drawing, order: [['id', 'DESC']], limit: 1, offset: 0 }], order: [['id', 'DESC']] });
     res.send({ code: "Success", data: users });
     return next();
 }
-
-/* async function list(req, res, next) {
-    let offset = (Number)(req.params.offset);
-    let limit = (Number)(req.params.limit);
-    const queryString = `SELECT u.id, u.username, d.shapes
-            FROM users as u
-            LEFT JOIN drawings as d
-            ON d.userId = u.id
-            WHERE d.id = (SELECT MAX(drawings.id) FROM drawings LEFT JOIN competitions ON competitions.id = drawings.competitionId
-                          WHERE drawings.competitionId IS NULL OR competitions.votingEndDate < NOW())
-            ORDER BY u.id DESC LIMIT ${limit} OFFSET ${offset}`; 
-    const users = await database.query(queryString, { type: Sequelize.QueryTypes.SELECT });
-    res.send({ code: "Success", data: users });
-    return next();
-} */
 
 async function getUserById(req, res, next) {
     let userId = req.params.id;
@@ -40,6 +26,7 @@ async function getUserGallery(req, res, next) {
     let userId = req.params.id;
     let offset = (Number)(req.params.offset);
     let limit = (Number)(req.params.limit);
+    // should be excluded drawings which are submited to competitions if competitions are not finished
     const userData = await User.findAll({
         attributes: ['id', 'username'],
         where: { id: userId },
