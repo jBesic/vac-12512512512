@@ -1,8 +1,8 @@
 import * as actionTypes from './actionTypes';
 import * as vacApi from '../../vacApi';
-import React from 'react';
-import { Link } from 'react-router-dom';
 import { toastr } from 'react-redux-toastr';
+
+let notificationsInterval = null;
 
 // Register
 const registerRequest = function () {
@@ -27,7 +27,7 @@ const registerFailure = function (message) {
     }
 };
 
-const AsyncRegisterUser = function (userName, password, payload = null ) {
+const AsyncRegisterUser = function (userName, password, payload = null) {
     return dispatch => {
         dispatch(registerRequest());
 
@@ -73,28 +73,6 @@ const loginFailure = function (message) {
         message: message
     }
 };
-
-const checkJoinedCompetitions = function () {
-    return dispatch => {
-        const timeoutId = setTimeout(() => {
-            vacApi.checkJoinedCompetitions()
-                .then(response => {
-                    response.forEach(competition => {
-                        toastr.info('The ' + competition.name + ' ends.', {
-                            timeOut: 0,
-                            removeOnHover: false,
-                            component: props => <Link onClick={props.remove} className='btn vac-btn-primary btn-sm mt-2' to={'/gallery/competition/' + competition.id}>See Results</Link>
-                        });
-                    });
-                })
-                .catch(error => {
-                    return error;
-                });
-        }, 45000);
-
-        localStorage.setItem('checkJoinedCompetitions', timeoutId)
-    }
-}
 
 const AsyncLoginUser = function (userName, password, payload = null) {
     return dispatch => {
@@ -409,7 +387,7 @@ const AsyncGetCompetitions = function (offset, limit) {
         dispatch(asyncCompetitionRequest());
         vacApi.getCompetitions(offset, limit)
             .then(response => {
-                dispatch(asyncCompetitionSuccess(null, [...response.data.data]));
+                dispatch(asyncCompetitionSuccess(null, [...response]));
             }).catch(error => {
                 dispatch(asyncCompetitionFailure(error.response.data.message));
             });
@@ -552,6 +530,57 @@ const resetGalleryState = () => {
     }
 };
 
+const getUserNotifications = function (notifications, numberOfNewNotifications) {
+    return {
+        type: actionTypes.GET_USER_NOTIFICATIONS,
+        notifications: notifications,
+        numberOfNewNotifications: numberOfNewNotifications
+    }
+};
+
+const checkForUserNotifications = function () {
+    return dispatch => {
+        vacApi.getUserNotifications()
+            .then(response => {
+                dispatch(getUserNotifications([...response.notifications], response.numberOfNewNotifications));
+            }).catch(error => {
+                dispatch(getUserNotifications([], 0));
+            });
+        notificationsInterval = setInterval(() => {
+            vacApi.getUserNotifications()
+                .then(response => {
+                    dispatch(getUserNotifications([...response.notifications], response.numberOfNewNotifications));
+                }).catch(error => {
+                    dispatch(getUserNotifications([], 0));
+                });
+        }, 10000);
+    }
+}
+
+const clearNotifications = function () {
+    return {
+        type: actionTypes.CLEAR_NOTIFICATIONS,
+    }
+};
+
+const clearNotificationsInterval = function () {
+    clearInterval(notificationsInterval);
+    return dispatch => {
+        dispatch(clearNotifications());
+    }
+};
+
+const updateNotifications = function () {
+    return dispatch => {
+        vacApi.updateNotifications()
+            .then(response => {
+                dispatch(getUserNotifications([...response.notifications], response.numberOfNewNotifications));
+            }).catch(error => {
+                dispatch(getUserNotifications([], 0));
+            });
+    }
+}
+
 export {
     AsyncRegisterUser,
     AsyncLogoutUser,
@@ -583,9 +612,11 @@ export {
     AsyncSaveVote,
     AsyncDeleteVote,
     resetCanvasGlobalState,
-    checkJoinedCompetitions,
     AsyncGetCompetitionsInVotePhase,
     resetCompetitionsState,
     resetUsersState,
-    resetGalleryState
+    resetGalleryState,
+    checkForUserNotifications,
+    clearNotificationsInterval,
+    updateNotifications
 };

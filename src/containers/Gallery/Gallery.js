@@ -149,9 +149,9 @@ class Gallery extends Component {
                                             <div className="row">
                                                 {this.props.users.map((item, index) => {
                                                     if (this.state.currentUsersPage !== this.state.nextUsersPage && index === this.props.users.length - 1) return [];
-                                                    //let shapes = item.drawing ? JSON.parse(item.drawing.shapes) : null;
+                                                    let shapes = item.drawing ? item.drawing.shapes : null;
                                                     return <div key={index} className='col-md-3'>
-                                                        <GalleryCard name={item.username} shapes={this.props.shapes} link={("/gallery/user/" + item.id)} action='VIEW' />
+                                                        <GalleryCard name={item.username} shapes={shapes} link={("/gallery/user/" + item.id)} action='VIEW' />
                                                     </div>
                                                 })}
                                             </div>
@@ -174,7 +174,7 @@ class Gallery extends Component {
                                             <div className='row'>
                                                 {this.props.competitions.map((item, index) => {
                                                     if (this.state.currentCompetitionsPage !== this.state.nextCompetitionsPage && index === this.props.competitions.length - 1) return [];
-                                                    let shapes = item.drawings && item.drawings.length ? item.drawings[item.drawings.length - 1].shapes : null;
+                                                    let shapes = item.drawing ? item.drawing.shapes : null;
                                                     let votingEndDate = new Date(item.votingEndDate);
                                                     let action = votingEndDate > this.state.currentDate ? 'VOTE' : 'VIEW';
                                                     if (!this.state.isLoged && action === 'VOTE') return [];

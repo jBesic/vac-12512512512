@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import ReduxToastr from 'react-redux-toastr';
 
 import Modal from './Modal';
-import { checkJoinedCompetitions } from '../store/actions/actions'
+import { checkForUserNotifications, clearNotificationsInterval } from '../store/actions/actions'
 import Navigation from './Navigation/Navigation';
 import Authentication from './Authentication';
 import Main from './Main/Main';
@@ -20,11 +20,22 @@ import CompetitionGallery from '../components/CompetitionGallery/CompetitionGall
 import VoteGallery from './VoteGallery/VoteGallery';
 
 class App extends Component {
-  componentDidMount() {
-    if (this.props.auth.isLoged) {
-      this.props.checkJoinedCompetitions();
+
+  componentDidMount = () => {
+    if (localStorage.getItem('token')) {
+      this.props.checkForUserNotifications();
     }
-  }
+  };
+
+  componentWillReceiveProps = (nextProps) => {
+    if (this.props.auth.isLoged !== nextProps.auth.isLoged) {
+      if (nextProps.auth.isLoged === true) {
+        this.props.checkForUserNotifications();
+      } else {
+        this.props.clearNotificationsInterval();
+      }
+    }
+  };
 
   render() {
     return (
@@ -78,7 +89,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    checkJoinedCompetitions: () => dispatch(checkJoinedCompetitions())
+    checkForUserNotifications: () => dispatch(checkForUserNotifications()),
+    clearNotificationsInterval: () => dispatch(clearNotificationsInterval())
   }
 }
 

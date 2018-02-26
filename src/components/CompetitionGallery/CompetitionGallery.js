@@ -133,7 +133,7 @@ class CompetitionGallery extends Component {
                                             })}
                                             {!this.props.votes.length &&
                                                 <div className='col-md-12'>
-                                                    <span className="badge badge-secondary">None</span>
+                                                    <span className="badge badge-secondary p-1" style={{width: '60px'}}>None</span>
                                                 </div>}
                                         </div>
                                     </div>}
