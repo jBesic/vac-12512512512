@@ -39,7 +39,7 @@ const AsyncRegisterUser = function (userName, password, payload = null) {
                 localStorage.setItem('token', token);
                 localStorage.setItem('userId', userId);
                 localStorage.setItem('userName', userName);
-                dispatch(registerSuccess(token, userId));
+                dispatch(registerSuccess(token, userId, userName));
                 dispatch(AuthenticationModal());
                 toastr.info('Welcome, ', userName);
                 if (payload) {
@@ -562,7 +562,7 @@ const checkForUserNotifications = function () {
                 }).catch(error => {
                     dispatch(getUserNotifications([], 0));
                 });
-        }, 10000);
+        }, 60000);
     }
 }
 

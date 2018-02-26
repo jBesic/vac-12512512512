@@ -100,9 +100,8 @@ class StartCompetition extends Component {
         return this.props.competitions.length > 0 ? (
             <div>
                 <h4 className="mb-4">Join to a competition</h4>
-                <p>Welcome. This is the short guideline that will help you better understand the competition rules. Generally speaking, the meaning of rules are same for any competition you chose.</p>
-                <p>When you start drawing, you should make an art related to a <strong>competition topic</strong>. Also,pay attention to the <strong>Drawing duration</strong> which is the time you have to finish your awesome art.</p>
-                <form className='d-block w-100' onSubmit={this.submitHandler}>
+                <p>Welcome. When you start drawing, you should make an art related to a <strong>competition topic</strong>. Also,pay attention to the <strong>Drawing duration</strong> which is the time you have to finish your awesome art.</p>
+                <form className='mt-2 d-block w-100' onSubmit={this.submitHandler}>
                     {this.state.message ? <div className="alert alert-danger">{this.state.message}</div> : null}
                     <div className="form-group">
                         <label htmlFor="name">Name</label>

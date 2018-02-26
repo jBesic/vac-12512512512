@@ -29,7 +29,7 @@ class Register extends Component {
     }
 
     render() {
-        const isInvalid = this.state.username === '' || this.state.password === '' || this.state.password !== this.state.repeatPassword;
+        const isInvalid = this.state.username === '' || /\s/.test(this.state.username) || this.state.password === '' || this.state.password !== this.state.repeatPassword;
 
         return (
             <form className='d-block w-100' onSubmit={this.submitHandler}>
