@@ -202,3 +202,15 @@ body {
         border: 0;
     }
 }
+
+.Select.form-control {
+    padding: 0;
+
+    .Select-control {
+        border: 0;
+    }
+
+    .Select-menu-outer {
+        box-shadow: unset;
+    }
+}

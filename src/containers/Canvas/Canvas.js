@@ -79,7 +79,7 @@ class Canvas extends Component {
             });
 
             this.props.updateResetCanvasLocalStateField(false);
-            this.props.history.push('/');
+            this.props.history.push('/gallery/user/' + nextProps.userId);
         }
 
         if ((this.state.activeMode === mode.UNDO_MODE || this.state.activeMode === mode.REDO_MODE) && nextProps.shapes.length) {
@@ -557,7 +557,7 @@ class Canvas extends Component {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         );
     };
 };
@@ -575,6 +575,7 @@ const mapStateToProps = state => {
     return {
         lastUsedId: state.canvas.lastUsedId,
         isLoged: state.auth.isLoged,
+        userId: state.auth.userId,
         shapes: clonnedShapes,
         groupsSettings: state.groupsSettings,
         resetCanvasLocalState: state.canvas.resetCanvasLocalState,

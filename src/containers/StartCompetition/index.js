@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import Select from 'react-select';
+import 'react-select/dist/react-select.css';
 
 import notFound from '../../assets/images/not-found.png';
 import { startCompetition, manageCompetitionModal, AsyncLoadCompetitions } from '../../store/actions/actions';
@@ -104,21 +106,23 @@ class StartCompetition extends Component {
                     {this.state.message ? <div className="alert alert-danger">{this.state.message}</div> : null}
                     <div className="form-group">
                         <label htmlFor="name">Name</label>
-                        <select
+                        <Select
                             className="form-control"
                             id="name"
                             disabled={this.props.manageCompetitionId !== '' ? true : false}
                             value={this.state.competitionId}
-                            onChange={(ev) => this.competitionDetails(ev.target.value)}>
-                            {this.state.competitionId ? null : <option value='' disabled>Select competition ...</option>}
-                            {this.props.competitions.map(competition => {
-                                return (
-                                    <option
-                                        key={competition.id}
-                                        value={competition.id}>{competition.name}</option>
-                                )
+                            onChange={option => {
+                                const value = option === null ? '' : option.value;
+                                this.competitionDetails(value);
+                            }}
+                            options={this.props.competitions.map(competition => {
+                                return {
+                                    value: competition.id,
+                                    label: competition.name
+                                }
                             })}
-                        </select>
+                        />
+
                     </div>
 
                     {this.state.competitionId ? (
@@ -142,7 +146,7 @@ class StartCompetition extends Component {
                                     value={this.dateTimeLocal(this.state.competitionDetails.startDate)} />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="endDate">Drawing duration</label>
+                                <label htmlFor="endDate">Drawing duration <small>(minutes)</small></label>
                                 <input
                                     type="number"
                                     min='5' max='30'
@@ -152,7 +156,7 @@ class StartCompetition extends Component {
                                     value={this.state.competitionDetails.endDate} />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="votingStartDate">Drawing phase duration</label>
+                                <label htmlFor="votingStartDate">Drawing phase duration <small>(minutes)</small></label>
                                 <input
                                     type="number"
                                     min={2 * Number.parseInt(this.state.competitionDetails.endDate, 10)}
@@ -162,7 +166,7 @@ class StartCompetition extends Component {
                                     value={this.state.competitionDetails.votingStartDate} />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="votingEndDate">Voting phase duration</label>
+                                <label htmlFor="votingEndDate">Voting phase duration <small>(minutes)</small></label>
                                 <input
                                     type="number"
                                     min={2 * Number.parseInt(this.state.competitionDetails.endDate, 10)}
