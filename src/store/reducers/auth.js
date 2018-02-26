@@ -16,6 +16,7 @@ const INITIAL_STATE = {
     registerActive: false,
     isFetching: false,
     message: '',
+    userId: null,
     isLoged: localStorage.getItem('token') ? true : false
 };
 
@@ -42,6 +43,7 @@ function registerUser(state = INITIAL_STATE, action) {
                 ...state,
                 message: '',
                 isFetching: false,
+                userId: action.userId,
                 isLoged: true
             };
 
@@ -64,6 +66,7 @@ function registerUser(state = INITIAL_STATE, action) {
                 ...state,
                 message: '',
                 isFetching: false,
+                userId: action.userId,
                 isLoged: true
             };
 
@@ -87,6 +90,7 @@ function registerUser(state = INITIAL_STATE, action) {
                 ...state,
                 message: '',
                 isFetching: false,
+                userId: null,
                 isLoged: false
             };
 

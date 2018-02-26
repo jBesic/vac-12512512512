@@ -45,7 +45,12 @@ async function register(req, res, next) {
     };
     const user = await User.create(newUser);
     const authToken = jwt.sign({ userId: user.id }, apiSecret);
-    res.send({ code: 'Success', data: authToken });
+    res.send({
+        code: 'Success', data: {
+            token: authToken,
+            userId: user.id
+        }
+    });
     await User.update({ authToken }, { where: { id: user.id } });
     return next();
 }
@@ -65,7 +70,12 @@ async function login(req, res, next) {
 
     const authToken = jwt.sign({ userId: user.id, iat: 5000 }, apiSecret);
     await User.update({ authToken }, { where: { id: user.id } });
-    res.send({ code: "Success", data: authToken });
+    res.send({
+        code: "Success", data: {
+            token: authToken,
+            userId: user.id
+        }
+    });
     return next();
 }
 

@@ -11,10 +11,11 @@ const registerRequest = function () {
     }
 };
 
-const registerSuccess = function (token) {
+const registerSuccess = function (token, userId) {
     return {
         type: actionTypes.REGISTER_SUCCESS,
-        token: token
+        token: token,
+        userId: userId
     }
 };
 
@@ -31,9 +32,10 @@ const AsyncRegisterUser = function (userName, password) {
 
         vacApi.register(userName, password)
             .then(response => {
-                const token = response.data.data;
+                const token = response.data.data.token;
+                const userId = response.data.data.userId;
                 localStorage.setItem('token', token);
-                dispatch(registerSuccess(token));
+                dispatch(registerSuccess(token, userId));
                 dispatch(AuthenticationModal());
                 toastr.info('Welcome, ', userName);
             }).catch(error => {
@@ -49,10 +51,11 @@ const loginRequest = function () {
     }
 };
 
-const loginSuccess = function (token) {
+const loginSuccess = function (token, userId) {
     return {
         type: actionTypes.LOGIN_SUCCESS,
-        token: token
+        token: token,
+        userId: userId
     }
 };
 
@@ -91,9 +94,10 @@ const AsyncLoginUser = function (userName, password, payload = null) {
 
         vacApi.login(userName, password)
             .then(response => {
-                const token = response.data.data;
+                const token = response.data.data.token;
+                const userId = response.data.data.userId;
                 localStorage.setItem('token', token);
-                dispatch(loginSuccess(token));
+                dispatch(loginSuccess(token, userId));
                 dispatch(AuthenticationModal());
                 toastr.info('Welcome, ' + userName);
                 if (payload) {

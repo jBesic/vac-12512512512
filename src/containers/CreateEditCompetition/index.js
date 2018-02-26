@@ -109,7 +109,7 @@ class CreateEditCompetition extends Component {
                         value={this.dateTimeLocal(this.state.startDate)} />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="endDate">Drawing duration</label>
+                    <label htmlFor="endDate">Drawing duration <small>(minutes)</small></label>
                     <input
                         type="number"
                         min='5' max='30'
@@ -119,7 +119,7 @@ class CreateEditCompetition extends Component {
                         value={this.state.endDate} />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="votingStartDate">Drawing phase duration</label>
+                    <label htmlFor="votingStartDate">Drawing phase duration <small>(minutes)</small></label>
                     <input
                         type="number"
                         min={2 * Number.parseInt(this.state.endDate, 10)}
@@ -129,7 +129,7 @@ class CreateEditCompetition extends Component {
                         value={this.state.votingStartDate} />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="votingEndDate">Voting phase duration</label>
+                    <label htmlFor="votingEndDate">Voting phase duration <small>(minutes)</small></label>
                     <input
                         type="number"
                         min={2 * Number.parseInt(this.state.endDate, 10)}
