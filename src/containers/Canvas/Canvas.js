@@ -13,7 +13,7 @@ import './Canvas.css';
 
 class Canvas extends Component {
     state = {
-        drawingName: '',
+        drawingName: 'Untitled',
         shape: { type: null, points: [], text: '' },
         referencePoint: { x: null, y: null },
         activeMode: mode.SELECT_MODE,

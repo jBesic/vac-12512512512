@@ -48,7 +48,8 @@ async function register(req, res, next) {
     res.send({
         code: 'Success', data: {
             token: authToken,
-            userId: user.id
+            userId: user.id,
+            userName: user.username
         }
     });
     await User.update({ authToken }, { where: { id: user.id } });
@@ -73,7 +74,8 @@ async function login(req, res, next) {
     res.send({
         code: "Success", data: {
             token: authToken,
-            userId: user.id
+            userId: user.id,
+            userName: user.username
         }
     });
     return next();

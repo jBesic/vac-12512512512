@@ -11,11 +11,12 @@ const registerRequest = function () {
     }
 };
 
-const registerSuccess = function (token, userId) {
+const registerSuccess = function (token, userId, userName) {
     return {
         type: actionTypes.REGISTER_SUCCESS,
         token: token,
-        userId: userId
+        userId: userId,
+        userName: userName
     }
 };
 
@@ -34,7 +35,10 @@ const AsyncRegisterUser = function (userName, password) {
             .then(response => {
                 const token = response.data.data.token;
                 const userId = response.data.data.userId;
+                const userName = response.data.data.userName;
                 localStorage.setItem('token', token);
+                localStorage.setItem('userId', userId);
+                localStorage.setItem('userName', userName);
                 dispatch(registerSuccess(token, userId));
                 dispatch(AuthenticationModal());
                 toastr.info('Welcome, ', userName);
@@ -51,11 +55,12 @@ const loginRequest = function () {
     }
 };
 
-const loginSuccess = function (token, userId) {
+const loginSuccess = function (token, userId, userName) {
     return {
         type: actionTypes.LOGIN_SUCCESS,
         token: token,
-        userId: userId
+        userId: userId,
+        userName: userName
     }
 };
 
@@ -96,8 +101,11 @@ const AsyncLoginUser = function (userName, password, payload = null) {
             .then(response => {
                 const token = response.data.data.token;
                 const userId = response.data.data.userId;
+                const userName = response.data.data.userName;
                 localStorage.setItem('token', token);
-                dispatch(loginSuccess(token, userId));
+                localStorage.setItem('userId', userId);
+                localStorage.setItem('userName', userName);
+                dispatch(loginSuccess(token, userId, userName));
                 dispatch(AuthenticationModal());
                 toastr.info('Welcome, ' + userName);
                 if (payload) {
@@ -144,6 +152,8 @@ const AsyncLogoutUser = function () {
                 clearTimeout(localStorage.getItem('checkJoinedCompetitions'));
                 localStorage.removeItem('checkJoinedCompetitions')
                 localStorage.removeItem('token');
+                localStorage.removeItem('userId');
+                localStorage.removeItem('userName');
                 dispatch(logoutSuccess());
                 dispatch(resetAll());
                 dispatch(AuthenticationModal());
