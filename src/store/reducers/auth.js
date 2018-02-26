@@ -16,8 +16,10 @@ const INITIAL_STATE = {
     registerActive: false,
     isFetching: false,
     message: '',
-    isLoged: localStorage.getItem('token') ? true : false,
-    payload: null
+    payload: null,
+    userId: localStorage.getItem('userId'),
+    userName: localStorage.getItem('userName'),
+    isLoged: localStorage.getItem('token') ? true : false
 };
 
 function registerUser(state = INITIAL_STATE, action) {
@@ -43,8 +45,10 @@ function registerUser(state = INITIAL_STATE, action) {
                 ...state,
                 message: '',
                 isFetching: false,
-                isLoged: true,
-                payload: null
+                payload: null,
+                userId: action.userId,
+                userName: action.userName,
+                isLoged: true
             };
 
         case REGISTER_FAILURE:
@@ -66,8 +70,10 @@ function registerUser(state = INITIAL_STATE, action) {
                 ...state,
                 message: '',
                 isFetching: false,
-                isLoged: true,
-                payload: null
+                payload: null,
+                userId: action.userId,
+                userName: action.userName,
+                isLoged: true
             };
 
         case LOGIN_FAILURE:
@@ -90,6 +96,8 @@ function registerUser(state = INITIAL_STATE, action) {
                 ...state,
                 message: '',
                 isFetching: false,
+                userId: null,
+                userName: null,
                 isLoged: false
             };
 
